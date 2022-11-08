@@ -1,1 +1,3 @@
-# INE5421-PseudoGALS
+# INE5421-GIRLS
+
+Gerador IRado de analisador Léxico e Sintático
