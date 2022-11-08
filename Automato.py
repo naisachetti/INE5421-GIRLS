@@ -1,5 +1,3 @@
-from enum import auto
-
 class Automato:
     def __init__(self, filename: str) -> None:
         self.estados: list[dict] = []
@@ -20,7 +18,8 @@ class Automato:
             # Criacao de todos os estados e suas transicoes
             for line in arquivo:
                 # Leitura da linha
-                origem, simbolo, destino = line.strip().split(",")
+                origem, simbolo, destinos = line.strip().split(",")
+                destinos = set(destinos.split("-")) # Nao Determinismo
 
                 # Criacao dos estados na tansicao caso eles ainda nao existam
                 def novo_estado(nome: str):
@@ -32,7 +31,14 @@ class Automato:
                             return estado
                     return [estado for estado in self.estados if estado["nome"] == nome][0]
                 dict_origem = novo_estado(origem)
-                dict_destino = novo_estado(destino)            
+
+                # Transicao Deterministica
+                if len(destinos) == 1:
+                    dict_destino = novo_estado(destinos)
+                
+                # Transicao Nao Deterministica
+                else:
+                    dict_destino = {novo_estado(destino) for destino in destinos}        
                 
                 # Criacao da transicao
                 dict_origem[simbolo] = dict_destino
@@ -44,9 +50,12 @@ class Automato:
         estado_atual = self.estado_inicial
         for simbolo in entrada:
             estado_atual = estado_atual[simbolo]
+            if isinstance(estado_atual, set):
+                raise RuntimeError ("Transicao nao deterministica")
         return estado_atual["final"]
 
 
+# Verifica se o automato ta reconhecendo as palavras corretamente
 automato = Automato("automato_exemplo.txt")
 assert automato.determine("bb") == True
 assert automato.determine("bbbbbbbbbbbbbb") == True
