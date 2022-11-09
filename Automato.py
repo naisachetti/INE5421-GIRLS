@@ -77,6 +77,22 @@ class Automato:
         copia.inicial = [estado for estado in estados_copia if estado["nome"] == self.inicial["nome"]][0]
         return copia
 
+    # Representacao do automato ao ser impresso
+    def __repr__(self) -> str:
+        saida = f"n estados: {self.n_estados}\n"
+        saida += f"estado inicial: "+self.inicial["nome"]+"\n"
+        saida += f"estados finais: "+",".join(self.finais)+"\n"
+        saida += f"alfabeto: "+",".join(self.alfabeto)+"\n"
+        for estado in self.estados:
+            for simbolo in self.alfabeto:
+                if isinstance(estado[simbolo], dict) and estado[simbolo]["nome"] != "Morto":
+                    saida += estado["nome"]+": "+simbolo+" -> "+estado[simbolo]["nome"]+"\n"
+                elif isinstance(estado[simbolo], list):
+                    saida += estado["nome"]+": "+simbolo+" -> "
+                    saida += "-".join([est["nome"] for est in estado[simbolo]])+"\n"
+        return saida
+ 
+    # Recebe uma entrada e retorna se o automato a reconhece
     def reconhece(self, entrada: str) -> bool:
         estado_atual = self.inicial
         for simbolo in entrada:
@@ -85,17 +101,70 @@ class Automato:
                 raise RuntimeError ("Transicao nao deterministica")
         return estado_atual["final"]
     
+    # Recebe outro automato e retorna a uniao entre os dois
     def uniao_com(self, other):
-        pass
+        uniao = Automato(None)
+        copia = self.copy()
+        other = other.copy()
 
+        uniao.n_estados = copia.n_estados + other.n_estados + 1
 
+        # Identifica o estado morto da copia e do outro e transfere o do outro para o da copia
+        morto_copia = [estado for estado in copia.estados if estado["nome"] == "Morto"][0]
+        morto_other = [estado for estado in other.estados if estado["nome"] == "Morto"][0]
+        for estado in other.estados:
+            for simbolo in other.alfabeto:
+                if estado[simbolo]["nome"] == "Morto":
+                    estado[simbolo] = morto_copia
+        other.estados.remove(morto_other)
+        
+        # Cria o novo alfabeto e inclui &
+        uniao.alfabeto = list(dict.fromkeys(copia.alfabeto+other.alfabeto+["&"]))
+        
+        # Cria transicoes vazias nos automatos que serao unidos para os simbolos especificados
+        def transicao_vazia(automato, alfabeto):
+            for simbolo in alfabeto:
+                if not simbolo in automato.alfabeto:
+                    for estado in automato.estados:
+                        estado[simbolo] = morto_copia
+        transicao_vazia(copia, uniao.alfabeto)
+        transicao_vazia(other, uniao.alfabeto)
 
-# Verifica se o automato ta reconhecendo as palavras corretamente
-automato = Automato("automato_exemplo.txt")
+        # Muda o nome dos estados do outro automato
+        for estado in other.estados:
+            estado["nome"] += "_"
+        other.finais = [outro + "_" for outro in other.finais]
+        uniao.finais = copia.finais + other.finais
 
-assert automato.reconhece("bb") == True
-assert automato.reconhece("bbbbbbbbbbbbbb") == True
-assert automato.reconhece("ba") == False
-assert automato.reconhece("baaaaabab") == True
-assert automato.reconhece("aaaaaaaaaaaaaabbbbbbbbbbbbbbbbbaaaaaaa") == True
-assert automato.reconhece("abb") == False
+        # Cria o estado inicial que vai por epslon para os outros iniciais e pra nenhum mais
+        uniao.inicial = {"nome": "inicio_uniao", "final": False, "&": [copia.inicial, other.inicial]}
+        for simbolo in uniao.alfabeto:
+            if simbolo == "&":
+                continue
+            uniao.inicial[simbolo] = morto_copia
+
+        # Une de fato os estados
+        uniao.estados = [uniao.inicial] + copia.estados + other.estados
+        
+        return uniao
+
+    # Exporta o arquivo do automato
+    def export(self, filename: str):
+        with open(filename, "w") as arquivo:
+            arquivo.write(f"{self.n_estados}\n")
+            arquivo.write(self.inicial["nome"]+"\n")
+            arquivo.write(",".join(self.finais)+"\n")
+            arquivo.write(",".join(self.alfabeto)+"\n")
+            for estado in self.estados:
+                for simbolo in self.alfabeto:
+                    if isinstance(estado[simbolo], dict) and estado[simbolo]["nome"] != "Morto":
+                        arquivo.write(estado["nome"]+": "+simbolo+" -> "+estado[simbolo]["nome"]+"\n")
+                    elif isinstance(estado[simbolo], list):
+                        arquivo.write(estado["nome"]+": "+simbolo+" -> ")
+                        arquivo.write("-".join([est["nome"] for est in estado[simbolo]])+"\n")
+
+a = Automato("unido_a.txt")
+b = Automato("unido_b.txt")
+ab = a.uniao_com(b)
+ab.export("exportado.txt")
+# ab.export("exportado.txt")
