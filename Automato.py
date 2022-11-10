@@ -1,70 +1,74 @@
-from enum import auto
-from re import S
-
-
 class Automato:
-    
+
     # Cria o automato
-    def __init__(self, filename: str or None) -> None:
+    def __init__(self) -> None:
         
         # Cria um automato vazio se nao receber arquivo
-        if filename is None:
-            self.estados = None
-            self.n_estados = None
-            self.finais = None
-            self.inicial = None
-            self.alfabeto = None
-            return
-        
+        self.estados = None
+        self.n_estados = None
+        self.finais = None
+        self.inicial = None
+        self.alfabeto = None
+    
+    # Le o automato a partir de um arquivo
+    def from_file(self, filename: str):
         self.estados: list[dict] = []
         with open(filename, "r") as arquivo:
             
             # Leitura do cabecalho
             self.n_estados: int = int(arquivo.readline().strip())
             inicial: str = arquivo.readline().strip()
-            self.finais: str = arquivo.readline().strip().split(",")
+            self.finais: list = arquivo.readline().strip().split(",")
             self.alfabeto: list[str] = arquivo.readline().strip().split(",")
             
             # Criacao do estado morto
             morto: dict = {"nome": "Morto", "final": False}
             for simbolo in self.alfabeto:
-                morto[simbolo] = morto
+                morto[simbolo] = [morto]
             self.estados.append(morto)
             
             # Criacao de todos os estados e suas transicoes
             for line in arquivo:
                 # Leitura da linha
                 origem, simbolo, destinos = line.strip().split(",")
+
+                if not simbolo in self.alfabeto:
+                    raise RuntimeError(f"o simbolo {simbolo} nao pertence ao meu alfabeto mas esta numa transicao")
+
                 destinos = list(destinos.split("-")) # Nao Determinismo
 
                 # Criacao dos estados na tansicao caso eles ainda nao existam
                 def novo_estado(nome: str):
+
+                    # Estado eh de fato novo
                     if not nome in [estado["nome"] for estado in self.estados]:
                         estado = {"nome": nome, "final": nome in self.finais}
                         for simbolo in self.alfabeto:
-                            estado[simbolo] = morto
-                            self.estados.append(estado)
-                            return estado
+                            estado[simbolo] = [morto]
+                        self.estados.append(estado)
+                        return estado
+
+                    # Estado nao eh novo
                     return [estado for estado in self.estados if estado["nome"] == nome][0]
                 dict_origem = novo_estado(origem)
 
-                # Transicao Deterministica
-                if len(destinos) == 1:
-                    dict_destino = novo_estado(destinos[0])
-                
-                # Transicao Nao Deterministica
-                else:
-                    dict_destino = {novo_estado(destino) for destino in destinos}        
+                # Transicao
+                lista_dict_destino = [novo_estado(destino) for destino in destinos]        
                 
                 # Criacao da transicao
-                dict_origem[simbolo] = dict_destino
+                dict_origem[simbolo] = lista_dict_destino
+
+        # Erro do numero de estados, o -1 eh do morto
+        if len(self.estados)-1 != self.n_estados:
+            raise RuntimeError(f"Numero de estados informado errado, contei {len(self.estados)-1} e nao {self.n_estados}")
 
         # Identificacao do estado inicial
         self.inicial = [estado for estado in self.estados if estado["nome"] == inicial][0]
+        return self
 
     # Retorna uma copia do automato
     def copy(self):
-        copia = Automato(None)
+        copia = Automato()
         copia.alfabeto = self.alfabeto.copy()
         copia.finais = self.finais.copy()
         copia.n_estados = self.n_estados
@@ -72,7 +76,10 @@ class Automato:
         # Ajusta as referencias para que se refiram as copias nao ao original
         for estado_copia in estados_copia:
             for simbolo in copia.alfabeto:
-                estado_copia[simbolo] = [estado for estado in estados_copia if estado_copia[simbolo]["nome"] == estado["nome"]][0]
+                nova_lista = []
+                for estado in estado_copia[simbolo]:
+                    nova_lista += [e for e in estados_copia if estado["nome"] == e["nome"]]
+                estado_copia[simbolo] = nova_lista
         copia.estados = estados_copia
         copia.inicial = [estado for estado in estados_copia if estado["nome"] == self.inicial["nome"]][0]
         return copia
@@ -84,26 +91,24 @@ class Automato:
         saida += f"estados finais: "+",".join(self.finais)+"\n"
         saida += f"alfabeto: "+",".join(self.alfabeto)+"\n"
         for estado in self.estados:
+            if estado["nome"] == "Morto": continue
             for simbolo in self.alfabeto:
-                if isinstance(estado[simbolo], dict) and estado[simbolo]["nome"] != "Morto":
-                    saida += estado["nome"]+": "+simbolo+" -> "+estado[simbolo]["nome"]+"\n"
-                elif isinstance(estado[simbolo], list):
-                    saida += estado["nome"]+": "+simbolo+" -> "
-                    saida += "-".join([est["nome"] for est in estado[simbolo]])+"\n"
+                if estado[simbolo][0]["nome"] == "Morto": continue
+                saida += estado["nome"]+": "+simbolo+" -> "
+                saida += "-".join([est["nome"] for est in estado[simbolo]])+"\n"
         return saida
  
     # Recebe uma entrada e retorna se o automato a reconhece
-    def reconhece(self, entrada: str) -> bool:
-        estado_atual = self.inicial
-        for simbolo in entrada:
-            estado_atual = estado_atual[simbolo]
-            if isinstance(estado_atual, set):
-                raise RuntimeError ("Transicao nao deterministica")
-        return estado_atual["final"]
+    # def reconhece(self, entrada: str) -> bool:
+    #     estado_atual = self.inicial
+    #     for simbolo in entrada:
+    #         for estado in estado_atual[simbolo]:
+    #             estado_atual = 
+    #     return estado_atual["final"]
     
     # Recebe outro automato e retorna a uniao entre os dois
     def uniao_com(self, other):
-        uniao = Automato(None)
+        uniao = Automato()
         copia = self.copy()
         other = other.copy()
 
@@ -114,8 +119,8 @@ class Automato:
         morto_other = [estado for estado in other.estados if estado["nome"] == "Morto"][0]
         for estado in other.estados:
             for simbolo in other.alfabeto:
-                if estado[simbolo]["nome"] == "Morto":
-                    estado[simbolo] = morto_copia
+                if estado[simbolo][0]["nome"] == "Morto":
+                    estado[simbolo] = [morto_copia]
         other.estados.remove(morto_other)
         
         # Cria o novo alfabeto e inclui &
@@ -126,7 +131,7 @@ class Automato:
             for simbolo in alfabeto:
                 if not simbolo in automato.alfabeto:
                     for estado in automato.estados:
-                        estado[simbolo] = morto_copia
+                        estado[simbolo] = [morto_copia]
         transicao_vazia(copia, uniao.alfabeto)
         transicao_vazia(other, uniao.alfabeto)
 
@@ -141,7 +146,7 @@ class Automato:
         for simbolo in uniao.alfabeto:
             if simbolo == "&":
                 continue
-            uniao.inicial[simbolo] = morto_copia
+            uniao.inicial[simbolo] = [morto_copia]
 
         # Une de fato os estados
         uniao.estados = [uniao.inicial] + copia.estados + other.estados
@@ -149,22 +154,124 @@ class Automato:
         return uniao
 
     # Exporta o arquivo do automato
-    def export(self, filename: str):
+    def to_file(self, filename: str):
         with open(filename, "w") as arquivo:
             arquivo.write(f"{self.n_estados}\n")
             arquivo.write(self.inicial["nome"]+"\n")
             arquivo.write(",".join(self.finais)+"\n")
             arquivo.write(",".join(self.alfabeto)+"\n")
             for estado in self.estados:
-                for simbolo in self.alfabeto:
-                    if isinstance(estado[simbolo], dict) and estado[simbolo]["nome"] != "Morto":
-                        arquivo.write(estado["nome"]+": "+simbolo+" -> "+estado[simbolo]["nome"]+"\n")
-                    elif isinstance(estado[simbolo], list):
-                        arquivo.write(estado["nome"]+": "+simbolo+" -> ")
-                        arquivo.write("-".join([est["nome"] for est in estado[simbolo]])+"\n")
+                if estado["nome"] != "Morto":
+                    for simbolo in self.alfabeto:
+                        if estado[simbolo][0]["nome"] != "Morto":
+                            arquivo.write(estado["nome"]+","+simbolo+",")
+                            arquivo.write("-".join([est["nome"] for est in estado[simbolo]])+"\n")
 
-a = Automato("unido_a.txt")
-b = Automato("unido_b.txt")
-ab = a.uniao_com(b)
-ab.export("exportado.txt")
-# ab.export("exportado.txt")
+    # Renomea os estados do automato
+    def rename(self):
+
+        # Gerador de nomes
+        def nomes():
+            num = 0
+            while True:
+                yield str(num)
+                num += 1
+        gerador = nomes()
+
+        # Renomeia os estados
+        self.finais = []
+        for estado in self.estados:
+            if estado["nome"] != "Morto":
+                estado["nome"] = next(gerador)
+                if estado["final"]:
+                    self.finais.append(estado["nome"])
+        
+        return self
+
+    # Retorna uma versao determinizada do automato
+    def determinizado(self):
+        copia = self.copy()
+
+        # Identificacao do &-fecho dos estados (lista)
+        for estado in copia.estados:
+            estado["fecho"] = [estado]
+            estado["fecho"] += [fecho for fecho in estado["&"] if fecho["nome"] != "Morto"]
+        
+        # Retorna o nome dos estados aglutinados
+        def aglutinar_nome(estados: list):
+            return "+".join([estado["nome"] for estado in estados])
+        
+        # Todos os estados do determinizado sao listas antes de serem ajustados
+        determinizado = Automato()
+        determinizado.finais = []
+        determinizado.n_estados = 1
+
+        # Alfabeto do automato determinizado
+        determinizado.alfabeto = copia.alfabeto
+        determinizado.alfabeto.remove("&")
+
+        # Criacao do estado morto
+        morto: dict = {"nome": "Morto", "final": False}
+        for simbolo in determinizado.alfabeto:
+            morto[simbolo] = [morto]
+        
+        # Estados fundamentais
+        determinizado.inicial = {"nome": aglutinar_nome(copia.inicial["fecho"]), "fecho": copia.inicial["fecho"]}
+        determinizado.inicial["final"] = True in [estado["final"] for estado in determinizado.inicial["fecho"]]
+        if determinizado.inicial["final"]:
+            determinizado.finais.append(determinizado.inicial["nome"])
+        determinizado.estados = [morto, determinizado.inicial]
+
+        # Retorna o estado determinizado equivalente a transicao ND
+        def destino_determinisico(estados: list, simbolo: str):
+            estados_destino = []
+            for estado in estados:
+                for estado_destino in estado[simbolo]:
+                    if estado_destino not in estados_destino and estado_destino["nome"] != "Morto":
+                        estados_destino.append(estado_destino)
+            
+            # Nao ha transicao, retorna o morto
+            if estados_destino == []:
+                return [estado for estado in determinizado.estados if estado["nome"] == "Morto"][0]
+            
+            # Gera o estado determinizado
+            estado_determinizado =\
+                    {"nome": aglutinar_nome(estados_destino), 
+                    "final": False, 
+                    "fecho": estados_destino}
+
+            for estado in determinizado.estados:
+                # ESTADO JA EXISTIA
+                if estado["nome"] == estado_determinizado["nome"]:
+                    return estado
+            
+            # ESTADO NAO EXISTIA
+
+            # Verifica se este estado eh de aceitacao e acrescenta nos finais se for o caso
+            for estado in estados_destino:
+                if estado["final"] == True:
+                    estado_determinizado["final"] = True
+
+            if estado_determinizado["final"]:
+                determinizado.finais.append(estado_determinizado["nome"])
+
+            determinizado.n_estados += 1
+
+            determinizado.estados.append(estado_determinizado)
+            return estado_determinizado
+
+        # Estados do automato determinizado
+        for estado in determinizado.estados:
+            if estado["nome"] == "Morto": continue
+            for simbolo in determinizado.alfabeto:
+                estado[simbolo] = [destino_determinisico(estado["fecho"], simbolo)]
+
+        return determinizado
+
+Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
+a = Automato().from_file("unido_a.txt")
+# print(a)
+b = Automato().from_file("unido_b.txt")
+ab = a.uniao_com(b).rename().determinizado().rename()
+epico = a.uniao_com(b).determinizado().rename()
+ab.to_file("epico.txt")
