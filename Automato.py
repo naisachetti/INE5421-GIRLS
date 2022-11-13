@@ -270,8 +270,6 @@ class Automato:
 
 Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
 a = Automato().from_file("unido_a.txt")
-# print(a)
 b = Automato().from_file("unido_b.txt")
 ab = a.uniao_com(b).rename().determinizado().rename()
-epico = a.uniao_com(b).determinizado().rename()
 ab.to_file("epico.txt")
