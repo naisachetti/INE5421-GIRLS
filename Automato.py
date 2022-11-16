@@ -1,3 +1,5 @@
+import ArvoreSintatica
+
 class Automato:
 
     # Cria o automato
@@ -10,6 +12,18 @@ class Automato:
         self.inicial = None
         self.alfabeto = None
     
+    # Cria o automato a partir de um arquivo contendo uma regex
+    def from_regex(self, filename: str):
+        pass
+        # Instanciacao de uma Arvore Sintatica para a regex
+        # with open(filename, "r") as arquivo:
+        #     regex = arquivo.readline()
+        # a_sint = ArvoreSintatica(regex)
+
+        # Conversao da Arvore Sintatica para AFD
+        # Usará firspos, lastpos e followpos da arvore
+
+
     # Le o automato a partir de um arquivo
     def from_file(self, filename: str):
         self.estados: list[dict] = []
@@ -223,7 +237,7 @@ class Automato:
         determinizado.estados = [morto, determinizado.inicial]
 
         # Retorna o estado determinizado equivalente a transicao ND
-        def destino_determinisico(estados: list, simbolo: str):
+        def destino_deterministico(estados: list, simbolo: str):
             estados_destino = []
             for estado in estados:
                 for estado_destino in estado[simbolo]:
@@ -264,7 +278,7 @@ class Automato:
         for estado in determinizado.estados:
             if estado["nome"] == "Morto": continue
             for simbolo in determinizado.alfabeto:
-                estado[simbolo] = [destino_determinisico(estado["fecho"], simbolo)]
+                estado[simbolo] = [destino_deterministico(estado["fecho"], simbolo)]
 
         return determinizado
 
