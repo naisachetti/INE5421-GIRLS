@@ -23,32 +23,43 @@ class ArvoreSintatica:
     # Função utilizada para verificação da integridade da AS
     def get_arvore(self):
         nodos = Pilha()
+        filhos_visit_nodos = Pilha()
         arvore = ""
 
         nodos.push(self.raiz)
+        filhos_visit_nodos.push(0)
         while (nodos.size() > 0):
             if isinstance(nodos.top(), Fecho):
-                if nodos.top_filhos_visitados() == 0:
+                if filhos_visit_nodos.top() == 0:
                     arvore += '(' + nodos.top().get_tipo()
-                    nodos.top_inc_filhos_visitados()
+                    num_visit = filhos_visit_nodos.pop()
+                    filhos_visit_nodos.push(num_visit + 1)
                     nodos.push(nodos.top().get_filho())
+                    filhos_visit_nodos.push(0)
                 else:
                     arvore += ')'
                     nodos.pop()
+                    filhos_visit_nodos.pop()
             elif isinstance(nodos.top(), Concat) or isinstance(nodos.top(), Ou):
-                if nodos.top_filhos_visitados() == 0:
+                if filhos_visit_nodos.top() == 0:
                     arvore += '(' + nodos.top().get_tipo()
-                    nodos.top_inc_filhos_visitados()
+                    num_visit = filhos_visit_nodos.pop()
+                    filhos_visit_nodos.push(num_visit + 1)
                     nodos.push(nodos.top().get_filho_esq())
-                elif nodos.top_filhos_visitados() == 1:
-                    nodos.top_inc_filhos_visitados()
+                    filhos_visit_nodos.push(0)
+                elif filhos_visit_nodos.top() == 1:
+                    num_visit = filhos_visit_nodos.pop()
+                    filhos_visit_nodos.push(num_visit + 1)
                     nodos.push(nodos.top().get_filho_dir())
+                    filhos_visit_nodos.push(0)
                 else:
                     arvore += ')'
                     nodos.pop()
+                    filhos_visit_nodos.pop()
             elif isinstance(nodos.top(), Simbolo):
                 arvore += self.simbolos[nodos.top().get_id()]
                 nodos.pop()
+                filhos_visit_nodos.pop()
 
         return arvore
 
@@ -160,7 +171,7 @@ class Fecho(Nodo):
         if (self.filho is None):
             self.filho = novo_filho
         else:
-            raise Exception("Impossivel adicionar filho. Nodo Fecho cheio.")
+            raise Exception("Impossivel adicionar filho. Nodo Fecho cheio. Possível causa: Regex mal formado.")
     
     def get_filho(self):
         return self.filho
@@ -190,7 +201,7 @@ class Concat(Nodo):
         elif (self.filho_dir is None):
             self.filho_dir = novo_filho
         else:
-            raise Exception("Impossivel adicionar filho. Nodo Concat cheio.")
+            raise Exception("Impossivel adicionar filho. Nodo Concat cheio. Possível causa: Regex mal formado.")
 
     def get_filho_esq(self):
         return self.filho_esq
@@ -222,7 +233,7 @@ class Ou(Nodo):
         elif (self.filho_dir is None):
             self.filho_dir = novo_filho
         else:
-            raise Exception("Impossivel adicionar filho. Nodo Ou cheio.")
+            raise Exception("Impossivel adicionar filho. Nodo Ou cheio. Possível causa: Regex mal formado.")
 
     def get_filho_esq(self):
         return self.filho_esq
