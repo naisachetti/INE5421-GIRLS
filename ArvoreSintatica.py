@@ -12,7 +12,7 @@ class ArvoreSintatica:
     # Cria uma Arvore Sintatica para testes
     def __init__(self, regex: str) -> None:
         self.raiz = None
-        self.simbolos = {} # Guarda o simbolo (caracter) para cada nodo do tipo Simbolo
+        self.simbolos: dict[int,Simbolo] = {} # Guarda cada nodo do tipo Simbolo por seu id, para busca rapida.
         self.cont_id = 1
         # Cria uma Arvore Sintatica para testes
         # self.criar_teste()
@@ -61,7 +61,7 @@ class ArvoreSintatica:
                     nodos.pop()
                     filhos_visit.pop()
             elif isinstance(nodos.top(), Simbolo):
-                arvore += self.simbolos[nodos.top().get_id()]
+                arvore += nodos.top().get_nome()
                 arvore += self.infos_nodo(nodos.top(), anulaveis, firstpos, lastpos, followpos)
                 nodos.pop()
                 filhos_visit.pop()
@@ -78,21 +78,27 @@ class ArvoreSintatica:
         
         if firstpos:
             infos += '{'
-            for id in nodo.get_firstpos():
-                infos += (str)(id)
+            if len(nodo.get_firstpos()) > 0:
+                for id in nodo.get_firstpos():
+                    infos += (str)(id)+','
+                infos = infos[:-1]
             infos += '}'
 
         if lastpos:
             infos += '{'
-            for id in nodo.get_lastpos():
-                infos += (str)(id)
+            if len(nodo.get_lastpos()) > 0:
+                for id in nodo.get_lastpos():
+                    infos += (str)(id)+','
+                infos = infos[:-1]
             infos += '}'
 
         if followpos:
-            if isinstance(nodo, Fecho) or isinstance(nodo, Concat):
+            if isinstance(nodo, Simbolo):
                 infos += '{'
-                for id in nodo.get_followpos():
-                    infos += (str)(id)
+                if len(nodo.get_followpos()) > 0:
+                    for id in nodo.get_followpos():
+                        infos += (str)(id)+','
+                    infos = infos[:-1]
                 infos += '}'
 
         return infos
@@ -174,11 +180,8 @@ class ArvoreSintatica:
 
     # Adiciona um simbolo como filho de um determinado nodo da AS
     def add_simbolo(self, caracter: chr, nodo_pai):
-        if (caracter == '&'):
-            simbolo = Simbolo(self.cont_id, anulavel=True)
-        else:
-            simbolo = Simbolo(self.cont_id)
-        self.simbolos[self.cont_id] = caracter
+        simbolo = Simbolo(self.cont_id, caracter)
+        self.simbolos[self.cont_id] = simbolo
         self.cont_id += 1
         nodo_pai.add_filho(simbolo)
 
@@ -199,7 +202,7 @@ class ArvoreSintatica:
                 else:
                     nodos.top().calcula_firstpos()
                     nodos.top().calcula_lastpos()
-                    nodos.top().calcula_followpos()
+                    nodos.top().calcula_followpos(self.simbolos)
                     nodos.pop()
                     filhos_visit.pop()
             elif isinstance(nodos.top(), Concat) or isinstance(nodos.top(), Ou):
@@ -218,7 +221,7 @@ class ArvoreSintatica:
                     nodos.top().calcula_firstpos()
                     nodos.top().calcula_lastpos()
                     if isinstance(nodos.top(), Concat):
-                        nodos.top().calcula_followpos()
+                        nodos.top().calcula_followpos(self.simbolos)
                     nodos.pop()
                     filhos_visit.pop()
             elif isinstance(nodos.top(), Simbolo):
@@ -228,10 +231,10 @@ class ArvoreSintatica:
 class Nodo:
 
     # Cria nodo da AS
-    def __init__(self, anulavel = False, firstpos = [], lastpos = []):
-        self.anulavel = anulavel
-        self.firstpos = firstpos
-        self.lastpos = lastpos
+    def __init__(self, anulavel = False, firstpos:set = set(), lastpos:set = set()):
+        self.anulavel:bool = anulavel
+        self.firstpos:set = firstpos
+        self.lastpos:set = lastpos
 
     def is_anulavel(self):
         return self.anulavel
@@ -248,13 +251,9 @@ class Fecho(Nodo):
     def __init__(self):
         super().__init__(anulavel=True)
         self.filho = None
-        self.followpos = []
 
     def get_tipo(self):
         return '*'
-
-    def get_followpos(self):
-        return self.followpos
 
     def add_filho(self, novo_filho):
         if (self.filho is None):
@@ -266,13 +265,16 @@ class Fecho(Nodo):
         return self.filho
         
     def calcula_firstpos(self):
-        pass
+        fp1 = self.filho.get_firstpos()
+        self.firstpos = fp1
 
     def calcula_lastpos(self):
-        pass
+        lp1 = self.filho.get_lastpos()
+        self.lastpos = lp1
 
-    def calcula_followpos(self):
-        pass
+    def calcula_followpos(self, simbolos):
+        for id in self.lastpos:
+            simbolos[id].add_followpos(self.firstpos)
 
 class Concat(Nodo):
 
@@ -281,13 +283,9 @@ class Concat(Nodo):
         super().__init__(anulavel=False)
         self.filho_esq = None
         self.filho_dir = None
-        self.followpos = []
 
     def get_tipo(self):
         return '.'
-
-    def get_followpos(self):
-        return self.followpos
 
     def add_filho(self, novo_filho):
         if (self.filho_esq is None):
@@ -310,13 +308,24 @@ class Concat(Nodo):
             self.anulavel = False
 
     def calcula_firstpos(self):
-        pass
+        fp1 = self.filho_esq.get_firstpos()
+        fp2 = self.filho_dir.get_firstpos()
+        if self.filho_esq.is_anulavel():
+            self.firstpos = fp1.union(fp2)
+        else:
+            self.firstpos = fp1
 
     def calcula_lastpos(self):
-        pass
+        lp1 = self.filho_esq.get_lastpos()
+        lp2 = self.filho_dir.get_lastpos()
+        if self.filho_dir.is_anulavel():
+            self.lastpos = lp1.union(lp2)
+        else:
+            self.lastpos = lp2
 
-    def calcula_followpos(self):
-        pass
+    def calcula_followpos(self, simbolos):
+        for id in self.filho_esq.get_lastpos():
+            simbolos[id].add_followpos(self.filho_dir.get_firstpos())
 
 class Ou(Nodo):
 
@@ -350,22 +359,37 @@ class Ou(Nodo):
             self.anulavel = False
 
     def calcula_firstpos(self):
-        pass
+        fp1 = self.filho_esq.get_firstpos()
+        fp2 = self.filho_dir.get_firstpos()
+        self.firstpos = fp1.union(fp2)
 
     def calcula_lastpos(self):
-        pass
+        lp1 = self.filho_esq.get_lastpos()
+        lp2 = self.filho_dir.get_lastpos()
+        self.lastpos = lp1.union(lp2)
 
 class Simbolo(Nodo):
 
     # Cria nodo do tipo Simbolo da AS.
     #
-    # O simbolo (caracter) representado por cada nodo fica guardado 
-    # em um dicionario na classe ArvoreSintatica, para busca rápida.
-    def __init__(self, id: int, anulavel = False):
-        firstpos = [] if anulavel else [id]
-        lastpos = [] if anulavel else [id]
+    # Cada nodo fica guardado em um dicionario na classe ArvoreSintatica, para busca rápida.
+    def __init__(self, id: int, nome:chr):
+        anulavel = (nome == '&')
+        firstpos:set = set() if anulavel else {id}
+        lastpos:set = set() if anulavel else {id}
         super().__init__(anulavel, firstpos, lastpos)
-        self.id = id
+        self.id:int = id
+        self.nome:chr = nome
+        self.followpos:set = set()
 
     def get_id(self):
         return self.id
+
+    def get_nome(self):
+        return self.nome
+
+    def get_followpos(self):
+        return self.followpos
+
+    def add_followpos(self, novos_followpos:set):
+        self.followpos = self.followpos.union(novos_followpos)
