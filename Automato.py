@@ -1,4 +1,4 @@
-import ArvoreSintatica
+from ArvoreSintatica import *
 
 class Automato:
 
@@ -16,12 +16,33 @@ class Automato:
     def from_regex(self, filename: str):
         pass
         # Instanciacao de uma Arvore Sintatica para a regex
-        # with open(filename, "r") as arquivo:
-        #     regex = arquivo.readline()
-        # a_sint = ArvoreSintatica(regex)
+        with open(filename, "r") as arquivo:
+            while True:
+                linha = arquivo.readline()
+                if linha[0] != '#':
+                    regex = linha
+                    break
+        a_sint = ArvoreSintatica(regex)
 
-        # Conversao da Arvore Sintatica para AFD
-        # Usará firspos, lastpos e followpos da arvore
+        # Definicao dos estados e suas transicoes
+        (self.estados, estado_inicial) = a_sint.get_estados_automato()
+
+        # Definicao da quantidade de estados no automato
+        self.n_estados = len(self.estados)-1
+
+        # Definicao dos estados finais
+        self.finais: list = []
+        for estado in self.estados:
+            if estado["final"]:
+                self.finais.append(estado["nome"])
+        
+        # Definicao do estado inicial
+        self.inicial = estado_inicial
+
+        # Definicao do alfabeto
+        self.alfabeto = a_sint.get_alfabeto()
+
+        return self
 
 
     # Le o automato a partir de um arquivo
@@ -282,8 +303,11 @@ class Automato:
 
         return determinizado
 
-Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
-a = Automato().from_file("unido_a.txt")
-b = Automato().from_file("unido_b.txt")
-ab = a.uniao_com(b).rename().determinizado().rename()
-ab.to_file("epico.txt")
+# Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
+# a = Automato().from_file("unido_a.txt")
+# b = Automato().from_file("unido_b.txt")
+# ab = a.uniao_com(b).rename().determinizado().rename()
+# ab.to_file("epico.txt")
+Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
+Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
+Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")

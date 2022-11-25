@@ -1,0 +1,2 @@
+# Mesmo que: (a + b)*abb
+(.(.(.(*(+ a b)) a) b) b)

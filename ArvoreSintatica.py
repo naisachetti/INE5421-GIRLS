@@ -18,7 +18,92 @@ class ArvoreSintatica:
         # self.criar_teste()
         # Cria a Arvore Sintatica para uma regex. regex deve ser recebido como argumento
         self.from_regex(regex)
+        self.calcula_infos_nodos()
 
+    # Retorna uma lista com os nomes dos simbolos, ou seja, o alfabeto contido na AS.
+    def get_alfabeto(self):
+        alfabeto: list[str] = []
+        for simbolo in self.simbolos.values():
+            if simbolo.get_nome() not in alfabeto and simbolo.get_nome() != '#' and simbolo.get_nome() != '&':
+                alfabeto.append(simbolo.get_nome())
+        return alfabeto
+
+    # Retorna os estados do automato, com suas transições (inclui estado morto e transicoes para ele)
+    def get_estados_automato(self):
+        # Definicao do id de '#' em self.simbolos para a identificacao de estados finais
+        id_simbolo_final = -1
+        for id in self.simbolos.keys():
+            if self.simbolos[id].get_nome() == '#':
+                id_simbolo_final = id
+                break
+
+        estados = [] # Estados do automato, com suas transicoes
+        alfabeto = self.get_alfabeto() # Alfabeto do automato
+
+        # Criacao do estado morto
+        morto: dict = {"nome": "Morto", "final": False}
+        for simbolo in alfabeto:
+            morto[simbolo] = [morto]
+        estados.append(morto)
+
+        # Algoritmo slide 45 de Analise Lexica
+        # Criacao do estado inicial
+        inicial: dict = {"nome": "q0", "final": (id_simbolo_final in self.raiz.get_firstpos())}
+        pos_estados: dict[str, set] = {"q0":self.raiz.get_firstpos()} # Guarda ids dos simbolos da AS para cada estado
+        estados.append(inicial)
+        # Indicacao do estado inicial como nao marcado
+        est_nao_marcados = [inicial]
+        cont_estados = 0 # Contador utilizado na nomeacao dos estados
+        # Criacao dos demais estados e suas transicoes
+        while (len(est_nao_marcados) > 0):
+            # print(estados)
+            # print("\n")
+            # Marca estado
+            estado_origem = est_nao_marcados.pop(0)
+            for simbolo in alfabeto:
+                pos_simbolo = set() # Guarda ids dos simbolos da AS para um dos simbolos do estado marcado (estado_origem)
+
+                # Faz a uniao dos followpos(id) para todo id do estado_origem que corresponde a simbolo
+                for id in pos_estados[estado_origem["nome"]]:
+                    if self.simbolos[id].get_nome() == simbolo:
+                        pos_simbolo = pos_simbolo.union(self.simbolos[id].get_followpos())
+
+                # Se pos_simbolo eh vazio, o estado_origem nao transita pelo simbolo
+                if len(pos_simbolo) == 0:
+                    estado_origem[simbolo] = [morto]
+                # Caso contrario, transita
+                else:
+                    # Se estado eh novo
+                    if pos_simbolo not in pos_estados.values():
+                        # Cria novo estado
+                        cont_estados += 1
+                        novo_estado = {"nome": "q"+(str)(cont_estados), "final": (id_simbolo_final in pos_simbolo)}
+                        pos_estados[novo_estado["nome"]] = pos_simbolo
+                        estados.append(novo_estado)
+                        # Indica estado como nao marcado
+                        est_nao_marcados.append(novo_estado)
+                        # Cria transicao do estado atual para o novo estado
+                        estado_origem[simbolo] = [novo_estado]
+
+                    # Se estado nao eh novo
+                    else:
+                        # Busca nome do estado de destino entre estados já registrados, a partir de pos_simbolo
+                        nome_estado_dest = ""
+                        for nome_estado in pos_estados.keys():
+                            if pos_estados[nome_estado] == pos_simbolo:
+                                nome_estado_dest = nome_estado
+
+                        # Busca estado de destino entre estados já registrados, a partir do nome do estado
+                        estado_dest = None
+                        for estado in estados:
+                            if estado["nome"] == nome_estado_dest:
+                                estado_dest = estado
+                        
+                        # Cria transicao do estado de origem para o estado de destino
+                        estado_origem[simbolo] = [estado_dest]
+        
+        return (estados, inicial)
+    
     # Função utilizada para verificação da integridade da AS.
     # Retorna o regex em notação prefixada da AS com informações sobre nodos anulaveis, 
     # seus firstpos, lastpos e/ou followpos.
@@ -179,8 +264,8 @@ class ArvoreSintatica:
         return op
 
     # Adiciona um simbolo como filho de um determinado nodo da AS
-    def add_simbolo(self, caracter: chr, nodo_pai):
-        simbolo = Simbolo(self.cont_id, caracter)
+    def add_simbolo(self, nome: str, nodo_pai):
+        simbolo = Simbolo(self.cont_id, nome)
         self.simbolos[self.cont_id] = simbolo
         self.cont_id += 1
         nodo_pai.add_filho(simbolo)
@@ -373,13 +458,13 @@ class Simbolo(Nodo):
     # Cria nodo do tipo Simbolo da AS.
     #
     # Cada nodo fica guardado em um dicionario na classe ArvoreSintatica, para busca rápida.
-    def __init__(self, id: int, nome:chr):
+    def __init__(self, id: int, nome:str):
         anulavel = (nome == '&')
         firstpos:set = set() if anulavel else {id}
         lastpos:set = set() if anulavel else {id}
         super().__init__(anulavel, firstpos, lastpos)
         self.id:int = id
-        self.nome:chr = nome
+        self.nome:str = nome
         self.followpos:set = set()
 
     def get_id(self):
