@@ -16,12 +16,7 @@ class Automato:
     def from_regex(self, filename: str):
         pass
         # Instanciacao de uma Arvore Sintatica para a regex
-        with open(filename, "r") as arquivo:
-            while True:
-                linha = arquivo.readline()
-                if linha[0] != '#':
-                    regex = linha
-                    break
+        regex = self.read_regex(filename)
         a_sint = ArvoreSintatica(regex)
 
         # Definicao dos estados e suas transicoes
@@ -44,6 +39,68 @@ class Automato:
 
         return self
 
+    # Le a regex e definicoes regulares a partir de um arquivo.
+    # Retorna a mesma regex sem definicoes regulares (ou seja, com as definicoes regulares ja substituidas em si).
+    def read_regex(self, filename):
+        letras = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+        regdefs:dict[str, str] = {}
+        regex = ""
+
+        # Leitura da regex e definicoes regulares
+        with open(filename, "r") as arquivo:
+            while True:
+                linha = arquivo.readline()
+                if linha[0] not in ['#'] and len(linha) > 1:
+                    # Se é uma definicao regular
+                    if linha[0] not in ['(']:
+                        # Verifica se a definicao regular comeca com uma letra e nao eh nomeada com apenas uma letra
+                        if linha[0] in letras:
+                            buffer = ""
+                            for char in linha:
+                                if char != ':':
+                                    buffer += char
+                                else:
+                                    if len(buffer) > 1:
+                                        regdef = linha[len(buffer)+1 : len(linha)-1]
+                                        regdefs[buffer] = regdef
+                                    else:
+                                        raise Exception("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
+                        else:
+                            raise Exception("Definição regular com formato incorreto. Deve começar com letra.")
+                    # Se não é uma definição regular, mas sim uma ER
+                    else:
+                        regex = linha
+                        break
+        
+        new_regex = regex
+
+        # Substituicao das definicoes regulares dentro da regex.
+        # Substitui todas as definicoes regulares que forem possiveis em uma passada
+        # pela regex e, caso substituicoes tenham sido realmente feitas, analisa a nova regex.
+        # Este processo se repete ate que nao haja mais definicoes regulares na regex.
+        while True:
+            regex = new_regex
+            buffer = ""
+            index_i = 0
+            inc_i = 0
+            for i in range (len(regex)):
+                if new_regex[i+inc_i] not in ['(','.','+','*']:
+                    if new_regex[i+inc_i] in [' ',')']:
+                        if len(buffer) > 1:
+                            new_regex = new_regex[0:index_i] + regdefs[buffer] + new_regex[i+inc_i:len(new_regex)]
+                            inc_i += len(regdefs[buffer])-len(buffer)-1
+                            buffer = ""
+                        else:
+                            buffer = ""
+                    else:
+                        if len(buffer) == 0:
+                            index_i = i+inc_i
+                        buffer += new_regex[i+inc_i]
+
+            if new_regex == regex:
+                break
+
+        return regex
 
     # Le o automato a partir de um arquivo
     def from_file(self, filename: str):
@@ -311,3 +368,4 @@ class Automato:
 Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
 Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
 Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
+Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
