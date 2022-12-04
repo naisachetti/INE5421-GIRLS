@@ -1,4 +1,5 @@
 from random import randrange
+from string import ascii_uppercase
 
 
 class Gramatica:
@@ -12,6 +13,23 @@ class Gramatica:
 
         # As producoes sao dicionarios provavelmente ainda n pensei 100% nisso
         self.producoes = {}
+
+    # Representacao da gramatica pra prints
+    def __repr__(self) -> str:
+        saida = ""
+        for nao_terminal, producoes in self.producoes.items():
+            producoes = " | ".join(producoes)
+            saida += f"{nao_terminal} -> {producoes}\n"
+        return saida[:-1]
+
+    # Retorna uma copia da gramatica
+    def copy(self):
+        copia = Gramatica()
+        copia.inicial = self.inicial
+        copia.terminais = self.terminais.copy()
+        copia.nao_terminais = self.nao_terminais.copy()
+        copia.producoes = self.producoes.copy()
+        return copia
 
     # Le a gramatica de um arquivo
     def from_file(self, filename: str):
@@ -48,6 +66,20 @@ class Gramatica:
                 producoes = " | ".join(producoes)
                 arquivo.write(f"{nao_terminal} -> {producoes}")
 
+    # Retorna um novo nao terminal 
+    def novo_nao_terminal(self, original = None):
+        
+        # Tenta retornar uma letra do alfabeto
+        alfabeto = list(ascii_uppercase)
+        for letra in alfabeto:
+            if not letra in self.nao_terminais:
+                self.nao_terminais.append(letra)
+                return letra
+        
+        # TODO: Geracoes mais iradas
+        # Tenta acentuar a letra 
+        raise RuntimeError("NAO CONSIGO RESTORNAR MAIS")
+
     # Simplesmente retorna uma producao aleatoria dentre as possiveis
     def random_production(self, nao_terminal: str) -> str:
         producao = self.producoes[nao_terminal][randrange(len(self.producoes[nao_terminal]))]
@@ -71,8 +103,111 @@ class Gramatica:
                 break
         return forma_sentencial
 
+    # Retorna a gramatica sem epslon producoes
+    def e_livre(self):
+        copia: Gramatica = self.copy()
 
-g = Gramatica().from_file("gramatica_exemplo.txt")
-g.to_file("output.txt")
+        # Encontra os simbolos anulaveis
+        anulaveis = ["&"]
+        alterado_flag = True
+        while alterado_flag:
+            # Flag pra ver se algum nao terminal passou a ser anulavel nessa iteracao
+            alterado_flag = False
+            for nao_terminal, producoes in copia.producoes.items():
+                
+                if nao_terminal in anulaveis:
+                    continue
+                
+                for producao in producoes:
+                    for simbolo in producao:
+                        # Se um simbolo ja nao for anulavel a producao como um todo nao eh
+                        if not simbolo in anulaveis:
+                            break
+                    else:
+                        # Todos simbolos anulaveis
+                        alterado_flag = True
+                        anulaveis.append(nao_terminal)
+                        # Nao ha mais por que analisar as producoes deste simbolo
+                        break
+        
+        # Novo estado inicial caso necessario
+        if copia.inicial in anulaveis:
+            novo_inicial = copia.novo_nao_terminal()
+            copia.producoes[novo_inicial] = [copia.inicial, "&"]
+            copia.inicial = novo_inicial
+        
+        # Elimina as & producoes
+        for nao_terminal, producoes in copia.producoes.items():
+            if nao_terminal == copia.inicial:
+                continue
+            if "&" in producoes:
+                producoes.remove("&")
+
+        # Gera as producoes livres
+        for nao_terminal, producoes in copia.producoes.items():
+            for producao in producoes:
+                if len(producao) == 1:
+                    continue
+                for index, simbolo in enumerate(producao):
+                    if simbolo in anulaveis:
+                        producoes.append(producao[:index]+producao[index+1:])
+        return copia
+
+    # Retorna a gramatica sem loops
+    def sem_loop(self):
+        copia = self.copy()
+        for nt, producoes in copia.producoes.items():
+            if nt in producoes:
+                producoes.remove(nt)
+        return copia
+
+    # Altera a gramatica para retirar recursao direta daquele nao terminal
+    def eliminar_recursao_direta(self, nao_terminal: str):
+        
+       # Separa producoes recursivas de nao recursivas
+        producoes_recursivas = []
+        producoes_nao_recursivas = []
+        for producao in self.producoes[nao_terminal]:
+            if nao_terminal != producao[0]:
+                producoes_nao_recursivas.append(producao)
+            if nao_terminal == producao[0]:
+                producoes_recursivas.append(producao)
+
+        # Se nao ha producoes recursivas nao ha o que fazer
+        if len(producoes_recursivas) == 0:
+            return
+
+        # Eliminacao de recursoes diretas
+        novo_simbolo = self.novo_nao_terminal(nao_terminal)
+        self.producoes[novo_simbolo] = ["&"]
+
+        self.producoes[nao_terminal] = [producao+novo_simbolo for producao in producoes_nao_recursivas]
+        self.producoes[novo_simbolo] += [producao[1:]+novo_simbolo for producao in producoes_recursivas]
+
+    # Retorna a gramatica sem recursao a esquerda
+    def sem_recursao(self):
+        copia = self.copy().sem_loop().e_livre()
+
+        # Notacao dos slides da professora
+        for i, ai in enumerate(copia.nao_terminais):
+            
+            # Eliminacao da recursao indireta
+            for _, aj in zip(range(i), copia.nao_terminais):
+                for pi in copia.producoes[ai]:
+                    if pi[0] == aj:
+                        for pj in copia.producoes[aj]:
+                            copia.producoes[ai].append(pj+pi[1:])
+                        copia.producoes[ai].remove(pi)
+
+            # Eliminacao da recursao direta
+            copia.eliminar_recursao_direta(ai)
+
+        return copia
+
+
+g = Gramatica().from_file("gramatica_indireta.txt")
+print(g)
+print("-----------------------------")
+print(g.sem_recursao())
 # for _ in range (20):
 #     print(g.generate_word())

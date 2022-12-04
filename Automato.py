@@ -191,12 +191,19 @@ class Automato:
         return saida
  
     # Recebe uma entrada e retorna se o automato a reconhece
-    # def reconhece(self, entrada: str) -> bool:
-    #     estado_atual = self.inicial
-    #     for simbolo in entrada:
-    #         for estado in estado_atual[simbolo]:
-    #             estado_atual = 
-    #     return estado_atual["final"]
+    # SE RECEBER UM AFND VAI DAR PAU
+    def reconhece(self, entrada: str) -> bool:
+        estado_atual = self.inicial
+        for simbolo in entrada:
+            if len(estado_atual[simbolo]) > 1:
+                nome_str = "nome"
+                raise RuntimeError(f"Tansicao nao deterministica de {estado_atual[nome_str]} por {simbolo}")
+            elif len(estado_atual[simbolo]) == 0:
+                nome_str = "nome"
+                raise RuntimeError(f"Tansicao de {estado_atual[nome_str]} por {simbolo} NAO EXISTE (???)")
+            
+            estado_atual = estado_atual[simbolo][0]
+        return estado_atual["final"]
     
     # Recebe outro automato e retorna a uniao entre os dois
     def uniao_com(self, other):
@@ -361,11 +368,17 @@ class Automato:
         return determinizado
 
 # Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
-# a = Automato().from_file("unido_a.txt")
+a = Automato().from_file("unido_a.txt")
+while True:
+    entrada = input()
+    if entrada == "stop":
+        break
+    else:
+        print(a.reconhece(entrada))
 # b = Automato().from_file("unido_b.txt")
 # ab = a.uniao_com(b).rename().determinizado().rename()
 # ab.to_file("epico.txt")
-Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
-Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
-Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
-Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
+# Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
+# Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
+# Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
+# Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
