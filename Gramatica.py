@@ -1,6 +1,46 @@
 from random import randrange
 from string import ascii_uppercase
 
+class Production(str):
+    def __init__(self, conteudo: str, separation_par = "char", nt_identification = None):
+        self.conteudo = conteudo
+        self.separation_par = separation_par #char ou space
+        self.nt_identification = None #caracteres especiais no inicio e fim de nao terminais
+        
+    def __iter__(self):
+        if self.separation_par == "space":
+            return iter(self.conteudo.split())
+        elif self.nt_identification is None:
+            return iter(self.conteudo)
+        else:
+            # Quando os nao terminais tem identificadores mas nao espaco eh um saco de tratar
+            
+            # Esse techo separa os nt terminais do resto, que fica agrupado
+            nt_separados = []
+            start = 0
+            for i, caracter in enumerate(self.conteudo):
+                if caracter == self.nt_identification[0] and i:
+                    nt_separados.append(self.conteudo[start:i])
+                    start = i
+                if caracter == self.nt_identification[1]:
+                    nt_separados.append(self.conteudo[start:i+1])
+                    start = i+1
+            else:
+                if nt_separados[-1][-1] != self.conteudo[-1]:
+                    nt_separados.append(self.conteudo[start:])
+            
+            # Esse trecho separa os terminais aglutinados
+            tudo_separado = []
+            for grupo in nt_separados:
+                if self.nt_identification[0] in grupo or self.nt_identification[1] in grupo:
+                    tudo_separado.append(grupo)
+                else:
+                    for letter in grupo:
+                        tudo_separado.append(letter)
+            
+            # Retorna o iterador tratado
+            return iter(tudo_separado)
+
 class Gramatica:
 
     def __init__(self) -> None:
@@ -12,6 +52,7 @@ class Gramatica:
 
         # As producoes sao dicionarios provavelmente ainda n pensei 100% nisso
         self.producoes = {}
+        self.nt_identification = None #Caracteres que identificam nao terminais. Ex: <NT> esse atributo seria "<>"
 
     # Representacao da gramatica pra prints
     def __repr__(self) -> str:
@@ -43,19 +84,29 @@ class Gramatica:
                 # Adiciona nao terminal na lista
                 if not nao_terminal in self.nao_terminais: self.nao_terminais.append(nao_terminal)
                 
-                producoes = [palavra.strip() for palavra in producoes.split("|")]
+                # TODO: TEM QUE RECEBER O PADRAO DE PRODUCAO DE ALGUM LUGAR PRA SABER ITERAR SOBRE
+                producoes = [Production(palavra.strip()) for palavra in producoes.split("|")]
+                
                 # Criacao dos dicionarios
                 self.producoes[nao_terminal] = producoes
 
                 # Leitura de todos os simbolos novos
                 for producao in producoes:
                     for simbolo in producao:
-
-                        # TODO: Deve haver algum jeito melhor de diferenciar terminal e nao terminal
-                        if simbolo == simbolo.lower():
-                            if not simbolo in self.terminais: self.terminais.append(simbolo)
+                        
+                        # Assume que nao terminais sao um unico caracter identificado por ser letra maiuscula
+                        if self.nt_identification is None:
+                            # TODO: Deve haver algum jeito melhor de diferenciar terminal e nao terminal
+                            if simbolo == simbolo.lower():
+                                if not simbolo in self.terminais: self.terminais.append(simbolo)
+                            else:
+                                if not simbolo in self.nao_terminais: self.nao_terminais.append(simbolo) 
                         else:
-                            if not simbolo in self.nao_terminais: self.nao_terminais.append(simbolo) 
+                            if self.nt_identification[0] in simbolo:
+                                if not simbolo in self.nao_terminais: self.nao_terminais.append(simbolo)
+                            else:
+                                if not simbolo in self.terminais: self.terminais.append(simbolo)
+                            
         return self
 
     # Escreve a gramatica num arquivo
@@ -68,16 +119,19 @@ class Gramatica:
     # Retorna um novo nao terminal 
     def novo_nao_terminal(self, original = None):
         
-        # Tenta retornar uma letra do alfabeto
-        alfabeto = list(ascii_uppercase)
-        for letra in alfabeto:
-            if not letra in self.nao_terminais:
-                self.nao_terminais.append(letra)
-                return letra
-        
-        # TODO: Geracoes mais iradas
-        # Tenta acentuar a letra 
-        raise RuntimeError("NAO CONSIGO RESTORNAR MAIS")
+        if self.nt_identification is None:
+            # Tenta retornar uma letra do alfabeto
+            alfabeto = list(ascii_uppercase)
+            for letra in alfabeto:
+                if not letra in self.nao_terminais:
+                    self.nao_terminais.append(letra)
+                    return letra
+            
+            # TODO: Geracoes mais iradas
+            # Tenta acentuar a letra 
+            raise RuntimeError("NAO CONSIGO RESTORNAR MAIS")
+        else:
+            return original[:-1]+"1"+original[-1]
 
     # Simplesmente retorna uma producao aleatoria dentre as possiveis
     def random_production(self, nao_terminal: str) -> str:
@@ -104,6 +158,8 @@ class Gramatica:
 
     # Altera a gramatica alterando as producoes da cabeca pra que "incorporem" as producoes do corpo e o eliminem
     def herdar_producoes(self, nt_cabeca: str, nt_corpo: str):
+        # print(nt_cabeca, nt_corpo)
+        novas_producoes = []
         for producao in self.producoes[nt_cabeca]:
             destruir = 0
             for index, simbolo in enumerate(producao):
@@ -112,9 +168,16 @@ class Gramatica:
                     if destruir > 1:
                         raise RuntimeError(f"POISE O SIMBOLO PRA HERDAR APARECEU 2 VEZES EM {producao}")
                     for herdada in self.producoes[nt_corpo]:
-                        self.producoes[nt_cabeca].append(producao[:index]+herdada+producao[index+1:])
+                        if herdada == "&":
+                            if len(producao) > 1:
+                                novas_producoes.append(producao[:index]+producao[index+1:])
+                            elif not "&" in self.producoes[nt_cabeca]:
+                                novas_producoes.append("&")
+                        else:
+                            novas_producoes.append(producao[:index]+herdada+producao[index+1:])
             if destruir == 1:
                 self.producoes[nt_cabeca].remove(producao)
+        self.producoes[nt_cabeca] += novas_producoes
                     
     # Retorna a gramatica sem epslon producoes
     def e_livre(self):
@@ -167,6 +230,7 @@ class Gramatica:
         return copia
 
     # Retorna a gramatica sem loops
+    #TODO: tem loops nao diretos, procurar eles
     def sem_loop(self):
         copia = self.copy()
         for nt, producoes in copia.producoes.items():
@@ -220,6 +284,7 @@ class Gramatica:
     # Altera a gramatica para retirar nao determinismo direto
     def eliminar_nd_direto(self, nao_terminal: str):
         houve_alteracao = True
+        novo_nt = None
         while houve_alteracao:
 
             houve_alteracao = False
@@ -247,7 +312,10 @@ class Gramatica:
                     self.producoes[nao_terminal].append(simbolo+novo_nt)
 
                     break
+        
+        return novo_nt # Retorna o novo terminal criado
 
+    # OBSOLETO POSSIVELMENTE
     # Recebe uma lista de simbolos iniciais, e retorna uma dos iniciais alcancaveis dando um passo a mais nos NT
     def inicias_proximo_passo(self, alcancaveis: dict):
         # alcancaveis = {"inferteis": [], "ferteis": []}
@@ -267,19 +335,31 @@ class Gramatica:
             
     # Retorna a gramatica fatorada
     def fatorada(self):
-        
+        copia = self.copy()
         # Elimina ND direto iniciais
-        for nao_terminal in self.nao_terminais:
-            self.eliminar_nd_direto(nao_terminal)
+        for nao_terminal in copia.nao_terminais:
+            copia.eliminar_nd_direto(nao_terminal)
         
-        # Elimina ND indireto
-        for nao_terminal in self.nao_terminais:
-            alcancaveis = {"inferteis": [], "ferteis": [nao_terminal]}
-            for _ in range(50):
-                alcancaveis, duplicatas = self.inicias_proximo_passo(alcancaveis)
-                if duplicatas:pass
-                if alcancaveis["ferteis"] == []: break
+        # TODO: POSSIVEL PROBLEMA PRA GRAMATICAS COMPLEXAS
+        # Se ha nao terminal a esquerda entao ta na hora de herdar producao
+        nt_lista = list(copia.producoes.keys())
+        for nao_terminal in nt_lista:
+            for i in range(100):
+                for producao in copia.producoes[nao_terminal]:
+                    # Comeca de fato com um nao terminal
+                    if producao[0] in copia.nao_terminais:
+                        copia.herdar_producoes(nao_terminal, producao[0])
+                        break
+                else:
+                    # Se ele nao conseguiu herdar nada
+                    break
+            novo_nt = copia.eliminar_nd_direto(nao_terminal)
+            if novo_nt:
+                nt_lista.append(novo_nt)
 
+    # Retorna a gramatica sem producoes unitarias
+    def sem_unitarias(self):
+        pass
 
 g = Gramatica().from_file("gramatica_indireta.txt")
 print(g)
