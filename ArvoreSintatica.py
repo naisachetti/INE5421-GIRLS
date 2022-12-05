@@ -188,62 +188,44 @@ class ArvoreSintatica:
 
         return infos
 
-    # Cria uma AS de teste para (.(.(.(.(*(+ab))a)b)b)#)
-    def criar_teste(self):
-        operadores = Pilha()
-
-        op = self.add_operador(TipoOp.CONCAT)
-        operadores.push(op)
-        op = self.add_operador(TipoOp.CONCAT, operadores.top())
-        operadores.push(op)
-        op = self.add_operador(TipoOp.CONCAT, operadores.top())
-        operadores.push(op)
-        op = self.add_operador(TipoOp.CONCAT, operadores.top())
-        operadores.push(op)
-        op = self.add_operador(TipoOp.FECHO, operadores.top())
-        operadores.push(op)
-        op = self.add_operador(TipoOp.OU, operadores.top())
-        operadores.push(op)
-        self.add_simbolo('a', operadores.top())
-        self.add_simbolo('b', operadores.top())
-        operadores.pop()
-        operadores.pop()
-        self.add_simbolo('a', operadores.top())
-        operadores.pop()
-        self.add_simbolo('b', operadores.top())
-        operadores.pop()
-        self.add_simbolo('b', operadores.top())
-        operadores.pop()
-        self.add_simbolo('#', operadores.top())
-        operadores.pop()
-
-    # Cria uma AS a partir de uma regex
+    # Cria uma AS a partir de uma regex prefixada
     def from_regex(self, regex: str):
-        regex_processar = '(.'+regex+'#)'
+        regex_processar = '.'+regex+'#'
+
         operadores = Pilha()
 
         for caracter in regex_processar:
-            # print(caracter)
-            if caracter == '(' or caracter == ' ':
-                pass
-            elif caracter == ')':
-                # print("Pop")
-                operadores.pop()
-            elif caracter == '*':
+            if caracter == '*':
                 # print("Add *")
-                op = self.add_operador(TipoOp.FECHO, operadores.top())
+                nodo_pai = operadores.top()
+                while (nodo_pai is not None) and (nodo_pai.cheio()):
+                    operadores.pop()
+                    nodo_pai = operadores.top()
+                op = self.add_operador(TipoOp.FECHO, nodo_pai)
                 operadores.push(op)
             elif caracter == '.':
                 # print("Add .")
-                op = self.add_operador(TipoOp.CONCAT, operadores.top())
+                nodo_pai = operadores.top()
+                while (nodo_pai is not None) and (nodo_pai.cheio()):
+                    operadores.pop()
+                    nodo_pai = operadores.top()
+                op = self.add_operador(TipoOp.CONCAT, nodo_pai)
                 operadores.push(op)
             elif caracter == '+':
                 # print("Add +")
-                op = self.add_operador(TipoOp.OU, operadores.top())
+                nodo_pai = operadores.top()
+                while (nodo_pai is not None) and (nodo_pai.cheio()):
+                    operadores.pop()
+                    nodo_pai = operadores.top()
+                op = self.add_operador(TipoOp.OU, nodo_pai)
                 operadores.push(op)
             else:
                 # print("Add simbolo")
-                self.add_simbolo(caracter, operadores.top())
+                nodo_pai = operadores.top()
+                while (nodo_pai is not None) and (nodo_pai.cheio()):
+                    operadores.pop()
+                    nodo_pai = operadores.top()
+                self.add_simbolo(caracter, nodo_pai)
 
     # Adiciona um operador como filho de um determinado nodo da AS
     def add_operador(self, tipo: TipoOp, nodo_pai = None):
@@ -348,6 +330,9 @@ class Fecho(Nodo):
     
     def get_filho(self):
         return self.filho
+
+    def cheio(self):
+        return (self.filho is not None)
         
     def calcula_firstpos(self):
         fp1 = self.filho.get_firstpos()
@@ -386,6 +371,9 @@ class Concat(Nodo):
     def get_filho_dir(self):
         return self.filho_dir
 
+    def cheio(self):
+        return ((self.filho_esq is not None) and (self.filho_dir is not None))
+
     def calcula_anulavel(self):
         if self.filho_esq.is_anulavel() and self.filho_dir.is_anulavel():
             self.anulavel = True
@@ -422,7 +410,7 @@ class Ou(Nodo):
 
     def get_tipo(self):
         return '+'
-
+    
     def add_filho(self, novo_filho):
         if (self.filho_esq is None):
             self.filho_esq = novo_filho
@@ -436,6 +424,9 @@ class Ou(Nodo):
 
     def get_filho_dir(self):
         return self.filho_dir
+
+    def cheio(self):
+        return ((self.filho_esq is not None) and (self.filho_dir is not None))
 
     def calcula_anulavel(self):
         if self.filho_esq.is_anulavel() or self.filho_dir.is_anulavel():
