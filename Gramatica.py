@@ -1,7 +1,6 @@
 from random import randrange
 from string import ascii_uppercase
 
-
 class Gramatica:
 
     def __init__(self) -> None:
@@ -103,6 +102,20 @@ class Gramatica:
                 break
         return forma_sentencial
 
+    # Altera a gramatica alterando as producoes da cabeca pra que "incorporem" as producoes do corpo e o eliminem
+    def herdar_producoes(self, nt_cabeca: str, nt_corpo: str):
+        for producao in self.producoes[nt_cabeca]:
+            destruir = 0
+            for index, simbolo in enumerate(producao):
+                if simbolo == nt_corpo:
+                    destruir += 1
+                    if destruir > 1:
+                        raise RuntimeError(f"POISE O SIMBOLO PRA HERDAR APARECEU 2 VEZES EM {producao}")
+                    for herdada in self.producoes[nt_corpo]:
+                        self.producoes[nt_cabeca].append(producao[:index]+herdada+producao[index+1:])
+            if destruir == 1:
+                self.producoes[nt_cabeca].remove(producao)
+                    
     # Retorna a gramatica sem epslon producoes
     def e_livre(self):
         copia: Gramatica = self.copy()
@@ -204,10 +217,75 @@ class Gramatica:
 
         return copia
 
+    # Altera a gramatica para retirar nao determinismo direto
+    def eliminar_nd_direto(self, nao_terminal: str):
+        houve_alteracao = True
+        while houve_alteracao:
+
+            houve_alteracao = False
+            simbolos_iniciais = [producao[0] for producao in self.producoes[nao_terminal]]
+            for simbolo in simbolos_iniciais:
+                # ha nao determinismo com este simbolo
+                if simbolos_iniciais.count(simbolo) > 1:
+                    houve_alteracao = True
+                    # Separa os indices das producoes que sao repetidas (sim esse codigo ta horrivel)
+                    indices = [index for index, simbolo_repetido in enumerate(simbolos_iniciais) if simbolo == simbolo_repetido]
+
+                    # Cria um novo nao terminal que produz dos nao deterministicos
+                    novo_nt = self.novo_nao_terminal()
+                    self.producoes[novo_nt] = [producao[1:] for producao in self.producoes[nao_terminal] if self.producoes[nao_terminal].index(producao) in indices]
+                    for producao in self.producoes[novo_nt]:
+                        if producao == "":
+                            self.producoes[novo_nt].remove("")
+                            self.producoes[novo_nt].append("&")
+
+                    # Elimina as producoes nao deterministicas
+                    for offset, indice in enumerate(indices):
+                        self.producoes[nao_terminal].pop(indice-offset)
+
+                    # Transicao que leva pro novo nao terminal
+                    self.producoes[nao_terminal].append(simbolo+novo_nt)
+
+                    break
+
+    # Recebe uma lista de simbolos iniciais, e retorna uma dos iniciais alcancaveis dando um passo a mais nos NT
+    def inicias_proximo_passo(self, alcancaveis: dict):
+        # alcancaveis = {"inferteis": [], "ferteis": []}
+        novos_alcancaveis = []
+        for simbolo in alcancaveis["ferteis"]:
+            # Nao terminais nao importam
+            if simbolo in self.terminais + ["&"]:
+                continue
+
+            # Todos os primeiros simbolos alcancaveis por este nao terminal
+            novos_alcancaveis += [producao[0] for producao in self.producoes[simbolo]]
+
+        alcancaveis["inferteis"] += alcancaveis["ferteis"]
+        alcancaveis["ferteis"] = novos_alcancaveis
+        ha_duplicatas = len(alcancaveis["inferteis"]) - len(set(alcancaveis["inferteis"])) > 0
+        return alcancaveis, ha_duplicatas
+            
+    # Retorna a gramatica fatorada
+    def fatorada(self):
+        
+        # Elimina ND direto iniciais
+        for nao_terminal in self.nao_terminais:
+            self.eliminar_nd_direto(nao_terminal)
+        
+        # Elimina ND indireto
+        for nao_terminal in self.nao_terminais:
+            alcancaveis = {"inferteis": [], "ferteis": [nao_terminal]}
+            for _ in range(50):
+                alcancaveis, duplicatas = self.inicias_proximo_passo(alcancaveis)
+                if duplicatas:pass
+                if alcancaveis["ferteis"] == []: break
+
 
 g = Gramatica().from_file("gramatica_indireta.txt")
 print(g)
 print("-----------------------------")
-print(g.sem_recursao())
+g.fatorada()
+print(g)
+# print(g.sem_recursao())
 # for _ in range (20):
 #     print(g.generate_word())

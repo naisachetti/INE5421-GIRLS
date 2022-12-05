@@ -1,4 +1,5 @@
 from ArvoreSintatica import *
+from string import ascii_lowercase
 
 class Automato:
 
@@ -42,7 +43,7 @@ class Automato:
     # Le a regex e definicoes regulares a partir de um arquivo.
     # Retorna a mesma regex sem definicoes regulares (ou seja, com as definicoes regulares ja substituidas em si).
     def read_regex(self, filename):
-        letras = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
+        letras = list(ascii_lowercase)
         regdefs:dict[str, str] = {}
         regex = ""
 
@@ -273,7 +274,7 @@ class Automato:
         def nomes():
             num = 0
             while True:
-                yield str(num)
+                yield "q"+str(num)
                 num += 1
         gerador = nomes()
 
@@ -367,18 +368,21 @@ class Automato:
 
         return determinizado
 
+
+epico = Automato().from_regex("regex_exemplo4.txt")
 # Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
-a = Automato().from_file("unido_a.txt")
+# a = Automato().from_file("unido_a.txt")
 while True:
     entrada = input()
     if entrada == "stop":
         break
     else:
-        print(a.reconhece(entrada))
+        print(epico.reconhece(entrada))
 # b = Automato().from_file("unido_b.txt")
-# ab = a.uniao_com(b).rename().determinizado().rename()
+# v = Automato().from_file("determinizado.txt")
+# ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
 # ab.to_file("epico.txt")
 # Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
 # Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
 # Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
-# Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
+Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
