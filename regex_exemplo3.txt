@@ -1,2 +1,2 @@
-# Mesmo que: ((a + b)* . (a.b)) + &
-(+(.(*(+a b)) (. a b)) &)
+# Comentário
+>regex:((a + b)* . (a.b)) + &

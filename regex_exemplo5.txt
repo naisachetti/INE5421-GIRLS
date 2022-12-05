@@ -1,4 +1,4 @@
-# Comentário
+# Mesmo que:
 letter_1:a+b+c+d+e+f+g
 letter_2:letter_1+h+i+j+k+l
 letter_3:letter_2+m+n+o+p+q
@@ -6,4 +6,4 @@ letter_4:letter_3+r+s+t+u+v
 letter_5:letter_4+w+x+y+z
 simbols:!+/
 
->regex_com_def_regulares:(letter_5 +!)* . simbols .b+ &
+>regex: (a+!*) . simbols.b + &

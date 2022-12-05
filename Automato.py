@@ -1,5 +1,7 @@
+import string
+import sys
 from ArvoreSintatica import *
-from string import ascii_lowercase
+from Pilha import *
 
 class Automato:
 
@@ -15,7 +17,6 @@ class Automato:
     
     # Cria o automato a partir de um arquivo contendo uma regex
     def from_regex(self, filename: str):
-        pass
         # Instanciacao de uma Arvore Sintatica para a regex
         regex = self.read_regex(filename)
         a_sint = ArvoreSintatica(regex)
@@ -43,7 +44,7 @@ class Automato:
     # Le a regex e definicoes regulares a partir de um arquivo.
     # Retorna a mesma regex sem definicoes regulares (ou seja, com as definicoes regulares ja substituidas em si).
     def read_regex(self, filename):
-        letras = list(ascii_lowercase)
+        letras = list(string.ascii_lowercase)
         regdefs:dict[str, str] = {}
         regex = ""
 
@@ -53,7 +54,7 @@ class Automato:
                 linha = arquivo.readline()
                 if linha[0] not in ['#'] and len(linha) > 1:
                     # Se é uma definicao regular
-                    if linha[0] not in ['(']:
+                    if linha[0] not in ['>']:
                         # Verifica se a definicao regular comeca com uma letra e nao eh nomeada com apenas uma letra
                         if linha[0] in letras:
                             buffer = ""
@@ -68,12 +69,22 @@ class Automato:
                                         raise Exception("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
                         else:
                             raise Exception("Definição regular com formato incorreto. Deve começar com letra.")
-                    # Se não é uma definição regular, mas sim uma ER
+                    # Se nao eh uma definicao regular, mas sim uma ER
                     else:
-                        regex = linha
+                        buffer = ""
+                        for char in linha:
+                            if char == '>':
+                                pass
+                            elif char != ':':
+                                buffer += char
+                            else:
+                                if len(buffer) > 1:
+                                    regex = linha[len(buffer)+2 : len(linha)]
+                                else:
+                                    raise Exception("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
                         break
         
-        new_regex = regex
+        new_regex = regex+" "
 
         # Substituicao das definicoes regulares dentro da regex.
         # Substitui todas as definicoes regulares que forem possiveis em uma passada
@@ -85,23 +96,92 @@ class Automato:
             index_i = 0
             inc_i = 0
             for i in range (len(regex)):
-                if new_regex[i+inc_i] not in ['(','.','+','*']:
-                    if new_regex[i+inc_i] in [' ',')']:
-                        if len(buffer) > 1:
-                            new_regex = new_regex[0:index_i] + regdefs[buffer] + new_regex[i+inc_i:len(new_regex)]
-                            inc_i += len(regdefs[buffer])-len(buffer)-1
-                            buffer = ""
-                        else:
-                            buffer = ""
+                if (new_regex[i+inc_i] in ['(',')','.','+','*',' ']) or (i == len(regex)-1):
+                    if (len(buffer) > 1) and (buffer in regdefs.keys()):
+                        new_regex = new_regex[0:index_i] + '(' + regdefs[buffer] + ')' + new_regex[i+inc_i:len(new_regex)]
+                        inc_i += len(regdefs[buffer])-len(buffer)-1
+                        buffer = ""
                     else:
-                        if len(buffer) == 0:
-                            index_i = i+inc_i
-                        buffer += new_regex[i+inc_i]
+                        buffer = ""
+                else:
+                    if len(buffer) == 0:
+                        index_i = i+inc_i
+                    buffer += new_regex[i+inc_i]
 
             if new_regex == regex:
                 break
 
-        return regex
+        # Adicao de concatenacoes implicitas
+        inc_i = 0
+        new_regex = regex
+        for i in range (len(regex)):
+            if new_regex[i+inc_i] not in [')','.','+','*',' ']:
+                k = i+inc_i-1
+                while (k >= 0) and new_regex[k] == ' ':
+                    k -= 1
+                if (k >= 0) and (new_regex[k] not in ['(','.','+']):
+                    new_regex = new_regex[0:k+1] + '.' + new_regex[k+1:len(new_regex)]
+                    inc_i += 1
+
+        regex = new_regex
+
+        # Transformacao da regex em notacao infixada para notacao prefixada.
+        # Algoritmo retirado de: https://www.geeksforgeeks.org/convert-infix-prefix-notation/
+        prec_op = {'*':3, '.':2, '+': 1}
+        # prec_op = {'*':3, '+':3, '?':3, '.':2, '|': 1}
+        assoc_op = {'*':"direita", '.':"esquerda", '+':"esquerda"}
+        # assoc_op = {'*':"direita," '+':"direita", '?':"direita", '.':"esquerda", '|':"esquerda"}
+        
+        # Inverte regex infixada original
+        regex_invertida = ""
+        aux_regex_invertida = regex[::-1]
+        for char in aux_regex_invertida:
+            if char == '(':
+                regex_invertida += ')'
+            elif char == ')':
+                regex_invertida += '('
+            else:
+                regex_invertida += char
+
+        # Converte regex infixada invertida para uma regex posfixada
+        operadores = Pilha()
+        regex_inv_posf = ""
+        for char in regex_invertida:
+            if char not in ['(',')','*','+','?','.','|',' ']:
+                regex_inv_posf += char
+            elif char == ' ':
+                pass
+            elif char == '(':
+                operadores.push('(')
+            elif char == ')':
+                operador = operadores.pop()
+                while operador != '(':
+                    regex_inv_posf += operador
+                    operador = operadores.pop()
+            else:
+                if operadores.size() == 0 or operadores.top() == '(':
+                    operadores.push(char)
+                else:
+                    if char == operadores.top():
+                        if assoc_op[char] == "direita":
+                            operadores.push()
+                        else:
+                            regex_inv_posf += operadores.pop()
+                            operadores.push(char)
+                    else:
+                        operador = operadores.top()
+                        while (operadores.size() > 0) and (operador != '(') and (prec_op[operador] >= prec_op[char]):
+                            regex_inv_posf += operadores.pop()
+                            operador = operadores.top()
+                        operadores.push(char)
+
+        while operadores.size() > 0:
+            regex_inv_posf += operadores.pop()
+
+        # Inverte regex posfixada, obtendo uma regex prefixada da regex infixada original
+        regex_pref = regex_inv_posf[::-1]
+
+        return regex_pref
 
     # Le o automato a partir de um arquivo
     def from_file(self, filename: str):
@@ -372,17 +452,18 @@ class Automato:
 epico = Automato().from_regex("regex_exemplo4.txt")
 # Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
 # a = Automato().from_file("unido_a.txt")
-while True:
-    entrada = input()
-    if entrada == "stop":
-        break
-    else:
-        print(epico.reconhece(entrada))
+# while True:
+#     entrada = input()
+#     if entrada == "stop":
+#         break
+#     else:
+#         print(a.reconhece(entrada))
 # b = Automato().from_file("unido_b.txt")
 # v = Automato().from_file("determinizado.txt")
 # ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
 # ab.to_file("epico.txt")
-# Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
+Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
 # Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
 # Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
-Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
+# Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
+# Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
