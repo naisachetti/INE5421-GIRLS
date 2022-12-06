@@ -15,10 +15,17 @@ class Pilha:
     # Retorna o elemento do topo da pilha, sem retira-lo
     def top(self):
         if self.size() > 0:
-            return self.elementos[self.size()-1]
+            return self.elementos[-1]
         else:
             return None
 
     # Retorna o número de elementos contido na pilha
     def size(self):
         return len(self.elementos)
+
+    # Apaga a pilha
+    def clear(self):
+        self.elementos.clear()
+
+    def __repr__(self) -> str:
+        return repr(self.elementos)

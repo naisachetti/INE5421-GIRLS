@@ -5,7 +5,7 @@ class Production(str):
     def __init__(self, conteudo: str, separation_par = "char", nt_identification = None):
         self.conteudo = conteudo
         self.separation_par = separation_par #char ou space
-        self.nt_identification = None #caracteres especiais no inicio e fim de nao terminais
+        self.nt_identification = nt_identification #caracteres especiais no inicio e fim de nao terminais
         self.len = 0
         
         self.iterator = None
@@ -52,7 +52,7 @@ class Production(str):
     def __iter__(self):
         # return self.iterator
         if self.separation_par == "space":
-            return  iter(self.conteudo.split())
+            return iter(self.conteudo.split())
         elif self.nt_identification is None:
             return iter(self.conteudo)
         else:
@@ -83,7 +83,10 @@ class Production(str):
             
             # Retorna o iterador tratado
             return iter(tudo_separado)
-        
+
+    def first(self):
+        return self[0]
+
 class Gramatica:
 
     def __init__(self) -> None:
@@ -255,23 +258,20 @@ class Gramatica:
             while houve_alteracao:
                 houve_alteracao = False
                 for producao in producoes:
-                    print(nao_terminal, producoes, producao)
                     if len(producao) == 1 and producao[0] in copia.nao_terminais:
                         copia.herdar_producoes(nao_terminal, producao[0])
                         houve_alteracao = True
         return copia
 
-    # Retorna a gramatica sem epslon producoes
-    def e_livre(self):
-        copia: Gramatica = self.copy()
-
+    # Encontra nao terminais anulaveis
+    def anulaveis(self):
         # Encontra os simbolos anulaveis
         anulaveis = ["&"]
         alterado_flag = True
         while alterado_flag:
             # Flag pra ver se algum nao terminal passou a ser anulavel nessa iteracao
             alterado_flag = False
-            for nao_terminal, producoes in copia.producoes.items():
+            for nao_terminal, producoes in self.producoes.items():
                 
                 if nao_terminal in anulaveis:
                     continue
@@ -287,6 +287,14 @@ class Gramatica:
                         anulaveis.append(nao_terminal)
                         # Nao ha mais por que analisar as producoes deste simbolo
                         break
+        return anulaveis
+    
+    # Retorna a gramatica sem epslon producoes
+    def e_livre(self):
+        copia: Gramatica = self.copy()
+
+        # Encontra os simbolos anulaveis
+        anulaveis = copia.anulaveis()
         
         # Novo estado inicial caso necessario
         if copia.inicial in anulaveis:
@@ -443,11 +451,106 @@ class Gramatica:
         
         return copia
 
-   
-g = Gramatica().from_file("gramatica_indireta.txt")
-print(g)
-print("-----------------------------")
-c = g.fatorada().sem_inalcancaveis()
-# for producoes in c.producoes.values():
-#     print([type(producao) for producao in producoes])
-print(c)
+    # Retorna o firstpos de uma producao
+    def first_prod(self, producao: Production):
+        if producao[0] in self.terminais or producao[0] == "&":
+            return {producao[0]}
+        first = set()
+        for simbolo in producao:
+            first = first.union(self.__firstpos_nt(simbolo))
+            if not simbolo in self.anulaveis():
+                break
+        return first
+    
+    # Calcula o firstpos de um nao terminal
+    def __firstpos_nt(self, nt: str):
+        first = set()
+        for producao in self.producoes[nt]:
+            firspos_producao = producao.first()
+            if firspos_producao in self.terminais or firspos_producao == "&":
+                first.add(firspos_producao)
+            # Firspos eh um NT
+            else:
+                for simbolo in producao:
+                    # Adiciona nao terminal no firstpos e sai
+                    if simbolo in self.terminais:
+                        first.add(simbolo)
+                        break
+
+                    # Acrescenta o firstpos do nao terminal e continua se for anulavel
+                    elif simbolo in self.nao_terminais:
+                        first = first.union(self.__firstpos_nt(simbolo))
+                        if not simbolo in self.anulaveis():
+                            break
+                        
+        if nt in self.anulaveis():
+            first.add("&")
+        return first
+
+    # Calcula o firstpos da gramatica
+    def firspost(self):
+        first = {nt:[] for nt in self.nao_terminais}
+        for nt in self.nao_terminais:
+            first[nt] = self.__firstpos_nt(nt)
+        return first
+
+    # Calcula o followpos de um nao terminal
+    def __followpos_nt(self, nt: str, analisys_set = None):
+        if analisys_set == None:
+            analisys_set = set()
+        # print(nt, analisys_set)
+        analisys_set.add(nt)
+        # print(analisys_set)
+        follow = set()
+        # Fim de arquivo sempre ao fim do simbolo inicial
+        if nt is self.inicial:
+            follow.add("$")
+        for nt_analisado, producoes in self.producoes.items():
+            for producao in producoes:
+                for i, simbolo in enumerate(producao):
+                    if nt == simbolo:
+                        # Ultimo simbolo da producao
+                        if i == len(producao) - 1:
+                            if not nt_analisado in analisys_set:
+                                # print("1", nt_analisado)
+                                follow = follow.union(self.__followpos_nt(nt_analisado, analisys_set.copy()))
+                        else:
+                            prox = producao[i+1]
+                            # Proximo simbolo eh um terminal
+                            if prox in self.terminais:
+                                follow.add(prox)
+                            # Proximo simbolo eh um nao terminal
+                            else:
+                                # Tem que ver todos os proximos e ver se eles sao anulaveis
+                                for j in range(i+1, len(producao)):
+                                    if producao[j] != nt:
+                                        follow = follow.union(self.__firstpos_nt(producao[j]))
+                                    if "&" in follow:
+                                        follow.remove("&")
+                                    if not producao[j] in self.anulaveis():
+                                        break
+                                else:
+                                    if not producao[j] in analisys_set:
+                                        # print("2", nt_analisado)
+                                        follow = follow.union(self.__followpos_nt(nt_analisado, analisys_set.copy()))
+        return follow
+    
+    # Calcula o firstpos da gramatica
+    def followpost(self):
+        follow = {nt:[] for nt in self.nao_terminais}
+        for nt in self.nao_terminais:
+            follow[nt] = self.__followpos_nt(nt)
+        return follow
+    
+    # Abreviacao de um monte de coisa
+    def tratada(self):
+        return self.sem_unitarias().sem_recursao().fatorada().sem_inalcancaveis()
+
+if __name__ == "__main__":  
+    g = Gramatica().from_file("gramatica_indireta.txt")
+    print(g)
+    print("-----------------------------")
+    c = g.fatorada().sem_inalcancaveis()
+    # for producoes in c.producoes.values():
+    #     print([type(producao) for producao in producoes])
+    print(c)
