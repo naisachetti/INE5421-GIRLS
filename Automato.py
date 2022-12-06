@@ -51,8 +51,11 @@ class Automato:
         # Leitura da regex e definicoes regulares
         with open(filename, "r") as arquivo:
             while True:
-                linha = arquivo.readline()
-                if linha[0] not in ['#'] and len(linha) > 1:
+                linha_list = list(arquivo.readline().strip())
+                linha = ""
+                for caracter in linha_list:
+                    linha += caracter
+                if len(linha) > 0 and linha[0] not in ['#']:
                     # Se é uma definicao regular
                     if linha[0] not in ['>']:
                         # Verifica se a definicao regular comeca com uma letra e nao eh nomeada com apenas uma letra
@@ -63,7 +66,7 @@ class Automato:
                                     buffer += char
                                 else:
                                     if len(buffer) > 1:
-                                        regdef = linha[len(buffer)+1 : len(linha)-1]
+                                        regdef = linha[len(buffer)+1 : len(linha)]
                                         regdefs[buffer] = regdef
                                     else:
                                         raise Exception("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
@@ -223,7 +226,7 @@ class Automato:
 
         # Inverte regex posfixada, obtendo uma regex prefixada da regex infixada original
         regex_pref = regex_inv_posf[::-1]
-
+        
         return regex_pref
 
     # Le o automato a partir de um arquivo
@@ -505,10 +508,10 @@ class Automato:
 # v = Automato().from_file("determinizado.txt")
 # ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
 # ab.to_file("epico.txt")
-Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
-Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
-Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
+# Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
+# Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
+# Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
 Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
-Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
-Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
-Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
+# Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
+# Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
+# Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
