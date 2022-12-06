@@ -14,10 +14,20 @@ class AnalisadorLexico:
         ers = glob(path + '/*.er')
 
         autos = [Automato().from_regex(er) for er in ers]
-        for auto in autos:
-            print(auto)
+
         self.automato = reduce(Automato.uniao_com, autos, autos[0]).determinizado().rename()
-        print(self.automato)
+
+    def gerar_tokens(self, source_path):
+        with open(source_path, 'r') as file:
+            chars = list(file.read())
+        begin = 0
+        forward = 5
+        lexeme = ''.join(chars[begin:forward])
+        while True:
 
 
-AnalisadorLexico().from_file('bnm')
+
+
+al = AnalisadorLexico()
+al.from_file('bnm')
+al.gerar_tokens('bnm/program')

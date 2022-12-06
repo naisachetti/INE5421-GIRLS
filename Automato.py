@@ -52,9 +52,11 @@ class Automato:
         # Leitura da regex e definicoes regulares
         with open(filename, "r") as arquivo:
             while True:
-                linha = arquivo.readline()
-
-                if len(linha) > 1 and linha[0] not in ['#']:
+                linha_list = list(arquivo.readline().strip())
+                linha = ""
+                for caracter in linha_list:
+                    linha += caracter
+                if len(linha) > 0 and linha[0] not in ['#']:
                     # Se é uma definicao regular
                     if linha[0] not in ['>']:
                         # Verifica se a definicao regular comeca com uma letra e nao eh nomeada com apenas uma letra
@@ -65,7 +67,7 @@ class Automato:
                                     buffer += char
                                 else:
                                     if len(buffer) > 1:
-                                        regdef = linha[len(buffer)+1 : len(linha)-1]
+                                        regdef = linha[len(buffer)+1 : len(linha)]
                                         regdefs[buffer] = regdef
                                     else:
                                         raise Exception("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
