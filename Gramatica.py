@@ -2,15 +2,15 @@ from random import randrange
 from string import ascii_uppercase
 
 class Production(str):
-    def __init__(self, conteudo: str, separation_par = "char", nt_identification = None):
-        self.conteudo = conteudo
+    def __init__(self, conteudo: str, separation_par = "space", nt_identification = None):
+        self.conteudo = conteudo.split()
         self.separation_par = separation_par #char ou space
         self.nt_identification = nt_identification #caracteres especiais no inicio e fim de nao terminais
         self.len = 0
         
         self.iterator = None
         if self.separation_par == "space":
-            self.len =  len(self.conteudo.split())
+            self.len =  len(self.conteudo)
         elif self.nt_identification is None:
             self.len = len(self.conteudo)
         else:
@@ -46,13 +46,13 @@ class Production(str):
         return self.len
 
     def copy(self):
-        copia = Production(self.conteudo, self.separation_par, self.nt_identification)
+        copia = Production(" ".join(self.conteudo), self.separation_par, self.nt_identification)
         return copia
     
     def __iter__(self):
         # return self.iterator
         if self.separation_par == "space":
-            return iter(self.conteudo.split())
+            return iter(self.conteudo)
         elif self.nt_identification is None:
             return iter(self.conteudo)
         else:
@@ -86,6 +86,9 @@ class Production(str):
 
     def first(self):
         return self[0]
+
+    def __getitem__(self, __i) -> str:
+        return self.conteudo[__i]
 
 class Gramatica:
 
@@ -237,11 +240,11 @@ class Gramatica:
                     for herdada in self.producoes[nt_corpo]:
                         if herdada == "&":
                             if len(producao) > 1:
-                                novas_producoes.append(Production(producao[:index]+producao[index+1:]))
+                                novas_producoes.append(Production(" ".join(producao[:index])+" "+" ".join(producao[index+1:])))
                             else:
                                 novas_producoes.append(Production("&"))
                         else:
-                            novas_producoes.append(Production(producao[:index]+herdada+producao[index+1:]))
+                            novas_producoes.append(Production(" ".join(producao[:index])+" "+herdada+" "+" ".join(producao[index+1:])))
             if destruir == 1:
                 self.producoes[nt_cabeca].remove(producao)
         # self.producoes[nt_cabeca] += novas_producoes
@@ -312,11 +315,17 @@ class Gramatica:
         # Gera as producoes livres
         for nao_terminal, producoes in copia.producoes.items():
             for producao in producoes:
+                # print(nao_terminal, producoes)
                 if len(producao) == 1:
                     continue
                 for index, simbolo in enumerate(producao):
+                    # print(index, simbolo)
                     if simbolo in anulaveis:
-                        producoes.append(Production(producao[:index]+producao[index+1:]))
+                        # print(simbolo, "lista",list(producao), producao[index+1:])
+                        nova_prod = Production(" ".join(producao[:index])+" "+" ".join(producao[index+1:]))
+                        # print(nova_prod)
+                        if not nova_prod in producoes:
+                            producoes.append(nova_prod)
         return copia
 
     # Retorna a gramatica sem loops
@@ -348,12 +357,13 @@ class Gramatica:
         novo_simbolo = self.novo_nao_terminal(nao_terminal)
         self.producoes[novo_simbolo] = [Production("&")]
 
-        self.producoes[nao_terminal] = [Production(producao+novo_simbolo) for producao in producoes_nao_recursivas]
-        self.producoes[novo_simbolo] += [Production(producao[1:]+novo_simbolo) for producao in producoes_recursivas]
+        self.producoes[nao_terminal] = [Production(producao+" "+novo_simbolo) for producao in producoes_nao_recursivas]
+        self.producoes[novo_simbolo] += [Production(" ".join(producao[1:])+" "+novo_simbolo) for producao in producoes_recursivas]
 
     # Retorna a gramatica sem recursao a esquerda
     def sem_recursao(self):
         copia = self.copy().sem_loop().e_livre()
+        # print(copia)
 
         # Notacao dos slides da professora
         for i, ai in enumerate(copia.nao_terminais):
@@ -363,7 +373,7 @@ class Gramatica:
                 for pi in copia.producoes[ai]:
                     if pi[0] == aj:
                         for pj in copia.producoes[aj]:
-                            copia.producoes[ai].append(Production(pj+pi[1:]))
+                            copia.producoes[ai].append(Production(pj+" "+pi[1:]))
                         copia.producoes[ai].remove(pi)
 
             # Eliminacao da recursao direta
@@ -388,7 +398,7 @@ class Gramatica:
 
                     # Cria um novo nao terminal que produz dos nao deterministicos
                     novo_nt = self.novo_nao_terminal()
-                    self.producoes[novo_nt] = [Production(producao[1:]) for producao in self.producoes[nao_terminal] if self.producoes[nao_terminal].index(producao) in indices]
+                    self.producoes[novo_nt] = [Production(" ".join(producao[1:])) for producao in self.producoes[nao_terminal] if self.producoes[nao_terminal].index(producao) in indices]
                     for producao in self.producoes[novo_nt]:
                         if producao == "":
                             self.producoes[novo_nt].remove("")
@@ -399,7 +409,7 @@ class Gramatica:
                         self.producoes[nao_terminal].pop(indice-offset)
 
                     # Transicao que leva pro novo nao terminal
-                    self.producoes[nao_terminal].append(Production(simbolo+novo_nt))
+                    self.producoes[nao_terminal].append(Production(simbolo+" "+novo_nt))
 
                     break
         
@@ -495,10 +505,7 @@ class Gramatica:
         return first
 
     # Calcula o followpos de um nao terminal
-    def __followpos_nt(self, nt: str, analisys_set = None):
-        if analisys_set == None:
-            analisys_set = set()
-        # print(nt, analisys_set)
+    def __followpos_nt(self, nt: str, analisys_set = set()):
         analisys_set.add(nt)
         # print(analisys_set)
         follow = set()
@@ -512,7 +519,6 @@ class Gramatica:
                         # Ultimo simbolo da producao
                         if i == len(producao) - 1:
                             if not nt_analisado in analisys_set:
-                                # print("1", nt_analisado)
                                 follow = follow.union(self.__followpos_nt(nt_analisado, analisys_set.copy()))
                         else:
                             prox = producao[i+1]
@@ -531,7 +537,7 @@ class Gramatica:
                                         break
                                 else:
                                     if not producao[j] in analisys_set:
-                                        # print("2", nt_analisado)
+                                        analisys_set.add(producao[j])
                                         follow = follow.union(self.__followpos_nt(nt_analisado, analisys_set.copy()))
         return follow
     
@@ -547,10 +553,11 @@ class Gramatica:
         return self.sem_unitarias().sem_recursao().fatorada().sem_inalcancaveis()
 
 if __name__ == "__main__":  
-    g = Gramatica().from_file("gramatica_indireta.txt")
-    print(g)
-    print("-----------------------------")
-    c = g.fatorada().sem_inalcancaveis()
+    g = Gramatica().from_file("gramatica_precedente.txt")
+    # print(g)
+    # print("-----------------------------")
+    print(g.tratada())
+    # print(g.sem_recursao())
     # for producoes in c.producoes.values():
     #     print([type(producao) for producao in producoes])
-    print(c)
+    # print(c)

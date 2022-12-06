@@ -65,7 +65,7 @@ class AnalisadorSintatico:
         self.pilha.push(self.gramatica.inicial)
 
         token_analisado = None
-        token = TokenDriver([caracter for caracter in "(i)+(i*(i))$"]).gerador()
+        token = TokenDriver("( id ) + ( id * ( id ) ) $".split()).gerador()
         token_analisado = next(token)
 
         topo = self.pilha.top()
@@ -101,6 +101,7 @@ class AnalisadorSintatico:
 
 if __name__ == "__main__":
     g = Gramatica().from_file("gramatica_precedente.txt").tratada()
+    print(g)
     parser = AnalisadorSintatico(g)
     print(parser.tabela)
     parser.parse(None)
