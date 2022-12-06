@@ -11,6 +11,7 @@ class Production(str):
         self.iterator = None
         if self.separation_par == "space":
             self.len =  len(self.conteudo)
+
         elif self.nt_identification is None:
             self.len = len(self.conteudo)
         else:
@@ -90,6 +91,16 @@ class Production(str):
     def __getitem__(self, __i) -> str:
         return self.conteudo[__i]
 
+    def __list__(self):
+        return self.conteudo
+
+    def __repr__(self) -> str:
+        return " ".join(self.conteudo)
+    
+    def index(self, valor) -> int:
+        # print(self.conteudo, valor)
+        return self.conteudo.index(valor)
+
 class Gramatica:
 
     def __init__(self) -> None:
@@ -125,6 +136,8 @@ class Gramatica:
         with open(filename, "r") as arquivo:
             conjunto_simbolos = set()
             for linha in arquivo:
+                if linha.strip() == "":
+                    continue
                 nao_terminal, producoes = [palavra.strip() for palavra in linha.split("::=")]
                 
                 # Simbolo inicial da gramatica
@@ -186,19 +199,25 @@ class Gramatica:
             return producao
 
     # Gera uma palavra aleatoria da gramatica
-    def generate_word(self):
-        forma_sentencial = self.inicial
+    def generate_word(self, limit: int = 100):
+        forma_sentencial = Production(self.inicial)
 
         # Ao inves de um while eh um for com limite de 100 iteracoes pra n ir pra sempre
-        for _ in range(100):
+        for _ in range(limit):
+            # print("forma:", repr(forma_sentencial))
             for simbolo in forma_sentencial:
                 if simbolo in self.nao_terminais:
+                    # print(forma_sentencial)
                     indice = forma_sentencial.index(simbolo)
-                    forma_sentencial = forma_sentencial[:indice] + self.random_production(simbolo) + forma_sentencial[indice+1:]
+                    nova_prod = self.random_production(simbolo)
+                    # print(f"{simbolo}({indice}): {nova_prod}")
+                    forma_sentencial = Production(" ".join(forma_sentencial[:indice])+" "+nova_prod+" "+" ".join(forma_sentencial[indice+1:]))
                     break
             else:
                 break
-        return forma_sentencial
+        else:
+            return None
+        return Production(" ".join(forma_sentencial)+" $")
 
     # Marca simbolos alcancaveis
     def alcance(self, nao_terminal):
@@ -440,7 +459,8 @@ class Gramatica:
         # Se ha nao terminal a esquerda entao ta na hora de herdar producao
         nt_lista = list(copia.producoes.keys())
         for nao_terminal in nt_lista:
-            for i in range(100):
+            # Limite de 1000 derivacoes sucessivas
+            for _ in range(1000):
                 for producao in copia.producoes[nao_terminal]:
                     # Comeca de fato com um nao terminal
                     # print(nao_terminal, copia.producoes[nao_terminal])
@@ -550,10 +570,12 @@ class Gramatica:
         return self.sem_unitarias().sem_recursao().fatorada().sem_inalcancaveis()
 
 if __name__ == "__main__":  
-    g = Gramatica().from_file("gramatica_precedente.txt")
+    g = Gramatica().from_file("gramatica_precedente.txt").tratada()
+    for _ in range(100):
+        print(g.generate_word())
     # print(g)
     # print("-----------------------------")
-    print(g.tratada())
+    # print(g.tratada())
     # print(g.sem_recursao())
     # for producoes in c.producoes.values():
     #     print([type(producao) for producao in producoes])

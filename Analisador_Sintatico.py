@@ -13,11 +13,13 @@ class TokenDriver:
             
 class ParsingTable:
     def __init__(self, gramatica: Gramatica) -> None:
+        self.gramatica = gramatica
         terminais = gramatica.terminais.copy()
         terminais += "$"
         firstpos = gramatica.firspost()
         followpos = gramatica.followpost()
         self.table = {}
+
         # Criacao da tabela
         for nt in gramatica.nao_terminais:
             linha = {terminal: None for terminal in terminais}
@@ -41,7 +43,7 @@ class ParsingTable:
                     if not self.table[nt][terminal] is None:
                         raise RuntimeError(f"Tentei colocar duas producoes na tabela ll1 {nt} {terminal}")
                     self.table[nt][terminal] = producao
-    
+
     def __repr__(self):
         saida = ""
         for label, linha in self.table.items():
@@ -51,6 +53,22 @@ class ParsingTable:
     def __getitem__(self, chave):
         return self.table[chave]
 
+    def to_csv(self, filename: str):
+        cabecalho: list = ["NT"]
+        cabecalho += [terminal for terminal in self.table[self.gramatica.inicial] if terminal != "&"]
+        with open(filename, "w") as csv:
+            csv.write(",".join(cabecalho)+"\n")
+            for nt, linha in self.table.items():
+                arquivo_linha = [nt]
+                arquivo_linha += [" " for terminal in linha if terminal != "&"]
+                for terminal in linha:
+                    if terminal == "&":
+                        continue
+                    producao_str = self.table[nt][terminal]
+                    if producao_str != None:
+                        arquivo_linha[cabecalho.index(terminal)] = producao_str
+                csv.write(",".join(arquivo_linha)+"\n")
+
 class AnalisadorSintatico:
     def __init__(self, gramatica: Gramatica) -> None:
         # self.gramatica = gramatica.sem_recursao().fatorada().sem_inalcancaveis()
@@ -58,22 +76,24 @@ class AnalisadorSintatico:
         self.tabela = ParsingTable(self.gramatica)
         self.pilha = Pilha()
     
-    def parse(self, codigo_fonte: str):
+    # Faz o parsing dos tokens e valida a sintaxe
+    def parse(self, token: TokenDriver, show_stack = False):
         # Inicializacao da pilha
         self.pilha.clear()
         self.pilha.push("$")
         self.pilha.push(self.gramatica.inicial)
 
         token_analisado = None
-        token = TokenDriver("( id ) + ( id * ( id  + id + ( id ) )  ) $".split()).gerador()
+        token = token.gerador()
         token_analisado = next(token)
 
         topo = self.pilha.top()
+        if show_stack: print("-------------------")
         while topo != "$":
-            # print(topo, token_analisado, self.pilha, end=" ")
+            if show_stack: print(topo, token_analisado, self.pilha, end=" ")
             # Token no topo da pilha correto
             if topo == token_analisado:
-                # print(topo)
+                if show_stack: print(topo)
                 self.pilha.pop()
                 token_analisado = next(token)
             # Token no topo da pilha incorreto
@@ -85,7 +105,7 @@ class AnalisadorSintatico:
             # Producao na pilha
             else:
                 producao = self.tabela[topo][token_analisado]
-                # print(producao)
+                if show_stack: print(producao)
                 self.pilha.pop()
                 simbolos = list(producao)
                 simbolos.reverse()
@@ -97,13 +117,35 @@ class AnalisadorSintatico:
                 topo = self.pilha.top()
         if token_analisado != "$":
             raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
-        print("SINTAXE PERFEITA")
+        return True
+
+    # Gera palavras 100 palavras aleatorias a partir da gramatica e faz o parsgin delas
+    def validate(self, gramatica):
+        total = 100
+        validas = 0
+        for _ in range(10000):
+            sentenca = gramatica.generate_word(100)
+            if not sentenca is None:
+                # print(sentenca)
+                driver = TokenDriver(sentenca.split())
+                try:
+                    self.parse(driver)
+                except SyntaxError:
+                    raise RuntimeError(f"Parseei errado uma sentenca gerada pela minha propria gramatica: {sentenca}")
+                validas += 1
+            if validas == total:
+                break
 
 if __name__ == "__main__":
+    gn = Gramatica().from_file("gramatica_precedente.txt")
     g = Gramatica().from_file("gramatica_precedente.txt").tratada()
+    t = ParsingTable(g)
+    t.to_csv("parsing_table.csv")
     # print(g)
     # print(g.firspost())
     # print(g.followpost())
     parser = AnalisadorSintatico(g)
-    # print(parser.tabela)
-    parser.parse(None)
+    parser.validate(gn)
+    # with open("tabela.txt", "w") as arquivo:
+    #     arquivo.write(repr(parser.tabela))
+    # parser.parse(None)
