@@ -123,8 +123,9 @@ class Gramatica:
     # Le a gramatica de um arquivo
     def from_file(self, filename: str):
         with open(filename, "r") as arquivo:
+            conjunto_simbolos = set()
             for linha in arquivo:
-                nao_terminal, producoes = [palavra.strip() for palavra in linha.split("->")]
+                nao_terminal, producoes = [palavra.strip() for palavra in linha.split("::=")]
                 
                 # Simbolo inicial da gramatica
                 if self.inicial == None:
@@ -145,17 +146,16 @@ class Gramatica:
                         
                         # Assume que nao terminais sao um unico caracter identificado por ser letra maiuscula
                         if self.nt_identification is None:
-                            # TODO: Deve haver algum jeito melhor de diferenciar terminal e nao terminal
-                            if simbolo == simbolo.lower():
-                                if not simbolo in self.terminais: self.terminais.append(simbolo)
-                            else:
-                                if not simbolo in self.nao_terminais: self.nao_terminais.append(simbolo) 
+                            conjunto_simbolos.add(simbolo) 
                         else:
                             if self.nt_identification[0] in simbolo:
                                 if not simbolo in self.nao_terminais: self.nao_terminais.append(simbolo)
                             else:
                                 if not simbolo in self.terminais: self.terminais.append(simbolo)
-                            
+            for simbolo in conjunto_simbolos.copy():
+                if simbolo in self.nao_terminais:
+                    conjunto_simbolos.remove(simbolo)
+                self.terminais = list(conjunto_simbolos)               
         return self
 
     # Escreve a gramatica num arquivo
@@ -175,12 +175,7 @@ class Gramatica:
                 if not letra in self.nao_terminais:
                     self.nao_terminais.append(letra)
                     return letra
-            
-            # TODO: Geracoes mais iradas
-            # Tenta acentuar a letra 
-            raise RuntimeError("NAO CONSIGO RESTORNAR MAIS")
-        else:
-            return original[:-1]+"1"+original[-1]
+        return original + "1"
 
     # Simplesmente retorna uma producao aleatoria dentre as possiveis
     def random_production(self, nao_terminal: str) -> str:
@@ -505,7 +500,9 @@ class Gramatica:
         return first
 
     # Calcula o followpos de um nao terminal
-    def __followpos_nt(self, nt: str, analisys_set = set()):
+    def __followpos_nt(self, nt: str, analisys_set = None):
+        if analisys_set is None:
+            analisys_set = set()
         analisys_set.add(nt)
         # print(analisys_set)
         follow = set()

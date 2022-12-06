@@ -19,6 +19,7 @@ class Automato:
     def from_regex(self, filename: str):
         # Instanciacao de uma Arvore Sintatica para a regex
         regex = self.read_regex(filename)
+        print(regex)
         a_sint = ArvoreSintatica(regex)
 
         # Definicao dos estados e suas transicoes
@@ -505,10 +506,10 @@ class Automato:
 # v = Automato().from_file("determinizado.txt")
 # ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
 # ab.to_file("epico.txt")
-Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
-Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
-Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
+# Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
+# Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
+# Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
 Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
-Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
-Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
-Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
+# Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
+# Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
+# Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")

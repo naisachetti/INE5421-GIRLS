@@ -65,15 +65,15 @@ class AnalisadorSintatico:
         self.pilha.push(self.gramatica.inicial)
 
         token_analisado = None
-        token = TokenDriver("( id ) + ( id * ( id ) ) $".split()).gerador()
+        token = TokenDriver("( id ) + ( id * ( id  + id + ( id ) )  ) $".split()).gerador()
         token_analisado = next(token)
 
         topo = self.pilha.top()
         while topo != "$":
-            print(topo, token_analisado, self.pilha, end=" ")
+            # print(topo, token_analisado, self.pilha, end=" ")
             # Token no topo da pilha correto
             if topo == token_analisado:
-                print(topo)
+                # print(topo)
                 self.pilha.pop()
                 token_analisado = next(token)
             # Token no topo da pilha incorreto
@@ -85,7 +85,7 @@ class AnalisadorSintatico:
             # Producao na pilha
             else:
                 producao = self.tabela[topo][token_analisado]
-                print(producao)
+                # print(producao)
                 self.pilha.pop()
                 simbolos = list(producao)
                 simbolos.reverse()
@@ -101,7 +101,9 @@ class AnalisadorSintatico:
 
 if __name__ == "__main__":
     g = Gramatica().from_file("gramatica_precedente.txt").tratada()
-    print(g)
+    # print(g)
+    # print(g.firspost())
+    # print(g.followpost())
     parser = AnalisadorSintatico(g)
-    print(parser.tabela)
+    # print(parser.tabela)
     parser.parse(None)
