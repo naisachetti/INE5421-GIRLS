@@ -1,6 +1,6 @@
 # Mesmo que:
 letter_:[C-Dd-g]
 numbers_: [0-9]
-simbols:!+/
+simbols:!|/
 
->regex: (letter_+numbers_*) . simbols.b + &
+>regex: (letter_|numbers_*) . simbols.b | &

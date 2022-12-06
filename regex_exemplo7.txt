@@ -1,0 +1,2 @@
+# Mesmo que:
+>regex:(a | b)+abb?

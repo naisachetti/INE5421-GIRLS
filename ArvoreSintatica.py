@@ -3,9 +3,10 @@ from Pilha import *
 
 class TipoOp(Enum):
     FECHO = 1
-    CONCAT = 2
-    OU = 3
-    # TALVEZ = 4
+    FECHO_POSITIVO = 2
+    TALVEZ = 3
+    CONCAT = 4
+    OU = 5
 
 class ArvoreSintatica:
 
@@ -116,7 +117,7 @@ class ArvoreSintatica:
         nodos.push(self.raiz)
         filhos_visit.push(0)
         while (nodos.size() > 0):
-            if isinstance(nodos.top(), Fecho):
+            if isinstance(nodos.top(), Fecho) or isinstance(nodos.top(), FechoPositivo) or isinstance(nodos.top(), Talvez):
                 if filhos_visit.top() == 0:
                     arvore += '(' + nodos.top().get_tipo()
                     arvore += self.infos_nodo(nodos.top(), anulaveis, firstpos, lastpos, followpos)
@@ -203,6 +204,22 @@ class ArvoreSintatica:
                     nodo_pai = operadores.top()
                 op = self.add_operador(TipoOp.FECHO, nodo_pai)
                 operadores.push(op)
+            elif caracter == '+':
+                # print("Add +")
+                nodo_pai = operadores.top()
+                while (nodo_pai is not None) and (nodo_pai.cheio()):
+                    operadores.pop()
+                    nodo_pai = operadores.top()
+                op = self.add_operador(TipoOp.FECHO_POSITIVO, nodo_pai)
+                operadores.push(op)            
+            elif caracter == '?':
+                # print("Add ?")
+                nodo_pai = operadores.top()
+                while (nodo_pai is not None) and (nodo_pai.cheio()):
+                    operadores.pop()
+                    nodo_pai = operadores.top()
+                op = self.add_operador(TipoOp.TALVEZ, nodo_pai)
+                operadores.push(op)
             elif caracter == '.':
                 # print("Add .")
                 nodo_pai = operadores.top()
@@ -211,8 +228,8 @@ class ArvoreSintatica:
                     nodo_pai = operadores.top()
                 op = self.add_operador(TipoOp.CONCAT, nodo_pai)
                 operadores.push(op)
-            elif caracter == '+':
-                # print("Add +")
+            elif caracter == '|':
+                # print("Add |")
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
                     operadores.pop()
@@ -227,10 +244,188 @@ class ArvoreSintatica:
                     nodo_pai = operadores.top()
                 self.add_simbolo(caracter, nodo_pai)
 
+        self.simplificaOperadores()
+
+
+    # Substitui nodos FechoPositivo e Talvez por nodos Fecho, Ou e Concat
+    def simplificaOperadores(self):
+        nodos = Pilha()
+        filhos_visit = Pilha()
+
+        nodos.push(self.raiz)
+        filhos_visit.push(0)
+        while (nodos.size() > 0):
+            if isinstance(nodos.top(), Fecho):
+                if (filhos_visit.top() == 0):
+                    num_visit = filhos_visit.pop()
+                    filhos_visit.push(num_visit + 1)
+                    nodos.push(nodos.top().get_filho())
+                    filhos_visit.push(0)
+                else:
+                    nodos.pop()
+                    filhos_visit.pop()
+            elif isinstance(nodos.top(), FechoPositivo):
+                if (filhos_visit.top() == 0):
+                    num_visit = filhos_visit.pop()
+                    filhos_visit.push(num_visit + 1)
+                    nodos.push(nodos.top().get_filho())
+                    filhos_visit.push(0)
+                else:
+                    fecho_pos = nodos.pop()
+                    filhos_visit.pop()
+                    
+                    filho_fecho_pos = fecho_pos.get_filho()
+                    novo_concat = Concat()
+                    novo_concat.add_filho(filho_fecho_pos)
+                    novo_fecho = self.add_operador(TipoOp.FECHO, novo_concat)
+                    raiz_copia_subarvore = self.copiar_arvore(filho_fecho_pos)
+                    novo_fecho.add_filho(raiz_copia_subarvore)
+                    
+                    nodo_pai = nodos.top()
+                    if isinstance(nodo_pai, Fecho) or isinstance(nodo_pai, FechoPositivo) or isinstance(nodo_pai, Talvez):
+                        nodo_pai.set_filho(novo_concat)
+                    else:
+                        if nodo_pai.get_filho_esq() == fecho_pos:
+                            nodo_pai.set_filho_esq(novo_concat)
+                        else:
+                            nodo_pai.set_filho_dir(novo_concat)
+            elif isinstance(nodos.top(), Talvez):
+                if (filhos_visit.top() == 0):
+                    num_visit = filhos_visit.pop()
+                    filhos_visit.push(num_visit + 1)
+                    nodos.push(nodos.top().get_filho())
+                    filhos_visit.push(0)
+                else:
+                    talvez = nodos.pop()
+                    filhos_visit.pop()
+                    
+                    filho_talvez = talvez.get_filho()
+                    novo_ou = Ou()
+                    self.add_simbolo('&', novo_ou)
+                    novo_ou.add_filho(filho_talvez)
+                    
+                    nodo_pai = nodos.top()
+                    if isinstance(nodo_pai, Fecho) or isinstance(nodo_pai, FechoPositivo) or isinstance(nodo_pai, Talvez):
+                        nodo_pai.set_filho(novo_ou)
+                    else:
+                        if nodo_pai.get_filho_esq() == talvez:
+                            nodo_pai.set_filho_esq(novo_ou)
+                        else:
+                            nodo_pai.set_filho_dir(novo_ou)
+            elif isinstance(nodos.top(), Concat) or isinstance(nodos.top(), Ou):
+                if (filhos_visit.top() == 0):
+                    num_visit = filhos_visit.pop()
+                    filhos_visit.push(num_visit + 1)
+                    nodos.push(nodos.top().get_filho_esq())
+                    filhos_visit.push(0)
+                elif (filhos_visit.top() == 1):
+                    num_visit = filhos_visit.pop()
+                    filhos_visit.push(num_visit + 1)
+                    nodos.push(nodos.top().get_filho_dir())
+                    filhos_visit.push(0)
+                else:
+                    nodos.pop()
+                    filhos_visit.pop()
+            elif isinstance(nodos.top(), Simbolo):
+                nodos.pop()
+                filhos_visit.pop()
+
+    # Dada uma raiz, faz uma copia da subarvore a partir dela.
+    # Retorna a raiz da subarvore copiada.
+    def copiar_arvore(self, raiz):
+        nodos_original = Pilha()
+        filhos_visit_originais = Pilha()
+        nodos_copia = Pilha()
+
+        copia_raiz = None
+        if isinstance(raiz, Fecho):
+            copia_raiz = Fecho()
+        elif isinstance(raiz, FechoPositivo):
+            copia_raiz = FechoPositivo()
+        elif isinstance(raiz, Talvez):
+            copia_raiz = Talvez()
+        elif isinstance(raiz, Concat):
+            copia_raiz = Concat()
+        elif isinstance(raiz, Ou):
+            copia_raiz = Ou()
+
+        nodos_original.push(raiz)
+        filhos_visit_originais.push(0)
+        nodos_copia.push(copia_raiz)
+        while (nodos_original.size() > 0):
+            if isinstance(nodos_original.top(), Fecho) or isinstance(nodos_original.top(), FechoPositivo) or isinstance(nodos_original.top(), Talvez):
+                if (filhos_visit_originais.top() == 0):
+                    if isinstance(nodos_original.top().get_filho(), Simbolo):
+                        self.add_simbolo(nodos_original.top().get_filho().get_nome(), nodos_copia.top())
+                        num_visit = filhos_visit_originais.pop()
+                        filhos_visit_originais.push(num_visit + 1)
+                    else:
+                        copia_filho = self.add_operador(self.recupera_tipo(nodos_original.top().get_filho()), nodos_copia.top())
+                        nodos_copia.push(copia_filho)
+                        num_visit = filhos_visit_originais.pop()
+                        filhos_visit_originais.push(num_visit + 1)
+                        nodos_original.push(nodos_original.top().get_filho())
+                        filhos_visit_originais.push(0)
+                else:
+                    nodos_copia.pop()
+                    nodos_original.pop()
+                    filhos_visit_originais.pop()                    
+            elif isinstance(nodos_original.top(), Concat) or isinstance(nodos_original.top(), Ou):
+                if (filhos_visit_originais.top() == 0):
+                    if isinstance(nodos_original.top().get_filho_esq(), Simbolo):
+                        self.add_simbolo(nodos_original.top().get_filho_esq().get_nome(), nodos_copia.top())
+                        num_visit = filhos_visit_originais.pop()
+                        filhos_visit_originais.push(num_visit + 1)
+                    else:
+                        copia_filho = self.add_operador(self.recupera_tipo(nodos_original.top().get_filho_esq()), nodos_copia.top())
+                        nodos_copia.push(copia_filho)
+                        num_visit = filhos_visit_originais.pop()
+                        filhos_visit_originais.push(num_visit + 1)
+                        nodos_original.push(nodos_original.top().get_filho_esq())
+                        filhos_visit_originais.push(0) 
+                elif (filhos_visit_originais.top() == 1):
+                    if isinstance(nodos_original.top().get_filho_dir(), Simbolo):
+                        self.add_simbolo(nodos_original.top().get_filho_dir().get_nome(), nodos_copia.top())
+                        num_visit = filhos_visit_originais.pop()
+                        filhos_visit_originais.push(num_visit + 1)
+                    else:
+                        copia_filho = self.add_operador(self.recupera_tipo(nodos_original.top().get_filho_dir()), nodos_copia.top())
+                        nodos_copia.push(copia_filho)
+                        num_visit = filhos_visit_originais.pop()
+                        filhos_visit_originais.push(num_visit + 1)
+                        nodos_original.push(nodos_original.top().get_filho_dir())
+                        filhos_visit_originais.push(0)
+                else:
+                    nodos_copia.pop()
+                    nodos_original.pop()
+                    filhos_visit_originais.pop() 
+
+        return copia_raiz
+                
+    # Dado um nodo, analisa o tipo do objeto e retorna enumeracao equivalente
+    def recupera_tipo(self, nodo):
+        tipo = None
+        if isinstance(nodo, Fecho):
+            tipo = TipoOp.FECHO
+        elif isinstance(nodo, FechoPositivo):
+            tipo = TipoOp.FECHO_POSITIVO
+        elif isinstance(nodo, Talvez):
+            tipo = TipoOp.TALVEZ
+        elif isinstance(nodo, Concat):
+            tipo = TipoOp.CONCAT
+        elif isinstance(nodo, Ou):
+            tipo = TipoOp.OU
+
+        return tipo
+
     # Adiciona um operador como filho de um determinado nodo da AS
     def add_operador(self, tipo: TipoOp, nodo_pai = None):
         if tipo == TipoOp.FECHO:
             op = Fecho()
+        elif tipo == TipoOp.FECHO_POSITIVO:
+            op = FechoPositivo()
+        if tipo == TipoOp.TALVEZ:
+            op = Talvez()
         elif tipo == TipoOp.CONCAT:
             op = Concat()
         elif tipo == TipoOp.OU:
@@ -331,6 +526,9 @@ class Fecho(Nodo):
     def get_filho(self):
         return self.filho
 
+    def set_filho(self, novo_filho):
+        self.filho = novo_filho
+
     def cheio(self):
         return (self.filho is not None)
         
@@ -345,6 +543,53 @@ class Fecho(Nodo):
     def calcula_followpos(self, simbolos):
         for id in self.lastpos:
             simbolos[id].add_followpos(self.firstpos)
+
+class FechoPositivo(Nodo):
+
+    # Cria nodo do tipo Fecho (*) da AS
+    def __init__(self):
+        super().__init__(anulavel=True)
+        self.filho = None
+
+    def get_tipo(self):
+        return '+'
+
+    def add_filho(self, novo_filho):
+        if (self.filho is None):
+            self.filho = novo_filho
+        else:
+            raise Exception("Impossivel adicionar filho. Nodo Fecho cheio. Possível causa: Regex mal formado.")
+    
+    def get_filho(self):
+        return self.filho
+
+    def cheio(self):
+        return (self.filho is not None)
+
+class Talvez(Nodo):
+
+    # Cria nodo do tipo Fecho (*) da AS
+    def __init__(self):
+        super().__init__(anulavel=True)
+        self.filho = None
+
+    def get_tipo(self):
+        return '?'
+
+    def add_filho(self, novo_filho):
+        if (self.filho is None):
+            self.filho = novo_filho
+        else:
+            raise Exception("Impossivel adicionar filho. Nodo Fecho cheio. Possível causa: Regex mal formado.")
+    
+    def get_filho(self):
+        return self.filho
+        
+    def set_filho(self, novo_filho):
+        self.filho = novo_filho
+
+    def cheio(self):
+        return (self.filho is not None)
 
 class Concat(Nodo):
 
@@ -370,6 +615,12 @@ class Concat(Nodo):
 
     def get_filho_dir(self):
         return self.filho_dir
+
+    def set_filho_esq(self, novo_filho):
+        self.filho_esq = novo_filho
+    
+    def set_filho_dir(self, novo_filho):
+        self.filho_dir = novo_filho
 
     def cheio(self):
         return ((self.filho_esq is not None) and (self.filho_dir is not None))
@@ -409,7 +660,7 @@ class Ou(Nodo):
         self.filho_dir = None
 
     def get_tipo(self):
-        return '+'
+        return '|'
     
     def add_filho(self, novo_filho):
         if (self.filho_esq is None):
@@ -424,6 +675,12 @@ class Ou(Nodo):
 
     def get_filho_dir(self):
         return self.filho_dir
+
+    def set_filho_esq(self, novo_filho):
+        self.filho_esq = novo_filho
+    
+    def set_filho_dir(self, novo_filho):
+        self.filho_dir = novo_filho
 
     def cheio(self):
         return ((self.filho_esq is not None) and (self.filho_dir is not None))

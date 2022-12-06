@@ -96,7 +96,7 @@ class Automato:
             index_i = 0
             inc_i = 0
             for i in range (len(regex)):
-                if (new_regex[i+inc_i] in ['(',')','.','+','*',' ']) or (i == len(regex)-1):
+                if (new_regex[i+inc_i] in ['(',')','.','+','*','|','?',' ']) or (i == len(regex)-1):
                     if (len(buffer) > 1) and (buffer in regdefs.keys()):
                         new_regex = new_regex[0:index_i] + '(' + regdefs[buffer] + ')' + new_regex[i+inc_i:len(new_regex)]
                         inc_i += len(regdefs[buffer])-len(buffer)-1
@@ -135,12 +135,12 @@ class Automato:
                         raise Exception("Erro. Regex mal formada. Sequência de letras ou dígitos inválida.")
 
                     if len(seq_add) > 0:
-                        seq_add += '+('
+                        seq_add += '|('
                     else:
                         seq_add += '('
                     for char in caracteres:
                         if char >= seq_init and char <= seq_end:
-                            seq_add += char+'+'
+                            seq_add += char+'|'
                     seq_add = seq_add[:-1]
                     seq_add += ')'
 
@@ -160,11 +160,11 @@ class Automato:
         inc_i = 0
         new_regex = regex
         for i in range (len(regex)):
-            if new_regex[i+inc_i] not in [')','.','+','*',' ']:
+            if new_regex[i+inc_i] not in [')','.','+','*','|','?',' ']:
                 k = i+inc_i-1
                 while (k >= 0) and new_regex[k] == ' ':
                     k -= 1
-                if (k >= 0) and (new_regex[k] not in ['(','.','+']):
+                if (k >= 0) and (new_regex[k] not in ['(','.','|']):
                     new_regex = new_regex[0:k+1] + '.' + new_regex[k+1:len(new_regex)]
                     inc_i += 1
 
@@ -172,10 +172,8 @@ class Automato:
 
         # Transformacao da regex em notacao infixada para notacao prefixada.
         # Algoritmo retirado de: https://www.geeksforgeeks.org/convert-infix-prefix-notation/
-        prec_op = {'*':3, '.':2, '+': 1}
-        # prec_op = {'*':3, '+':3, '?':3, '.':2, '|': 1}
-        assoc_op = {'*':"direita", '.':"esquerda", '+':"esquerda"}
-        # assoc_op = {'*':"direita," '+':"direita", '?':"direita", '.':"esquerda", '|':"esquerda"}
+        prec_op = {'*':3, '+':3, '?':3, '.':2, '|': 1}
+        assoc_op = {'*':"direita,", '+':"direita", '?':"direita", '.':"esquerda", '|':"esquerda"}
         
         # Inverte regex infixada original
         regex_invertida = ""
@@ -494,7 +492,7 @@ class Automato:
         return determinizado
 
 
-epico = Automato().from_regex("regex_exemplo4.txt")
+# epico = Automato().from_regex("regex_exemplo4.txt")
 # Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
 # a = Automato().from_file("unido_a.txt")
 # while True:
@@ -507,9 +505,10 @@ epico = Automato().from_regex("regex_exemplo4.txt")
 # v = Automato().from_file("determinizado.txt")
 # ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
 # ab.to_file("epico.txt")
-# Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
-# Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
-# Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
-# Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
-# Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
+Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
+Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
+Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
+Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
+Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
 Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
+Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
