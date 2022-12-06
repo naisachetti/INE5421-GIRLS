@@ -7,19 +7,18 @@ class Automato:
 
     # Cria o automato
     def __init__(self) -> None:
-        
+
         # Cria um automato vazio se nao receber arquivo
         self.estados = None
         self.n_estados = None
         self.finais = None
         self.inicial = None
         self.alfabeto = None
-    
+
     # Cria o automato a partir de um arquivo contendo uma regex
     def from_regex(self, filename: str):
         # Instanciacao de uma Arvore Sintatica para a regex
         regex = self.read_regex(filename)
-        print(regex)
         a_sint = ArvoreSintatica(regex)
 
         # Definicao dos estados e suas transicoes
@@ -33,7 +32,7 @@ class Automato:
         for estado in self.estados:
             if estado["final"]:
                 self.finais.append(estado["nome"])
-        
+
         # Definicao do estado inicial
         self.inicial = estado_inicial
 
@@ -52,8 +51,11 @@ class Automato:
         # Leitura da regex e definicoes regulares
         with open(filename, "r") as arquivo:
             while True:
-                linha = arquivo.readline()
-                if linha[0] not in ['#'] and len(linha) > 1:
+                linha_list = list(arquivo.readline().strip())
+                linha = ""
+                for caracter in linha_list:
+                    linha += caracter
+                if len(linha) > 0 and linha[0] not in ['#']:
                     # Se é uma definicao regular
                     if linha[0] not in ['>']:
                         # Verifica se a definicao regular comeca com uma letra e nao eh nomeada com apenas uma letra
@@ -64,7 +66,7 @@ class Automato:
                                     buffer += char
                                 else:
                                     if len(buffer) > 1:
-                                        regdef = linha[len(buffer)+1 : len(linha)-1]
+                                        regdef = linha[len(buffer)+1 : len(linha)]
                                         regdefs[buffer] = regdef
                                     else:
                                         raise Exception("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
@@ -84,7 +86,7 @@ class Automato:
                                 else:
                                     raise Exception("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
                         break
-        
+
         new_regex = regex+" "
 
         # Substituicao das definicoes regulares dentro da regex.
@@ -146,17 +148,16 @@ class Automato:
                     seq_add += ')'
 
                     init_i += 3
-                    if (init_i+3) >= len(new_regex): 
+                    if (init_i+3) >= len(new_regex):
                         raise Exception("Erro. Regex mal formada. Sequência de letras ou dígitos inválida.")
 
                 seq_add = '(' + seq_add + ')'
-                
+
                 index_end = init_i+1
                 new_regex = new_regex[0:index_init] + seq_add + new_regex[index_end+1:len(new_regex)]
                 inc_i += len(seq_add)-(index_end-index_init)-1
 
         regex = new_regex
-
         # Adicao de concatenacoes implicitas
         inc_i = 0
         new_regex = regex
@@ -175,7 +176,6 @@ class Automato:
         # Algoritmo retirado de: https://www.geeksforgeeks.org/convert-infix-prefix-notation/
         prec_op = {'*':3, '+':3, '?':3, '.':2, '|': 1}
         assoc_op = {'*':"direita,", '+':"direita", '?':"direita", '.':"esquerda", '|':"esquerda"}
-        
         # Inverte regex infixada original
         regex_invertida = ""
         aux_regex_invertida = regex[::-1]
@@ -231,19 +231,19 @@ class Automato:
     def from_file(self, filename: str):
         self.estados: list[dict] = []
         with open(filename, "r") as arquivo:
-            
+
             # Leitura do cabecalho
             self.n_estados: int = int(arquivo.readline().strip())
             inicial: str = arquivo.readline().strip()
             self.finais: list = arquivo.readline().strip().split(",")
             self.alfabeto: list[str] = arquivo.readline().strip().split(",")
-            
+
             # Criacao do estado morto
             morto: dict = {"nome": "Morto", "final": False}
             for simbolo in self.alfabeto:
                 morto[simbolo] = [morto]
             self.estados.append(morto)
-            
+
             # Criacao de todos os estados e suas transicoes
             for line in arquivo:
                 # Leitura da linha
@@ -270,8 +270,8 @@ class Automato:
                 dict_origem = novo_estado(origem)
 
                 # Transicao
-                lista_dict_destino = [novo_estado(destino) for destino in destinos]        
-                
+                lista_dict_destino = [novo_estado(destino) for destino in destinos]
+
                 # Criacao da transicao
                 dict_origem[simbolo] = lista_dict_destino
 
@@ -314,7 +314,7 @@ class Automato:
                 saida += estado["nome"]+": "+simbolo+" -> "
                 saida += "-".join([est["nome"] for est in estado[simbolo]])+"\n"
         return saida
- 
+
     # Recebe uma entrada e retorna se o automato a reconhece
     # SE RECEBER UM AFND VAI DAR PAU
     def reconhece(self, entrada: str) -> bool:
@@ -326,10 +326,10 @@ class Automato:
             elif len(estado_atual[simbolo]) == 0:
                 nome_str = "nome"
                 raise RuntimeError(f"Tansicao de {estado_atual[nome_str]} por {simbolo} NAO EXISTE (???)")
-            
+
             estado_atual = estado_atual[simbolo][0]
         return estado_atual["final"]
-    
+
     # Recebe outro automato e retorna a uniao entre os dois
     def uniao_com(self, other):
         uniao = Automato()
@@ -346,10 +346,10 @@ class Automato:
                 if estado[simbolo][0]["nome"] == "Morto":
                     estado[simbolo] = [morto_copia]
         other.estados.remove(morto_other)
-        
+
         # Cria o novo alfabeto e inclui &
         uniao.alfabeto = list(dict.fromkeys(copia.alfabeto+other.alfabeto+["&"]))
-        
+
         # Cria transicoes vazias nos automatos que serao unidos para os simbolos especificados
         def transicao_vazia(automato, alfabeto):
             for simbolo in alfabeto:
@@ -374,8 +374,8 @@ class Automato:
 
         # Une de fato os estados
         uniao.estados = [uniao.inicial] + copia.estados + other.estados
-        
-        return uniao
+
+        return uniao.rename()
 
     # Exporta o arquivo do automato
     def to_file(self, filename: str):
@@ -409,7 +409,7 @@ class Automato:
                 estado["nome"] = next(gerador)
                 if estado["final"]:
                     self.finais.append(estado["nome"])
-        
+
         return self
 
     # Retorna uma versao determinizada do automato
@@ -420,11 +420,11 @@ class Automato:
         for estado in copia.estados:
             estado["fecho"] = [estado]
             estado["fecho"] += [fecho for fecho in estado["&"] if fecho["nome"] != "Morto"]
-        
+
         # Retorna o nome dos estados aglutinados
         def aglutinar_nome(estados: list):
             return "+".join([estado["nome"] for estado in estados])
-        
+
         # Todos os estados do determinizado sao listas antes de serem ajustados
         determinizado = Automato()
         determinizado.finais = []
@@ -438,7 +438,7 @@ class Automato:
         morto: dict = {"nome": "Morto", "final": False}
         for simbolo in determinizado.alfabeto:
             morto[simbolo] = [morto]
-        
+
         # Estados fundamentais
         determinizado.inicial = {"nome": aglutinar_nome(copia.inicial["fecho"]), "fecho": copia.inicial["fecho"]}
         determinizado.inicial["final"] = True in [estado["final"] for estado in determinizado.inicial["fecho"]]
@@ -453,22 +453,22 @@ class Automato:
                 for estado_destino in estado[simbolo]:
                     if estado_destino not in estados_destino and estado_destino["nome"] != "Morto":
                         estados_destino.append(estado_destino)
-            
+
             # Nao ha transicao, retorna o morto
             if estados_destino == []:
                 return [estado for estado in determinizado.estados if estado["nome"] == "Morto"][0]
-            
+
             # Gera o estado determinizado
             estado_determinizado =\
-                    {"nome": aglutinar_nome(estados_destino), 
-                    "final": False, 
+                    {"nome": aglutinar_nome(estados_destino),
+                    "final": False,
                     "fecho": estados_destino}
 
             for estado in determinizado.estados:
                 # ESTADO JA EXISTIA
                 if estado["nome"] == estado_determinizado["nome"]:
                     return estado
-            
+
             # ESTADO NAO EXISTIA
 
             # Verifica se este estado eh de aceitacao e acrescenta nos finais se for o caso
@@ -506,10 +506,10 @@ class Automato:
 # v = Automato().from_file("determinizado.txt")
 # ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
 # ab.to_file("epico.txt")
-# Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
-# Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
-# Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
+#Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
+#Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
+#Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
 Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
-# Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
-# Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
-# Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
+#Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
+#Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
+#Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
