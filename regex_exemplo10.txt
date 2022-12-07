@@ -1,8 +1,0 @@
-# Regex de exemplo para teste de suporte a múltiplas regex em um mesmo arquivo
-letters: [d-gC-D]
-digits: [0-1]
-simbols: \+ | \) | \(
-
->regex1:(letters|digits*)(a | b)\++a\(\)\(b\\b?
->regex2:(letters|digits*)(a | b)+abb?
->regex3: (letters|digits*) . simbols.b | &
