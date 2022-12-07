@@ -159,15 +159,26 @@ class Automato:
                 inc_i += len(seq_add)-(index_end-index_init)-1
 
         regex = new_regex
+
+        # Coloca literais entre parenteses. Assim, "protege" literais da adicao de concatenacoes implicitas indevidas.
+        inc_i = 0
+        new_regex = regex
+        for i in range (len(regex)):
+            if new_regex[i+inc_i] == '\\':
+                new_regex = new_regex[0:i+inc_i] + '(' + new_regex[i+inc_i:i+inc_i+2] + ')' + new_regex[i+inc_i+2:len(new_regex)]
+                inc_i += 2
+
+        regex = new_regex
+
         # Adicao de concatenacoes implicitas
         inc_i = 0
         new_regex = regex
         for i in range (len(regex)):
-            if new_regex[i+inc_i] not in [')','.','+','*','|','?',' ']:
+            if new_regex[i+inc_i] not in [')','.','+','*','|','?',' ','\\']:
                 k = i+inc_i-1
                 while (k >= 0) and new_regex[k] == ' ':
                     k -= 1
-                if (k >= 0) and (new_regex[k] not in ['(','.','|']):
+                if (k >= 0) and (new_regex[k] not in ['(','.','|']) and (i+inc_i-1 > 0) and (new_regex[i+inc_i-1] != '\\'):
                     new_regex = new_regex[0:k+1] + '.' + new_regex[k+1:len(new_regex)]
                     inc_i += 1
 
@@ -180,45 +191,73 @@ class Automato:
         # Inverte regex infixada original
         regex_invertida = ""
         aux_regex_invertida = regex[::-1]
-        for char in aux_regex_invertida:
-            if char == '(':
-                regex_invertida += ')'
-            elif char == ')':
-                regex_invertida += '('
+        is_literal = False
+        # Troca os parenteses, exceto se forem literais
+        for i in range (len(aux_regex_invertida)):
+            if aux_regex_invertida[i] == '(':
+                if i < len(aux_regex_invertida)-1 and aux_regex_invertida[i+1] == '\\':
+                    regex_invertida += '('
+                else:
+                    regex_invertida += ')'
+            elif aux_regex_invertida[i] == ')':
+                if i < len(aux_regex_invertida)-1  and aux_regex_invertida[i+1] == '\\':
+                    regex_invertida += ')'
+                else:
+                    regex_invertida += '('
             else:
-                regex_invertida += char
+                regex_invertida += aux_regex_invertida[i]
 
         # Converte regex infixada invertida para uma regex posfixada
         operadores = Pilha()
         regex_inv_posf = ""
-        for char in regex_invertida:
+        is_literal = False
+        for i in range(len(regex_invertida)):
+            char = regex_invertida[i]
             if char not in ['(',')','*','+','?','.','|',' ']:
                 regex_inv_posf += char
             elif char == ' ':
+                is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
+                if is_literal:
+                    raise Exception("Erro. Regex mal formada. Literal inválido.")
                 pass
             elif char == '(':
-                operadores.push('(')
-            elif char == ')':
-                operador = operadores.pop()
-                while operador != '(':
-                    regex_inv_posf += operador
-                    operador = operadores.pop()
-            else:
-                if operadores.size() == 0 or operadores.top() == '(':
-                    operadores.push(char)
+                is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
+                if is_literal:
+                    regex_inv_posf += char
+                    is_literal = False
                 else:
-                    if char == operadores.top():
-                        if assoc_op[char] == "direita":
-                            operadores.push()
-                        else:
-                            regex_inv_posf += operadores.pop()
-                            operadores.push(char)
-                    else:
-                        operador = operadores.top()
-                        while (operadores.size() > 0) and (operador != '(') and (prec_op[operador] >= prec_op[char]):
-                            regex_inv_posf += operadores.pop()
-                            operador = operadores.top()
+                    operadores.push('(')
+            elif char == ')':
+                is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
+                if is_literal:
+                    regex_inv_posf += char
+                    is_literal = False
+                else:
+                    operador = operadores.pop()
+                    while operador != '(':
+                        regex_inv_posf += operador
+                        operador = operadores.pop()
+            else:
+                is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
+                if is_literal:
+                    regex_inv_posf += char
+                    is_literal = False
+                else:
+                    if operadores.size() == 0 or operadores.top() == '(':
                         operadores.push(char)
+                    else:
+                        if char == operadores.top():
+                            if assoc_op[char] == "direita":
+                                operadores.push(char)
+                            else:
+                                regex_inv_posf += operadores.pop()
+                                operadores.push(char)
+                        else:
+                            operador = operadores.top()
+                            while (operadores.size() > 0) and (operador != '(') and (prec_op[operador] >= prec_op[char]):
+                                regex_inv_posf += operadores.pop()
+                                operador = operadores.top()
+                            operadores.push(char)
 
         while operadores.size() > 0:
             regex_inv_posf += operadores.pop()
@@ -518,10 +557,11 @@ class Automato:
 # v = Automato().from_file("determinizado.txt")
 # ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
 # ab.to_file("epico.txt")
-#Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
-#Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
-#Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
-#Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
-#Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
-#Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
-#Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
+Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
+Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
+Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
+Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
+Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
+Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
+Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
+Automato().from_regex("regex_exemplo8.txt").to_file("from_regex_exemplo8.txt")

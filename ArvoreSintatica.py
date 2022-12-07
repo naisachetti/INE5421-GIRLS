@@ -195,8 +195,11 @@ class ArvoreSintatica:
 
         operadores = Pilha()
 
+        is_literal = False
         for caracter in regex_processar:
-            if caracter == '*':
+            if caracter == '\\':
+                is_literal = True
+            elif caracter == '*' and not is_literal:
                 # print("Add *")
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
@@ -204,7 +207,7 @@ class ArvoreSintatica:
                     nodo_pai = operadores.top()
                 op = self.add_operador(TipoOp.FECHO, nodo_pai)
                 operadores.push(op)
-            elif caracter == '+':
+            elif caracter == '+' and not is_literal:
                 # print("Add +")
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
@@ -212,7 +215,7 @@ class ArvoreSintatica:
                     nodo_pai = operadores.top()
                 op = self.add_operador(TipoOp.FECHO_POSITIVO, nodo_pai)
                 operadores.push(op)            
-            elif caracter == '?':
+            elif caracter == '?' and not is_literal:
                 # print("Add ?")
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
@@ -220,7 +223,7 @@ class ArvoreSintatica:
                     nodo_pai = operadores.top()
                 op = self.add_operador(TipoOp.TALVEZ, nodo_pai)
                 operadores.push(op)
-            elif caracter == '.':
+            elif caracter == '.' and not is_literal:
                 # print("Add .")
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
@@ -228,7 +231,7 @@ class ArvoreSintatica:
                     nodo_pai = operadores.top()
                 op = self.add_operador(TipoOp.CONCAT, nodo_pai)
                 operadores.push(op)
-            elif caracter == '|':
+            elif caracter == '|' and not is_literal:
                 # print("Add |")
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
@@ -237,12 +240,13 @@ class ArvoreSintatica:
                 op = self.add_operador(TipoOp.OU, nodo_pai)
                 operadores.push(op)
             else:
-                # print("Add simbolo")
+                # print("Add simbolo " + caracter)
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
                     operadores.pop()
                     nodo_pai = operadores.top()
                 self.add_simbolo(caracter, nodo_pai)
+                is_literal = False
 
         self.simplificaOperadores()
 
@@ -278,7 +282,11 @@ class ArvoreSintatica:
                     novo_concat = Concat()
                     novo_concat.add_filho(filho_fecho_pos)
                     novo_fecho = self.add_operador(TipoOp.FECHO, novo_concat)
-                    raiz_copia_subarvore = self.copiar_arvore(filho_fecho_pos)
+                    raiz_copia_subarvore = None
+                    if isinstance(filho_fecho_pos, Simbolo):
+                        raiz_copia_subarvore = filho_fecho_pos
+                    else:
+                        raiz_copia_subarvore = self.copiar_arvore(filho_fecho_pos)
                     novo_fecho.add_filho(raiz_copia_subarvore)
                     
                     nodo_pai = nodos.top()
@@ -562,6 +570,9 @@ class FechoPositivo(Nodo):
     
     def get_filho(self):
         return self.filho
+
+    def set_filho(self, novo_filho):
+        self.filho = novo_filho
 
     def cheio(self):
         return (self.filho is not None)
