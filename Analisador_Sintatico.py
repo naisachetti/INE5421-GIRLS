@@ -1,8 +1,6 @@
 from Gramatica import Gramatica
 from Pilha import Pilha
 
-# TODO: VERIFICAR SE A GRAMATICA EH LL1
-
 class TokenDriver:
     def __init__(self, tokens_validos: list) -> None:
         self.tokens = tokens_validos
@@ -18,6 +16,11 @@ class ParsingTable:
         terminais += "$"
         firstpos = gramatica.firspost()
         followpos = gramatica.followpost()
+        # print(firstpos, followpos)
+        # for nt in gramatica.nao_terminais:
+        #     if firstpos[nt].intersection(followpos[nt]):
+        #         print(gramatica)
+        #         raise SyntaxError(f"Gramatica nao eh LL1 nt: {nt} first:{firstpos[nt]}, follow:{followpos[nt]}")
         self.table = {}
 
         # Criacao da tabela
@@ -43,7 +46,7 @@ class ParsingTable:
                 first = gramatica.first_prod(producao)
                 if "&" in first:
                     raise RuntimeError
-                print(nt, first)
+                # print(nt, first)
                 for terminal in first:
                     if not self.table[nt][terminal] is None:
                         raise RuntimeError(f"Tentei colocar duas producoes na tabela ll1 {nt} {terminal}")
@@ -142,7 +145,7 @@ class AnalisadorSintatico:
                 break
 
 if __name__ == "__main__":
-    arquivo = "gramatica_ex4.txt"
+    arquivo = "gramatica_indireta.txt"
     pura = Gramatica().from_file(arquivo)
     tratada = Gramatica().from_file(arquivo).tratada()
     parser = AnalisadorSintatico(tratada)

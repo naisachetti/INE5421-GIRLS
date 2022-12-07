@@ -122,11 +122,16 @@ class Gramatica:
     # Le a gramatica de um arquivo
     def from_file(self, filename: str):
         with open(filename, "r") as arquivo:
+            
             conjunto_simbolos = set()
+            
             for linha in arquivo:
+                # Ignora linhas vazias
                 if linha.strip() == "":
                     continue
-                nao_terminal, producoes = [palavra.strip() for palavra in linha.split("::=")]
+
+                separador = "->" if "->" in linha else "::="
+                nao_terminal, producoes = [palavra.strip() for palavra in linha.split(separador)]
                 
                 # Simbolo inicial da gramatica
                 if self.inicial == None:
@@ -135,7 +140,7 @@ class Gramatica:
                 # Adiciona nao terminal na lista
                 if not nao_terminal in self.nao_terminais: self.nao_terminais.append(nao_terminal)
                 
-                producoes = [Production(palavra.strip()) for palavra in producoes.split("|")]
+                producoes = list({Production(palavra.strip()) for palavra in producoes.split("|")})
                 
                 # Criacao dos dicionarios
                 self.producoes[nao_terminal] = producoes
@@ -145,13 +150,9 @@ class Gramatica:
                     for simbolo in producao:
                         
                         # Assume que nao terminais sao um unico caracter identificado por ser letra maiuscula
-                        if self.nt_identification is None:
-                            conjunto_simbolos.add(simbolo) 
-                        else:
-                            if self.nt_identification[0] in simbolo:
-                                if not simbolo in self.nao_terminais: self.nao_terminais.append(simbolo)
-                            else:
-                                if not simbolo in self.terminais: self.terminais.append(simbolo)
+                        conjunto_simbolos.add(simbolo)
+            
+            # Criacao dos simbolos nao terminais
             for simbolo in conjunto_simbolos.copy():
                 if simbolo in self.nao_terminais:
                     conjunto_simbolos.remove(simbolo)
@@ -681,87 +682,108 @@ class Gramatica:
     def tratada(self):
         return self.sem_recursao().fatorada().sem_inalcancaveis()
     
-    ########################################
+    ################### First e Follow #####################
 
     # Retorna o firstpos de uma producao
     def first_prod(self, producao: Production):
+
+        if producao == []:
+            return {"&"}
+
         if producao[0] in self.terminais or producao[0] == "&":
             return {producao[0]}
+
         first = set()
+        anulaveis = self.anulaveis()
+        # Inclui o firstpost de todos simbolos ate o primeiro nao anulavel
         for simbolo in producao:
-            first = first.union(self.__firstpos_nt(simbolo))
-            if not simbolo in self.anulaveis():
+            self.__firstpos_simbol(simbolo, first)
+            if not simbolo in anulaveis:
                 break
         return first
     
     # Calcula o firstpos de um nao terminal
-    def __firstpos_nt(self, nt: str):
-        first = set()
-        for producao in self.producoes[nt]:
-            firspos_producao = producao.first()
-            if firspos_producao in self.terminais or firspos_producao == "&":
-                first.add(firspos_producao)
-            # Firspos eh um NT
-            else:
-                for simbolo in producao:
-                    # Adiciona nao terminal no firstpos e sai
-                    if simbolo in self.terminais:
-                        first.add(simbolo)
-                        break
+    def __firstpos_simbol(self, cabeca: str, first: set = None):
 
-                    # Acrescenta o firstpos do nao terminal e continua se for anulavel
-                    elif simbolo in self.nao_terminais:
-                        first = first.union(self.__firstpos_nt(simbolo))
-                        if not simbolo in self.anulaveis():
-                            break
-                        
-        if nt in self.anulaveis():
-            first.add("&")
+        if first == None:
+            first = set()
+
+        def check_nd():
+            if cabeca in first:
+                raise RuntimeError("Nao determinismo no calculo de Firstpos")
+
+        # o first de um terminal eh o proprio terminal
+        if cabeca in self.terminais or cabeca == "&":
+            check_nd()
+            first.add(cabeca)
+            return first
+
+        anulaveis = self.anulaveis()
+        # Itera sobre as producoes do nao terminal
+        for producao in self.producoes[cabeca]:
+
+            # Itera sobre os simbolos de uma producao
+            for simbolo in producao:
+
+                # Se o simbolo da producao eh um terminal
+                if simbolo in self.terminais or simbolo == "&":
+                    check_nd()
+                    first.add(simbolo)
+                    break
+                
+                # Simbolo nao terminal
+                self.__firstpos_simbol(simbolo, first)
+
+                # Simbolo nao anulavel
+                if not simbolo in anulaveis:
+                    break
+            else:
+                # Producao inteira anulaves
+                first.add("&")
+            
         return first
 
     # Calcula o firstpos da gramatica
     def firspost(self):
         first = {nt:[] for nt in self.nao_terminais}
         for nt in self.nao_terminais:
-            first[nt] = self.__firstpos_nt(nt)
+            first[nt] = self.__firstpos_simbol(nt)
+        # print(first)
         return first
 
     # Calcula o followpos de um nao terminal
     def __followpos_nt(self, nt: str, analisys_set = None):
+        
         if analisys_set is None:
             analisys_set = set()
+
         analisys_set.add(nt)
         follow = set()
+
         # Fim de arquivo sempre ao fim do simbolo inicial
         if nt is self.inicial:
             follow.add("$")
+        
+        # Itera sobre as producoes
         for nt_analisado, producoes in self.producoes.items():
             for producao in producoes:
+
+                # Encontra o simbolo em outras producoes
                 for i, simbolo in enumerate(producao):
                     if nt == simbolo:
-                        # Ultimo simbolo da producao
-                        if i == len(producao) - 1:
+
+                        # Firstpos de tudo que vem depois dele
+                        first_beta = self.first_prod(producao[i+1:])
+
+                        # Firstpos do resto da producao anulavel
+                        if "&" in first_beta:
                             if not nt_analisado in analisys_set:
                                 follow = follow.union(self.__followpos_nt(nt_analisado, analisys_set.copy()))
-                        else:
-                            prox = producao[i+1]
-                            # Proximo simbolo eh um terminal
-                            if prox in self.terminais:
-                                follow.add(prox)
-                            # Proximo simbolo eh um nao terminal
-                            else:
-                                # Tem que ver todos os proximos e ver se eles sao anulaveis
-                                for j in range(i+1, len(producao)):
-                                    if producao[j] != nt:
-                                        follow = follow.union(self.__firstpos_nt(producao[j]))
-                                    if "&" in follow:
-                                        follow.remove("&")
-                                    if not producao[j] in self.anulaveis():
-                                        break
-                                else:
-                                    if not producao[j] in analisys_set:
-                                        analisys_set.add(producao[j])
-                                        follow = follow.union(self.__followpos_nt(nt_analisado, analisys_set.copy()))
+                        # Firstpos do resto da producao nao eh literalmente so &
+                        if {"&"} != first_beta:
+                            if "&" in first_beta:
+                                first_beta.remove("&")
+                            follow = follow.union(first_beta)
         return follow
     
     # Calcula o firstpos da gramatica
