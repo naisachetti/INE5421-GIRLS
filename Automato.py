@@ -1,7 +1,6 @@
-import string
-import sys
 from ArvoreSintatica import *
 from Pilha import *
+from regex_lib import read_regex
 
 class Automato:
 
@@ -15,10 +14,9 @@ class Automato:
         self.inicial = None
         self.alfabeto = None
 
-    # Cria o automato a partir de um arquivo contendo uma regex
-    def from_regex(self, filename: str):
+    # Cria o automato a partir de um arquivo contendo uma ou multiplas regex
+    def from_regex(self, regex, token_type):
         # Instanciacao de uma Arvore Sintatica para a regex
-        (regex, token_type) = self.read_regex(filename)
         a_sint = ArvoreSintatica(regex)
 
         # Definicao dos estados e suas transicoes
@@ -41,245 +39,6 @@ class Automato:
         self.alfabeto = a_sint.get_alfabeto()
 
         return self
-
-    # Le a regex e definicoes regulares a partir de um arquivo.
-    # Retorna a mesma regex sem definicoes regulares (ou seja, com as definicoes regulares ja substituidas em si).
-    def read_regex(self, filename):
-        letras = list(string.ascii_lowercase)
-        regdefs:dict[str, str] = {}
-        regex = ""
-
-        # Leitura da regex e definicoes regulares
-        with open(filename, "r") as arquivo:
-            while True:
-                linha_list = list(arquivo.readline().strip())
-                linha = ""
-                for caracter in linha_list:
-                    linha += caracter
-                if len(linha) > 0 and linha[0] not in ['#']:
-                    # Se é uma definicao regular
-                    if linha[0] not in ['>']:
-                        # Verifica se a definicao regular comeca com uma letra e nao eh nomeada com apenas uma letra
-                        if linha[0] in letras:
-                            buffer = ""
-                            for char in linha:
-                                if char != ':':
-                                    buffer += char
-                                else:
-                                    if len(buffer) > 1:
-                                        regdef = linha[len(buffer)+1 : len(linha)]
-                                        regdefs[buffer] = regdef
-                                    else:
-                                        raise Exception("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
-                        else:
-                            raise Exception("Definição regular com formato incorreto. Deve começar com letra.")
-                    # Se nao eh uma definicao regular, mas sim uma ER
-                    else:
-                        buffer = ""
-                        for char in linha:
-                            if char == '>':
-                                pass
-                            elif char != ':':
-                                buffer += char
-                            else:
-                                if len(buffer) > 1:
-                                    regex = linha[len(buffer)+2 : len(linha)]
-                                    token_type = buffer
-                                else:
-                                    raise Exception("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
-                        break
-        new_regex = regex+" "
-
-        # Substituicao das definicoes regulares dentro da regex.
-        # Substitui todas as definicoes regulares que forem possiveis em uma passada
-        # pela regex e, caso substituicoes tenham sido realmente feitas, analisa a nova regex.
-        # Este processo se repete ate que nao haja mais definicoes regulares na regex.
-        while True:
-            regex = new_regex
-            buffer = ""
-            index_i = 0
-            inc_i = 0
-            for i in range (len(regex)):
-                if (new_regex[i+inc_i] in ['(',')','.','+','*','|','?',' ']) or (i == len(regex)-1):
-                    if (len(buffer) > 1) and (buffer in regdefs.keys()):
-                        new_regex = new_regex[0:index_i] + '(' + regdefs[buffer] + ')' + new_regex[i+inc_i:len(new_regex)]
-                        inc_i += len(regdefs[buffer])-len(buffer)-1
-                        buffer = ""
-                    else:
-                        buffer = ""
-                else:
-                    if len(buffer) == 0:
-                        index_i = i+inc_i
-                    buffer += new_regex[i+inc_i]
-
-            if new_regex == regex:
-                break
-
-        # Adicao de sequencias de numeros ou letras do tipo [A-Za-z] e [0-9]
-        inc_i = 0
-        init_i = 0
-        new_regex = regex
-        for i in range (len(regex)):
-            if new_regex[i+inc_i] == '[':
-                seq_add = ""
-                index_init = i+inc_i
-                init_i = i+inc_i
-                while new_regex[init_i+1] != ']':
-                    seq_init = new_regex[init_i+1]
-                    seq_end = new_regex[init_i+3] # Motivo da verificação "if init_i+3 >= len(new_regex)"
-
-                    caracteres = []
-                    if seq_init.isupper() and seq_end.isupper() and seq_init < seq_end:
-                        caracteres = list(string.ascii_uppercase)
-                    elif  seq_init.islower() and seq_end.islower() and seq_init < seq_end:
-                        caracteres = list(string.ascii_lowercase)
-                    elif seq_init.isdigit() and seq_end.isdigit() and seq_init < seq_end:
-                        caracteres = list(string.digits)
-                    else:
-                        raise Exception("Erro. Regex mal formada. Sequência de letras ou dígitos inválida.")
-
-                    if len(seq_add) > 0:
-                        seq_add += '|('
-                    else:
-                        seq_add += '('
-                    for char in caracteres:
-                        if char >= seq_init and char <= seq_end:
-                            seq_add += char+'|'
-                    seq_add = seq_add[:-1]
-                    seq_add += ')'
-
-                    init_i += 3
-                    if (init_i+3) >= len(new_regex):
-                        raise Exception("Erro. Regex mal formada. Sequência de letras ou dígitos inválida.")
-
-                seq_add = '(' + seq_add + ')'
-
-                index_end = init_i+1
-                new_regex = new_regex[0:index_init] + seq_add + new_regex[index_end+1:len(new_regex)]
-                inc_i += len(seq_add)-(index_end-index_init)-1
-
-        regex = new_regex
-
-        # Coloca literais entre parenteses. Assim, "protege" literais da adicao de concatenacoes implicitas indevidas.
-        inc_i = 0
-        new_regex = regex
-        for i in range (len(regex)):
-            if new_regex[i+inc_i] == '\\':
-                new_regex = new_regex[0:i+inc_i] + '(' + new_regex[i+inc_i:i+inc_i+2] + ')' + new_regex[i+inc_i+2:len(new_regex)]
-                inc_i += 2
-
-        regex = new_regex
-
-        # Adicao de concatenacoes implicitas
-        inc_i = 0
-        new_regex = regex
-        for i in range (len(regex)):
-            if new_regex[i+inc_i] not in [')','.','+','*','|','?',' ','\\']:
-                k = i+inc_i-1
-                while (k >= 0) and new_regex[k] == ' ':
-                    k -= 1
-                if (k >= 0) and (new_regex[k] not in ['(','.','|']) and (i+inc_i-1 >= 0) and (new_regex[i+inc_i-1] != '\\'):
-                    new_regex = new_regex[0:k+1] + '.' + new_regex[k+1:len(new_regex)]
-                    inc_i += 1
-
-        regex = new_regex
-
-        # Transformacao da regex em notacao infixada para notacao prefixada.
-        # Algoritmo retirado de: https://www.geeksforgeeks.org/convert-infix-prefix-notation/
-        prec_op = {'*':3, '+':3, '?':3, '.':2, '|': 1}
-        assoc_op = {'*':"direita,", '+':"direita", '?':"direita", '.':"esquerda", '|':"esquerda"}
-        # Inverte regex infixada original
-        regex_invertida = ""
-        aux_regex_invertida = regex[::-1]
-        is_literal = False
-        # Troca os parenteses, exceto se forem literais
-        for i in range (len(aux_regex_invertida)):
-            if aux_regex_invertida[i] == '(':
-                # Checa se ')' eh um literal
-                if i < len(aux_regex_invertida)-1 and aux_regex_invertida[i+1] == '\\':
-                    # Checa se o proprio \ eh um literal
-                    if i < len(aux_regex_invertida)-2 and aux_regex_invertida[i+2] == '\\':
-                        regex_invertida += ')'
-                    else:
-                        regex_invertida += '('
-                else:
-                    regex_invertida += ')'
-            elif aux_regex_invertida[i] == ')':
-                # Checa se '(' eh um literal
-                if i < len(aux_regex_invertida)-1  and aux_regex_invertida[i+1] == '\\':
-                    # Checa se o proprio \ eh um literal
-                    if i < len(aux_regex_invertida)-2 and aux_regex_invertida[i+2] == '\\':
-                        regex_invertida += '('
-                    else:
-                        regex_invertida += ')'
-                else:
-                    regex_invertida += '('
-            else:
-                regex_invertida += aux_regex_invertida[i]
-
-        # Converte regex infixada invertida para uma regex posfixada
-        operadores = Pilha()
-        regex_inv_posf = ""
-        is_literal = False
-        for i in range(len(regex_invertida)):
-            char = regex_invertida[i]
-            if char not in ['(',')','*','+','?','.','|',' ']:
-                regex_inv_posf += char
-            elif char == ' ':
-                is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
-                barra_is_literal = True if (i < len(regex_invertida)-2 and regex_invertida[i+2] == '\\') else False
-                if is_literal and not barra_is_literal:
-                    raise Exception("Erro. Regex mal formada. Literal inválido.")
-                pass
-            elif char == '(':
-                is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
-                barra_is_literal = True if (i < len(regex_invertida)-2 and regex_invertida[i+2] == '\\') else False
-                if is_literal and not barra_is_literal:
-                    regex_inv_posf += char
-                    is_literal = False
-                else:
-                    operadores.push('(')
-            elif char == ')':
-                is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
-                barra_is_literal = True if (i < len(regex_invertida)-2 and regex_invertida[i+2] == '\\') else False
-                if is_literal and not barra_is_literal:
-                    regex_inv_posf += char
-                    is_literal = False
-                else:
-                    operador = operadores.pop()
-                    while operador != '(':
-                        regex_inv_posf += operador
-                        operador = operadores.pop()
-            else:
-                is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
-                barra_is_literal = True if (i < len(regex_invertida)-2 and regex_invertida[i+2] == '\\') else False
-                if is_literal and not barra_is_literal:
-                    regex_inv_posf += char
-                    is_literal = False
-                else:
-                    if operadores.size() == 0 or operadores.top() == '(':
-                        operadores.push(char)
-                    else:
-                        if char == operadores.top():
-                            if assoc_op[char] == "direita":
-                                operadores.push(char)
-                            else:
-                                regex_inv_posf += operadores.pop()
-                                operadores.push(char)
-                        else:
-                            operador = operadores.top()
-                            while (operadores.size() > 0) and (operador != '(') and (prec_op[operador] >= prec_op[char]):
-                                regex_inv_posf += operadores.pop()
-                                operador = operadores.top()
-                            operadores.push(char)
-
-        while operadores.size() > 0:
-            regex_inv_posf += operadores.pop()
-
-        # Inverte regex posfixada, obtendo uma regex prefixada da regex infixada original
-        regex_pref = regex_inv_posf[::-1]
-
-        return (regex_pref, token_type)
 
     # Le o automato a partir de um arquivo
     def from_file(self, filename: str):
@@ -570,13 +329,26 @@ if __name__ == '__main__':
     # b = Automato().from_file("unido_b.txt")
     # v = Automato().from_file("determinizado.txt")
     # ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
-    # ab.to_file("epico.txt")
-    Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
-    Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
-    Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
-    Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
-    Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
-    Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
-    Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
-    Automato().from_regex("regex_exemplo8.txt").to_file("from_regex_exemplo8.txt")
-    Automato().from_regex("regex_exemplo9.txt").to_file("from_regex_exemplo9.txt")
+    # # # ab.to_file("epico.txt")
+    # regex_exemplo = read_regex("regex_exemplo.txt")
+    # Automato().from_regex(regex_exemplo[list(regex_exemplo.keys())[0]], list(regex_exemplo.keys())[0]).to_file("from_regex_exemplo.txt")
+    # regex_exemplo2 = read_regex("regex_exemplo2.txt")
+    # Automato().from_regex(regex_exemplo2[list(regex_exemplo2.keys())[0]], list(regex_exemplo2.keys())[0]).to_file("from_regex_exemplo2.txt")
+    # regex_exemplo3 = read_regex("regex_exemplo3.txt")
+    # Automato().from_regex(regex_exemplo3[list(regex_exemplo3.keys())[0]], list(regex_exemplo3.keys())[0]).to_file("from_regex_exemplo3.txt")
+    # regex_exemplo4 = read_regex("regex_exemplo4.txt")
+    # Automato().from_regex(regex_exemplo4[list(regex_exemplo4.keys())[0]], list(regex_exemplo4.keys())[0]).to_file("from_regex_exemplo4.txt")
+    # regex_exemplo5 = read_regex("regex_exemplo5.txt")
+    # Automato().from_regex(regex_exemplo5[list(regex_exemplo5.keys())[0]], list(regex_exemplo5.keys())[0]).to_file("from_regex_exemplo5.txt")
+    # regex_exemplo6 = read_regex("regex_exemplo6.txt")
+    # Automato().from_regex(regex_exemplo6[list(regex_exemplo6.keys())[0]], list(regex_exemplo6.keys())[0]).to_file("from_regex_exemplo6.txt")
+    # regex_exemplo7 = read_regex("regex_exemplo7.txt")
+    # Automato().from_regex(regex_exemplo7[list(regex_exemplo7.keys())[0]], list(regex_exemplo7.keys())[0]).to_file("from_regex_exemplo7.txt")
+    regex_exemplo8 = read_regex("regex_exemplo8.txt")
+    Automato().from_regex(regex_exemplo8[list(regex_exemplo8.keys())[0]], list(regex_exemplo8.keys())[0]).to_file("from_regex_exemplo8.txt")
+    regex_exemplo9 = read_regex("regex_exemplo9.txt")
+    Automato().from_regex(regex_exemplo9[list(regex_exemplo9.keys())[0]], list(regex_exemplo9.keys())[0]).to_file("from_regex_exemplo9.txt")
+
+    regex_exemplo10 = read_regex("regex_exemplo10.txt")
+    for nome_regex in regex_exemplo10.keys():
+        Automato().from_regex(regex_exemplo10[nome_regex], nome_regex).to_file(("from_regex_exemplo10_"+nome_regex+".txt"))
