@@ -29,6 +29,7 @@ class ParsingTable:
         for nt, producoes in gramatica.producoes.items():
             for producao in producoes:
 
+                # print(producao)
                 # Preenchimento de quando for follow
                 if producao == "&":
                     for terminal in followpos[nt]:
@@ -38,7 +39,11 @@ class ParsingTable:
                     continue
 
                 # Preenchimento de first
+                # print("prod",producao)
                 first = gramatica.first_prod(producao)
+                if "&" in first:
+                    raise RuntimeError
+                print(nt, first)
                 for terminal in first:
                     if not self.table[nt][terminal] is None:
                         raise RuntimeError(f"Tentei colocar duas producoes na tabela ll1 {nt} {terminal}")
@@ -137,22 +142,25 @@ class AnalisadorSintatico:
                 break
 
 if __name__ == "__main__":
-    gn = Gramatica().from_file("gramatica_ex2.txt")
-    print(gn)
+    arquivo = "gramatica_indireta.txt"
+    g1 = Gramatica().from_file(arquivo)
+    # print(g1)
+    g2 = Gramatica().from_file(arquivo).tratada()
+    print(g2)
     # for _ in range(50):
     #     palavra = gn.generate_word()
     #     if not palavra is None:
     #         print(palavra)
-    g = gn.tratada()
-    print("---------------------------------------------------------")
+    # g = gn.copy().tratada()
+    # print("---------------------------------------------------------")
     # for _ in range(50):
     #     palavra = g.generate_word()
     #     if not palavra is None:
     #         print(palavra)
-    print(g)
+    # print(g2)
     # t = ParsingTable(gn)
-    parser = AnalisadorSintatico(g)
-    parser.validate(gn)
+    parser = AnalisadorSintatico(g2)
+    parser.validate(g1)
 
     # t.to_csv("parsing_table.csv")
 
