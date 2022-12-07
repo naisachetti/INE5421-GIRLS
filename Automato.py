@@ -18,7 +18,7 @@ class Automato:
     # Cria o automato a partir de um arquivo contendo uma regex
     def from_regex(self, filename: str):
         # Instanciacao de uma Arvore Sintatica para a regex
-        regex = self.read_regex(filename)
+        (regex, token_type) = self.read_regex(filename)
         a_sint = ArvoreSintatica(regex)
 
         # Definicao dos estados e suas transicoes
@@ -31,6 +31,7 @@ class Automato:
         self.finais: list = []
         for estado in self.estados:
             if estado["final"]:
+                estado["token"] = [token_type]
                 self.finais.append(estado["nome"])
 
         # Definicao do estado inicial
@@ -83,10 +84,10 @@ class Automato:
                             else:
                                 if len(buffer) > 1:
                                     regex = linha[len(buffer)+2 : len(linha)]
+                                    token_type = buffer
                                 else:
                                     raise Exception("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
                         break
-
         new_regex = regex+" "
 
         # Substituicao das definicoes regulares dentro da regex.
@@ -225,7 +226,7 @@ class Automato:
         # Inverte regex posfixada, obtendo uma regex prefixada da regex infixada original
         regex_pref = regex_inv_posf[::-1]
 
-        return regex_pref
+        return (regex_pref, token_type)
 
     # Le o automato a partir de um arquivo
     def from_file(self, filename: str):
@@ -305,7 +306,8 @@ class Automato:
     def __repr__(self) -> str:
         saida = f"n estados: {self.n_estados}\n"
         saida += f"estado inicial: "+self.inicial["nome"]+"\n"
-        saida += f"estados finais: "+",".join(self.finais)+"\n"
+        saida += f"estados finais: \n"
+        saida += "".join([estado["nome"] + " representando " + estado["token"][0] + "\n" for estado in self.estados if estado["final"]])
         saida += f"alfabeto: "+",".join(self.alfabeto)+"\n"
         for estado in self.estados:
             if estado["nome"] == "Morto": continue
@@ -317,9 +319,11 @@ class Automato:
 
     # Recebe uma entrada e retorna se o automato a reconhece
     # SE RECEBER UM AFND VAI DAR PAU
-    def reconhece(self, entrada: str) -> bool:
+    def percorre(self, entrada: str) -> dict:
         estado_atual = self.inicial
         for simbolo in entrada:
+            if simbolo not in self.alfabeto:
+                return {"final": False}
             if len(estado_atual[simbolo]) > 1:
                 nome_str = "nome"
                 raise RuntimeError(f"Tansicao nao deterministica de {estado_atual[nome_str]} por {simbolo}")
@@ -328,7 +332,13 @@ class Automato:
                 raise RuntimeError(f"Tansicao de {estado_atual[nome_str]} por {simbolo} NAO EXISTE (???)")
 
             estado_atual = estado_atual[simbolo][0]
-        return estado_atual["final"]
+        return estado_atual
+
+    def token(self, entrada: str) -> str:
+        return self.percorre(entrada)["token"]
+
+    def reconhece(self, entrada: str) -> bool:
+        return self.percorre(entrada)["final"]
 
     # Recebe outro automato e retorna a uniao entre os dois
     def uniao_com(self, other):
@@ -440,9 +450,10 @@ class Automato:
             morto[simbolo] = [morto]
 
         # Estados fundamentais
-        determinizado.inicial = {"nome": aglutinar_nome(copia.inicial["fecho"]), "fecho": copia.inicial["fecho"]}
+        determinizado.inicial = {"nome": aglutinar_nome(copia.inicial["fecho"]), "fecho": copia.inicial["fecho"], "token": []}
         determinizado.inicial["final"] = True in [estado["final"] for estado in determinizado.inicial["fecho"]]
         if determinizado.inicial["final"]:
+            determinizado.inicial["token"] = [token for token in estado["token"] for estado in determinizado.inicial["fecho"] if estado["final"]]
             determinizado.finais.append(determinizado.inicial["nome"])
         determinizado.estados = [morto, determinizado.inicial]
 
@@ -462,7 +473,8 @@ class Automato:
             estado_determinizado =\
                     {"nome": aglutinar_nome(estados_destino),
                     "final": False,
-                    "fecho": estados_destino}
+                    "fecho": estados_destino,
+                    "token": [] }
 
             for estado in determinizado.estados:
                 # ESTADO JA EXISTIA
@@ -474,6 +486,7 @@ class Automato:
             # Verifica se este estado eh de aceitacao e acrescenta nos finais se for o caso
             for estado in estados_destino:
                 if estado["final"] == True:
+                    estado_determinizado["token"] += estado["token"]
                     estado_determinizado["final"] = True
 
             if estado_determinizado["final"]:
@@ -489,7 +502,6 @@ class Automato:
             if estado["nome"] == "Morto": continue
             for simbolo in determinizado.alfabeto:
                 estado[simbolo] = [destino_deterministico(estado["fecho"], simbolo)]
-
         return determinizado
 
 
@@ -509,7 +521,7 @@ class Automato:
 #Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
 #Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
 #Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
-Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
+#Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
 #Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
 #Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
 #Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
