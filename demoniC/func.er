@@ -1,3 +1,0 @@
-upper:[A-Z]
-letter:[A-Za-z]
->function:upper(letter)*

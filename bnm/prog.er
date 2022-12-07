@@ -1,3 +1,0 @@
-letters:[A-Za-z]
-numbers:[0-9]
->id:(letters|_)(letters|numbers|_)*

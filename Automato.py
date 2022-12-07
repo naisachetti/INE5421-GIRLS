@@ -134,8 +134,6 @@ class Automato:
     def percorre(self, entrada: str) -> dict:
         estado_atual = self.inicial
         for simbolo in entrada:
-            if simbolo not in self.alfabeto:
-                return {"final": False}
             if len(estado_atual[simbolo]) > 1:
                 nome_str = "nome"
                 raise RuntimeError(f"Tansicao nao deterministica de {estado_atual[nome_str]} por {simbolo}")
@@ -147,7 +145,7 @@ class Automato:
         return estado_atual
 
     def token(self, entrada: str) -> str:
-        return self.percorre(entrada)["token"]
+        return self.percorre(entrada)["token"][0]
 
     def reconhece(self, entrada: str) -> bool:
         return self.percorre(entrada)["final"]
