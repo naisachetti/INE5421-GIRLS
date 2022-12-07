@@ -557,25 +557,26 @@ class Automato:
                 estado[simbolo] = [destino_deterministico(estado["fecho"], simbolo)]
         return determinizado
 
-
-# epico = Automato().from_regex("regex_exemplo4.txt")
-# Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
-# a = Automato().from_file("unido_a.txt")
-# while True:
-#     entrada = input()
-#     if entrada == "stop":
-#         break
-#     else:
-#         print(a.reconhece(entrada))
-# b = Automato().from_file("unido_b.txt")
-# v = Automato().from_file("determinizado.txt")
-# ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
-# # ab.to_file("epico.txt")
-# Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
-# Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
-# Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
-# Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
-# Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
-# Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
-# Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
-Automato().from_regex("regex_exemplo8.txt").to_file("from_regex_exemplo8.txt")
+if __name__ == '__main__':
+    # epico = Automato().from_regex("regex_exemplo4.txt")
+    # Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
+    # a = Automato().from_file("unido_a.txt")
+    # while True:
+    #     entrada = input()
+    #     if entrada == "stop":
+    #         break
+    #     else:
+    #         print(a.reconhece(entrada))
+    # b = Automato().from_file("unido_b.txt")
+    # v = Automato().from_file("determinizado.txt")
+    # ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
+    # ab.to_file("epico.txt")
+    Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
+    Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
+    Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
+    Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
+    Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
+    Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
+    Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
+    Automato().from_regex("regex_exemplo8.txt").to_file("from_regex_exemplo8.txt")
+    Automato().from_regex("regex_exemplo9.txt").to_file("from_regex_exemplo9.txt")

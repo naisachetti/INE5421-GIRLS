@@ -1,0 +1,3 @@
+officium Sum(a, b) {
+	redeo a + b
+}

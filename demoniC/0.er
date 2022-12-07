@@ -1,0 +1,2 @@
+letter:[A-Za-z]
+>id:letter*
