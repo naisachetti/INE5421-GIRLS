@@ -119,7 +119,7 @@ class Gramatica:
         saida = ""
         for nao_terminal, producoes in self.producoes.items():
             producoes = " | ".join(producoes)
-            saida += f"{nao_terminal} -> {producoes}\n"
+            saida += f"{nao_terminal} ::= {producoes}\n"
         return saida[:-1]
 
     # Retorna uma copia da gramatica
@@ -180,15 +180,23 @@ class Gramatica:
 
     # Retorna um novo nao terminal 
     def novo_nao_terminal(self, original = None):
+        if original:
+            return original + "'"
         
+        alfabeto = list(ascii_uppercase)
+        sufix = 0
         if self.nt_identification is None:
+            for _ in range(10000):
             # Tenta retornar uma letra do alfabeto
-            alfabeto = list(ascii_uppercase)
-            for letra in alfabeto:
-                if not letra in self.nao_terminais:
-                    self.nao_terminais.append(letra)
-                    return letra
-        return original + "1"
+                for letra in alfabeto:
+                    proposta = letra+"".join(["'" for _ in range(sufix)])
+                    if not proposta in self.nao_terminais:
+                        self.nao_terminais.append(letra)
+                        return letra
+                else:
+                    sufix += 1
+            else: 
+                raise RuntimeError("Nao consegui gerar um nome novo")
 
     # Simplesmente retorna uma producao aleatoria dentre as possiveis
     def random_production(self, nao_terminal: str) -> str:
@@ -244,13 +252,20 @@ class Gramatica:
     def herdar_producoes(self, nt_cabeca: str, nt_corpo: str):
         # print(nt_cabeca, nt_corpo)
         novas_producoes = []
+
+        # Itera sobre cada producao
         for producao in self.producoes[nt_cabeca]:
             destruir = 0
+
+            # Atavessa os simbolos da producao
             for index, simbolo in enumerate(producao):
+                
+                # Simbolo analisado eh o que vai ser substituido por suas producoes
                 if simbolo == nt_corpo:
                     destruir += 1
                     if destruir > 1:
-                        raise RuntimeError(f"POISE O SIMBOLO PRA HERDAR APARECEU 2 VEZES EM {producao}")
+                        break #TODO: ISSO EH GAMBIARRA
+                        raise RuntimeError(f"POISE O SIMBOLO PRA HERDAR {nt_corpo} APARECEU 2 VEZES EM {producao}")
                     for herdada in self.producoes[nt_corpo]:
                         if herdada == "&":
                             if len(producao) > 1:
@@ -376,7 +391,7 @@ class Gramatica:
 
     # Retorna a gramatica sem recursao a esquerda
     def sem_recursao(self):
-        copia = self.copy().sem_loop().e_livre()
+        copia = self.copy()#.sem_loop().e_livre()
         # print(copia)
 
         # Notacao dos slides da professora
@@ -387,7 +402,8 @@ class Gramatica:
                 for pi in copia.producoes[ai]:
                     if pi[0] == aj:
                         for pj in copia.producoes[aj]:
-                            copia.producoes[ai].append(Production(pj+" "+pi[1:]))
+                            # print(type(pi[1:]), type(pj))
+                            copia.producoes[ai].append(Production(pj+" "+" ".join(pi[1:])))
                         copia.producoes[ai].remove(pi)
 
             # Eliminacao da recursao direta
@@ -459,17 +475,29 @@ class Gramatica:
         # Se ha nao terminal a esquerda entao ta na hora de herdar producao
         nt_lista = list(copia.producoes.keys())
         for nao_terminal in nt_lista:
+            # copia.eliminar_nd_direto(nao_terminal)
             # Limite de 1000 derivacoes sucessivas
-            for _ in range(1000):
+            for _ in range(100):
+                if len(copia.producoes[nao_terminal]) > 20:
+                    print(copia)
+                    raise RuntimeError("Nao consegui fatorar a gramatica (muita producao)")
                 for producao in copia.producoes[nao_terminal]:
+                    # if nao_terminal == "F":
+                    #     print("producao", producao)
+                    #     print("producoes", copia.producoes[nao_terminal])
                     # Comeca de fato com um nao terminal
-                    # print(nao_terminal, copia.producoes[nao_terminal])
+                    print(nao_terminal, copia.producoes[nao_terminal], producao)
                     if producao[0] in copia.nao_terminais:
+                        # print(nao_terminal, producao[0], list(producao))
                         copia.herdar_producoes(nao_terminal, producao[0])
+                        
                         break
                 else:
                     # Se ele nao conseguiu herdar nada
                     break
+                # copia.eliminar_nd_direto(nao_terminal)
+            else:
+                raise RuntimeError("Nao consegui fatorar a gramatica (limite de derivacoes)")
             novo_nt = copia.eliminar_nd_direto(nao_terminal)
             if novo_nt:
                 nt_lista.append(novo_nt)
@@ -567,12 +595,24 @@ class Gramatica:
     
     # Abreviacao de um monte de coisa
     def tratada(self):
-        return self.sem_unitarias().sem_recursao().fatorada().sem_inalcancaveis()
+        return self.sem_recursao().fatorada().sem_inalcancaveis()
 
 if __name__ == "__main__":  
-    g = Gramatica().from_file("gramatica_precedente.txt").tratada()
-    for _ in range(100):
-        print(g.generate_word())
+    gn = Gramatica().from_file("gramatica_ex4.txt")
+    print(gn)
+    print("--------------")
+    # print(gn.e_livre().sem_inalcancaveis())
+    g1 = gn.sem_recursao()
+    print(g1)
+    print("--------------")
+    g2 = g1.fatorada()
+    print(g2)
+    # g1 = gn.sem_recursao()
+    # print(g1)
+    # g2 = g1.fatorada()
+    # print(g2)
+    # for _ in range(100):
+    #     print(g.generate_word())
     # print(g)
     # print("-----------------------------")
     # print(g.tratada())

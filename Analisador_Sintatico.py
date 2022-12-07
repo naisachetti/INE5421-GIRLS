@@ -137,15 +137,25 @@ class AnalisadorSintatico:
                 break
 
 if __name__ == "__main__":
-    gn = Gramatica().from_file("gramatica_precedente.txt")
-    g = Gramatica().from_file("gramatica_precedente.txt").tratada()
-    t = ParsingTable(g)
-    t.to_csv("parsing_table.csv")
-    # print(g)
-    # print(g.firspost())
-    # print(g.followpost())
+    gn = Gramatica().from_file("gramatica_ex2.txt")
+    print(gn)
+    # for _ in range(50):
+    #     palavra = gn.generate_word()
+    #     if not palavra is None:
+    #         print(palavra)
+    g = gn.tratada()
+    print("---------------------------------------------------------")
+    # for _ in range(50):
+    #     palavra = g.generate_word()
+    #     if not palavra is None:
+    #         print(palavra)
+    print(g)
+    # t = ParsingTable(gn)
     parser = AnalisadorSintatico(g)
     parser.validate(gn)
+
+    # t.to_csv("parsing_table.csv")
+
     # with open("tabela.txt", "w") as arquivo:
     #     arquivo.write(repr(parser.tabela))
     # parser.parse(None)
