@@ -1,0 +1,4 @@
+upper:[A-Z]
+letters:[A-Za-z]
+numbers:[0-9]
+>id:(upper|_)(letters|numbers|_)*

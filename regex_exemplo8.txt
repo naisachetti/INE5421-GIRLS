@@ -1,0 +1,4 @@
+# Regex de exemplo para teste de interpretação de operadores como símbolos literais.
+# Para que um operador seja interpretado como literal, \ deve ser adicionado imeditamente antes do operador.
+# Ex.: \+ ; \* ; \|; \\
+>regex:(a | b)\++a\(\)\(b\\b?
