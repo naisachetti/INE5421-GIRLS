@@ -14,9 +14,7 @@ class AnalisadorLexico:
         ers = glob(path + '/*.er')
 
         autos = [Automato().from_regex(er) for er in ers]
-
         self.automato = reduce(Automato.uniao_com, autos[1:], autos[0]).determinizado().rename()
-        print(self.automato)
 
     def gerar_tokens(self, source_path):
         with open(source_path, 'r') as file:

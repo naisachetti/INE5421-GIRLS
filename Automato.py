@@ -424,7 +424,7 @@ class Automato:
         # Une de fato os estados
         uniao.estados = [uniao.inicial] + copia.estados + other.estados
 
-        return uniao.rename()
+        return uniao.determinizado().rename()
 
     # Exporta o arquivo do automato
     def to_file(self, filename: str):
