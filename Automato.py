@@ -178,7 +178,7 @@ class Automato:
                 k = i+inc_i-1
                 while (k >= 0) and new_regex[k] == ' ':
                     k -= 1
-                if (k >= 0) and (new_regex[k] not in ['(','.','|']) and (i+inc_i-1 > 0) and (new_regex[i+inc_i-1] != '\\'):
+                if (k >= 0) and (new_regex[k] not in ['(','.','|']) and (i+inc_i-1 >= 0) and (new_regex[i+inc_i-1] != '\\'):
                     new_regex = new_regex[0:k+1] + '.' + new_regex[k+1:len(new_regex)]
                     inc_i += 1
 
