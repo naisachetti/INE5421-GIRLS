@@ -197,7 +197,7 @@ class ArvoreSintatica:
 
         is_literal = False
         for caracter in regex_processar:
-            if caracter == '\\':
+            if caracter == '\\' and not is_literal:
                 is_literal = True
             elif caracter == '*' and not is_literal:
                 # print("Add *")

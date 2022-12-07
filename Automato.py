@@ -195,13 +195,23 @@ class Automato:
         # Troca os parenteses, exceto se forem literais
         for i in range (len(aux_regex_invertida)):
             if aux_regex_invertida[i] == '(':
+                # Checa se ')' eh um literal
                 if i < len(aux_regex_invertida)-1 and aux_regex_invertida[i+1] == '\\':
-                    regex_invertida += '('
+                    # Checa se o proprio \ eh um literal
+                    if i < len(aux_regex_invertida)-2 and aux_regex_invertida[i+2] == '\\':
+                        regex_invertida += ')'
+                    else:
+                        regex_invertida += '('
                 else:
                     regex_invertida += ')'
             elif aux_regex_invertida[i] == ')':
+                # Checa se '(' eh um literal
                 if i < len(aux_regex_invertida)-1  and aux_regex_invertida[i+1] == '\\':
-                    regex_invertida += ')'
+                    # Checa se o proprio \ eh um literal
+                    if i < len(aux_regex_invertida)-2 and aux_regex_invertida[i+2] == '\\':
+                        regex_invertida += '('
+                    else:
+                        regex_invertida += ')'
                 else:
                     regex_invertida += '('
             else:
@@ -217,19 +227,22 @@ class Automato:
                 regex_inv_posf += char
             elif char == ' ':
                 is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
-                if is_literal:
+                barra_is_literal = True if (i < len(regex_invertida)-2 and regex_invertida[i+2] == '\\') else False
+                if is_literal and not barra_is_literal:
                     raise Exception("Erro. Regex mal formada. Literal inválido.")
                 pass
             elif char == '(':
                 is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
-                if is_literal:
+                barra_is_literal = True if (i < len(regex_invertida)-2 and regex_invertida[i+2] == '\\') else False
+                if is_literal and not barra_is_literal:
                     regex_inv_posf += char
                     is_literal = False
                 else:
                     operadores.push('(')
             elif char == ')':
                 is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
-                if is_literal:
+                barra_is_literal = True if (i < len(regex_invertida)-2 and regex_invertida[i+2] == '\\') else False
+                if is_literal and not barra_is_literal:
                     regex_inv_posf += char
                     is_literal = False
                 else:
@@ -239,7 +252,8 @@ class Automato:
                         operador = operadores.pop()
             else:
                 is_literal = True if (i < len(regex_invertida)-1 and regex_invertida[i+1] == '\\') else False
-                if is_literal:
+                barra_is_literal = True if (i < len(regex_invertida)-2 and regex_invertida[i+2] == '\\') else False
+                if is_literal and not barra_is_literal:
                     regex_inv_posf += char
                     is_literal = False
                 else:
@@ -556,12 +570,12 @@ class Automato:
 # b = Automato().from_file("unido_b.txt")
 # v = Automato().from_file("determinizado.txt")
 # ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
-# ab.to_file("epico.txt")
-Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
-Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
-Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
-Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
-Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
-Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
-Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
+# # ab.to_file("epico.txt")
+# Automato().from_regex("regex_exemplo.txt").to_file("from_regex_exemplo.txt")
+# Automato().from_regex("regex_exemplo2.txt").to_file("from_regex_exemplo2.txt")
+# Automato().from_regex("regex_exemplo3.txt").to_file("from_regex_exemplo3.txt")
+# Automato().from_regex("regex_exemplo4.txt").to_file("from_regex_exemplo4.txt")
+# Automato().from_regex("regex_exemplo5.txt").to_file("from_regex_exemplo5.txt")
+# Automato().from_regex("regex_exemplo6.txt").to_file("from_regex_exemplo6.txt")
+# Automato().from_regex("regex_exemplo7.txt").to_file("from_regex_exemplo7.txt")
 Automato().from_regex("regex_exemplo8.txt").to_file("from_regex_exemplo8.txt")
