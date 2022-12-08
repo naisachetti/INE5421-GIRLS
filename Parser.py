@@ -81,6 +81,7 @@ class AnalisadorSintatico:
         self.gramatica = Gramatica().from_file(folder+"/grammar").tratada()
         self.token = Lexer.gerador()
         self.tabela = ParsingTable(self.gramatica)
+        self.tabela.to_csv(folder+"/tabela_sintatica.csv")
         self.pilha = Pilha()
         self.validate(self.gramatica)
 
@@ -100,13 +101,19 @@ class AnalisadorSintatico:
 
         topo = self.pilha.top()
 
-        if show_stack: print("-------------------")
+        if show_stack:
+            pilha_str = None
+            print("-------------------")
 
         while topo != "$":
-            if show_stack: print(topo, token_analisado, self.pilha, end=" ")
+            if show_stack: 
+                pilha_str = list(self.pilha)
+                pilha_str.reverse()
+                pilha_str = " , ".join(pilha_str)
+                print(f"token: {token_analisado}, topo: {topo}, ", end=" ")
             # Token no topo da pilha correto
             if topo == token_analisado:
-                if show_stack: print(topo)
+                print(f"terminal: {topo}, ", end=" ")
                 self.pilha.pop()
                 try:
                     token_analisado = next(token)
@@ -121,7 +128,8 @@ class AnalisadorSintatico:
             # Producao na pilha
             else:
                 producao = self.tabela[topo][token_analisado]
-                if show_stack: print(producao)
+                if show_stack: 
+                    print(f"producao: {producao}, ", end = "")
                 self.pilha.pop()
                 simbolos = list(producao)
                 simbolos.reverse()
@@ -131,6 +139,8 @@ class AnalisadorSintatico:
             while topo == "&":
                 self.pilha.pop()
                 topo = self.pilha.top()
+            if show_stack:
+                print(f"pilha: {pilha_str}")
         if token_analisado != "$":
             raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
         return True

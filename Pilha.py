@@ -27,5 +27,8 @@ class Pilha:
     def clear(self):
         self.elementos.clear()
 
+    def list(self):
+        return self.elementos.copy()
+
     def __repr__(self) -> str:
         return repr(self.elementos)
