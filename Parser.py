@@ -106,7 +106,10 @@ class AnalisadorSintatico:
             if topo == token_analisado:
                 if show_stack: print(topo)
                 self.pilha.pop()
-                token_analisado = next(self.token)
+                try:
+                    token_analisado = next(self.token)
+                except StopIteration:
+                    raise SyntaxError("Erro de Sintaxe no arquivo fonte (Arquivo terminou muito cedo)")
             # Token no topo da pilha incorreto
             elif topo in self.gramatica.terminais:
                 raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
@@ -138,6 +141,7 @@ class AnalisadorSintatico:
             sentenca = gramatica.generate_word(100)
             if not sentenca is None:
                 driver = TokenDriver(sentenca.split())
+                # TODO: ARRUMAR AQUIIII
                 try:
                     self.parse(driver)
                 except SyntaxError:
