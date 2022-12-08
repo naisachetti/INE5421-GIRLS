@@ -19,6 +19,7 @@ class AnalisadorLexico:
         tokens_regex = read_regex(tokens_path)
         autos = [Automato().from_regex(tokens_regex[token], token) for token in tokens_regex.keys()]
         self.automato = reduce(Automato.uniao_com, autos)
+        self.automato.to_file(self.folder + '/automata')
 
     def analisar(self):
         source = self.folder + '/program'
@@ -49,12 +50,18 @@ class AnalisadorLexico:
             return tokens
 
         self.tabela = reduce(iconcat, map(tokens, code.split()))
-        print(self.tabela)
+
+        for item in self.tabela:
+            print(f'{item[0] :<10}: {item[1]}')
+
+        self.to_csv()
 
     def to_csv(self):
-        with open(self.folder+'/lexer.csv', 'w') as csv:
+        def escape(str):
+            return str if str not in [',', '"'] else '"'+str+'"'
+        with open(self.folder+'/tabela_lexica.csv', 'w') as csv:
             for item in self.tabela:
-                csv.write(f"{item[0]},{item[1]}\n")
+                csv.write(f"{escape(item[0])},{escape(item[1])}\n")
 
 
     def gerador(self):

@@ -1,3 +1,5 @@
+import sys
+
 from Gramatica import Gramatica
 from Parser import AnalisadorSintatico
 from Lexer import AnalisadorLexico
@@ -10,4 +12,7 @@ class GIRLS:
         self.parser.parse(True)
 
 if __name__ == '__main__':
-    girls = GIRLS('pasca')
+    if len(sys.argv) < 1:
+        print('Informe o nome da pasta')
+    else:
+        girls = GIRLS(sys.argv[1])
