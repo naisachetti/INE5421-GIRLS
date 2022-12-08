@@ -17,10 +17,10 @@ class ParsingTable:
         firstpos = gramatica.firspost()
         followpos = gramatica.followpost()
         # print(firstpos, followpos)
-        # for nt in gramatica.nao_terminais:
-        #     if firstpos[nt].intersection(followpos[nt]):
-        #         print(gramatica)
-        #         raise SyntaxError(f"Gramatica nao eh LL1 nt: {nt} first:{firstpos[nt]}, follow:{followpos[nt]}")
+        for nt in gramatica.nao_terminais:
+            if firstpos[nt].intersection(followpos[nt]) and nt in gramatica.anulaveis():
+                print(gramatica)
+                raise SyntaxError(f"Gramatica nao eh LL1 nt: {nt} first:{firstpos[nt]}, follow:{followpos[nt]}")
         self.table = {}
 
         # Criacao da tabela
@@ -32,12 +32,11 @@ class ParsingTable:
         for nt, producoes in gramatica.producoes.items():
             for producao in producoes:
 
-                # print(producao)
                 # Preenchimento de quando for follow
                 if producao == "&":
                     for terminal in followpos[nt]:
                         if not self.table[nt][terminal] is None:
-                            raise RuntimeError(f"Tentei colocar duas producoes na tabela ll1 {nt} {terminal}")
+                            raise RuntimeError(f"Tentei colocar duas producoes na tabela LL1 {nt} {terminal}")
                         self.table[nt][terminal] = producao
                     continue
 
@@ -78,32 +77,36 @@ class ParsingTable:
                 csv.write(",".join(arquivo_linha)+"\n")
 
 class AnalisadorSintatico:
-    def __init__(self, gramatica: Gramatica) -> None:
-        # self.gramatica = gramatica.sem_recursao().fatorada().sem_inalcancaveis()
-        self.gramatica = gramatica
+    def __init__(self, folder: str, Lexer:TokenDriver) -> None:
+        self.gramatica = Gramatica().from_file(folder+"/grammar").tratada()
+        self.token = Lexer.gerador()
         self.tabela = ParsingTable(self.gramatica)
         self.pilha = Pilha()
+        self.validate(self.gramatica)
 
     # Faz o parsing dos tokens e valida a sintaxe
-    def parse(self, token: TokenDriver, show_stack = False):
+    def parse(self, show_stack = False):
+        
         # Inicializacao da pilha
         self.pilha.clear()
         self.pilha.push("$")
         self.pilha.push(self.gramatica.inicial)
 
+        # Leitura do token
         token_analisado = None
-        token = token.gerador()
-        token_analisado = next(token)
+        token_analisado = next(self.token)
 
         topo = self.pilha.top()
+
         if show_stack: print("-------------------")
+
         while topo != "$":
             if show_stack: print(topo, token_analisado, self.pilha, end=" ")
             # Token no topo da pilha correto
             if topo == token_analisado:
                 if show_stack: print(topo)
                 self.pilha.pop()
-                token_analisado = next(token)
+                token_analisado = next(self.token)
             # Token no topo da pilha incorreto
             elif topo in self.gramatica.terminais:
                 raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
@@ -134,7 +137,6 @@ class AnalisadorSintatico:
         for _ in range(10000):
             sentenca = gramatica.generate_word(100)
             if not sentenca is None:
-                # print(sentenca)
                 driver = TokenDriver(sentenca.split())
                 try:
                     self.parse(driver)
@@ -148,5 +150,6 @@ if __name__ == "__main__":
     arquivo = "gramatica_ex4.txt"
     pura = Gramatica().from_file(arquivo)
     tratada = Gramatica().from_file(arquivo).tratada()
-    parser = AnalisadorSintatico(tratada)
-    parser.validate(pura)
+    # p = ParsingTable(tratada)
+    # parser = AnalisadorSintatico("defauld", TokenDriver(""))
+    # parser.validate(pura)
