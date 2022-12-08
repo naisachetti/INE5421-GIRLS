@@ -85,8 +85,10 @@ class AnalisadorSintatico:
         self.validate(self.gramatica)
 
     # Faz o parsing dos tokens e valida a sintaxe
-    def parse(self, show_stack = False):
-        
+    def parse(self, show_stack = False, token: TokenDriver = None):
+
+        if token is None:
+            token = self.token
         # Inicializacao da pilha
         self.pilha.clear()
         self.pilha.push("$")
@@ -94,7 +96,7 @@ class AnalisadorSintatico:
 
         # Leitura do token
         token_analisado = None
-        token_analisado = next(self.token)
+        token_analisado = next(token)
 
         topo = self.pilha.top()
 
@@ -107,7 +109,7 @@ class AnalisadorSintatico:
                 if show_stack: print(topo)
                 self.pilha.pop()
                 try:
-                    token_analisado = next(self.token)
+                    token_analisado = next(token)
                 except StopIteration:
                     raise SyntaxError("Erro de Sintaxe no arquivo fonte (Arquivo terminou muito cedo)")
             # Token no topo da pilha incorreto
@@ -143,7 +145,7 @@ class AnalisadorSintatico:
                 driver = TokenDriver(sentenca.split())
                 # TODO: ARRUMAR AQUIIII
                 try:
-                    self.parse(driver)
+                    self.parse(token=driver.gerador())
                 except SyntaxError:
                     raise RuntimeError(f"Parseei errado uma sentenca gerada pela minha propria gramatica: {sentenca}")
                 validas += 1

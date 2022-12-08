@@ -49,6 +49,7 @@ class AnalisadorLexico:
             return tokens
 
         self.tabela = reduce(iconcat, map(tokens, code.split()))
+        print(self.tabela)
 
     def to_csv(self):
         with open(self.folder+'/lexer.csv', 'w') as csv:
@@ -59,6 +60,7 @@ class AnalisadorLexico:
     def gerador(self):
         for item in self.tabela:
             yield item[0]
+        yield '$'
 
 if __name__ == '__main__':
     al = AnalisadorLexico('portugues')

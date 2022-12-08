@@ -42,10 +42,11 @@ def read_regex(filename):
                         elif char != ':':
                             buffer += char
                         else:
-                            if len(buffer) > 1:
-                                regexes[buffer] = linha[len(buffer)+2 : len(linha)]
-                            else:
-                                raise RuntimeError("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
+                            regexes[buffer] = linha[len(buffer)+2 : len(linha)]
+                            #if len(buffer) > 1:
+                            #    regexes[buffer] = linha[len(buffer)+2 : len(linha)]
+                            #else:
+                            #    raise RuntimeError("Definição regular com formato incorreto. Não deve ser nomeada com apenas uma letra.")
 
     # Transforma as regex lidas em notacao infixada, com definicoes regulares, definicoes de
     # sequencias e com concatenacoes implicitas em uma regex em notacao prefixada, com definicoes
@@ -96,7 +97,7 @@ def substitui_regdefs(regdefs, regex_):
         # Se nenhuma substituicao foi feita na ultima passada, nao ha mais def. regulares na regex.
         if new_regex == regex:
             break
-    
+
     return new_regex
 
 # Adiciona sequencias de numeros ou letras do tipo [A-Za-z] e [0-9].
@@ -142,7 +143,7 @@ def adiciona_sequencias(regex):
                 # Para suportar definicoes de sequencias do tipo [A-Za-z], e não somente [A-Z] ou [a-z]
                 init_i += 3
 
-                # Para prevenir acesso a indices inexistentes na string por conta do nao fechamento da 
+                # Para prevenir acesso a indices inexistentes na string por conta do nao fechamento da
                 # definicao de sequencias, com ']'.
                 if (init_i+3) >= len(new_regex):
                     raise RuntimeError("Erro. Regex mal formada. Sequência de letras ou dígitos inválida.")
@@ -193,7 +194,7 @@ def infix_to_prefix(regex):
     # Definicao das ordens de precedencia e associatividade para os operadores
     prec_op = {'*':3, '+':3, '?':3, '.':2, '|': 1}
     assoc_op = {'*':"direita,", '+':"direita", '?':"direita", '.':"esquerda", '|':"esquerda"}
-    
+
     # Inverte regex infixada original
     regex_invertida = ""
     aux_regex_invertida = regex[::-1]

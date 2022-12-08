@@ -5,12 +5,9 @@ from Lexer import AnalisadorLexico
 class GIRLS:
     def __init__(self, folder):
         self.lexer = AnalisadorLexico(folder)
+        self.parser = AnalisadorSintatico(folder, self.lexer)
 
-        gramatica = Gramatica().from_file(folder + '/grammar').tratada()
-        self.parser = AnalisadorSintatico(gramatica)
-        self.parser.validate(gramatica)
-
-        self.parser.parse(self.lexer, True)
+        self.parser.parse(True)
 
 if __name__ == '__main__':
-    girls = GIRLS('default')
+    girls = GIRLS('pasca')
