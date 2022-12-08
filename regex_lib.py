@@ -110,6 +110,10 @@ def adiciona_sequencias(regex):
     for i in range (len(regex)):
         # Achou uma definicao de sequencia
         if new_regex[i+inc_i] == '[':
+            # Checa se '[' é literal, se for, ignora.
+            if (i+inc_i-1 >= 0) and (new_regex[i+inc_i-1] == '\\'):
+                continue
+
             seq_add = ""
             index_init = i+inc_i
             init_i = i+inc_i
