@@ -1,5 +1,0 @@
-S ::= B A
-A ::= a B A | &
-B ::= D C
-C ::= b D C | &
-D ::= c S c | d

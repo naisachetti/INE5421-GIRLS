@@ -1,8 +1,0 @@
-officium Sum(a, b) {
-	redeo a + b;
-}
-
-num1 = 420;
-num2 = 6,66;
-_ = Sum(num1, num2);
-__ = "teste";

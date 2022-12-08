@@ -1,6 +1,0 @@
-P ::= begin D C end
-D ::= inteiro id I
-I ::= , id I | &
-C ::= C ; T = E | T = E | com
-E ::= E + T | T
-T ::= id | id [ E ]

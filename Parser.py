@@ -48,7 +48,7 @@ class ParsingTable:
                 # print(nt, first)
                 for terminal in first:
                     if not self.table[nt][terminal] is None:
-                        raise RuntimeError(f"Tentei colocar duas producoes na tabela ll1 {nt} {terminal}")
+                        raise RuntimeError(f"Tentei colocar duas producoes na tabela LL1 {nt} {terminal}")
                     self.table[nt][terminal] = producao
 
     def __repr__(self):
@@ -73,7 +73,7 @@ class ParsingTable:
                         continue
                     producao_str = self.table[nt][terminal]
                     if producao_str != None:
-                        arquivo_linha[cabecalho.index(terminal)] = producao_str
+                        arquivo_linha[cabecalho.index(terminal)] = producao_str.replace('"', '"""').replace(',', '","')
                 csv.write(",".join(arquivo_linha)+"\n")
 
 class AnalisadorSintatico:
@@ -106,7 +106,7 @@ class AnalisadorSintatico:
             print("-------------------")
 
         while topo != "$":
-            if show_stack: 
+            if show_stack:
                 pilha_str = self.pilha.list()
                 # print(pilha_str)
                 pilha_str.reverse()
@@ -120,17 +120,20 @@ class AnalisadorSintatico:
                 try:
                     token_analisado = next(token)
                 except StopIteration:
-                    raise SyntaxError("Erro de Sintaxe no arquivo fonte (Arquivo terminou muito cedo)")
+                    return False
+                    # raise SyntaxError("Erro de Sintaxe no arquivo fonte (Arquivo terminou muito cedo)")
             # Token no topo da pilha incorreto
             elif topo in self.gramatica.terminais:
-                raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
+                return False
+                #raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
             # Producao inexistente
             elif self.tabela[topo][token_analisado] is None:
-                raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
+                return False
+                #raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
             # Producao na pilha
             else:
                 producao = self.tabela[topo][token_analisado]
-                if show_stack: 
+                if show_stack:
                     print(f"prod: {producao:<18} ", end = "")
                 self.pilha.pop()
                 simbolos = list(producao)
@@ -142,9 +145,10 @@ class AnalisadorSintatico:
                 self.pilha.pop()
                 topo = self.pilha.top()
             if show_stack:
-                print(f"s: [{pilha_str}]")
+                print(f"s: [{pilha_str : >50}]")
         if token_analisado != "$":
-            raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
+            return False
+            # raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
         return True
 
     # Gera palavras 100 palavras aleatorias a partir da gramatica e faz o parsgin delas
@@ -165,9 +169,4 @@ class AnalisadorSintatico:
                 break
 
 if __name__ == "__main__":
-    arquivo = "gramatica_ex4.txt"
-    pura = Gramatica().from_file(arquivo)
-    tratada = Gramatica().from_file(arquivo).tratada()
-    # p = ParsingTable(tratada)
-    parser = AnalisadorSintatico("defauld", TokenDriver(""))
-    # parser.validate(pura)
+    pass

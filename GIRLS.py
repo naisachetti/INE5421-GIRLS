@@ -8,8 +8,10 @@ class GIRLS:
     def __init__(self, folder):
         self.lexer = AnalisadorLexico(folder)
         self.parser = AnalisadorSintatico(folder, self.lexer)
-
-        self.parser.parse(True)
+        if self.parser.parse(True):
+            print("\nSintaxe e léxico correto do arquivo program")
+        else:
+            print("\nProblema na sintaxe")
 
 if __name__ == '__main__':
     if len(sys.argv) < 1:

@@ -1,7 +1,0 @@
-P ::= K L | b K L e
-K ::= c K | T V
-T ::= t T | &
-V ::= v V | &
-L ::= C J
-J ::= L | &
-C ::= P | com | &
