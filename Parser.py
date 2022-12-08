@@ -107,13 +107,15 @@ class AnalisadorSintatico:
 
         while topo != "$":
             if show_stack: 
-                pilha_str = list(self.pilha)
+                pilha_str = self.pilha.list()
+                # print(pilha_str)
                 pilha_str.reverse()
                 pilha_str = " , ".join(pilha_str)
-                print(f"token: {token_analisado}, topo: {topo}, ", end=" ")
+                print(f"tk: {token_analisado:<10} ", end=" ")
             # Token no topo da pilha correto
             if topo == token_analisado:
-                print(f"terminal: {topo}, ", end=" ")
+                if show_stack:
+                    print(f"top: {topo:<18} ", end=" ")
                 self.pilha.pop()
                 try:
                     token_analisado = next(token)
@@ -129,7 +131,7 @@ class AnalisadorSintatico:
             else:
                 producao = self.tabela[topo][token_analisado]
                 if show_stack: 
-                    print(f"producao: {producao}, ", end = "")
+                    print(f"prod: {producao:<18} ", end = "")
                 self.pilha.pop()
                 simbolos = list(producao)
                 simbolos.reverse()
@@ -140,7 +142,7 @@ class AnalisadorSintatico:
                 self.pilha.pop()
                 topo = self.pilha.top()
             if show_stack:
-                print(f"pilha: {pilha_str}")
+                print(f"s: [{pilha_str}]")
         if token_analisado != "$":
             raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
         return True
@@ -167,5 +169,5 @@ if __name__ == "__main__":
     pura = Gramatica().from_file(arquivo)
     tratada = Gramatica().from_file(arquivo).tratada()
     # p = ParsingTable(tratada)
-    # parser = AnalisadorSintatico("defauld", TokenDriver(""))
+    parser = AnalisadorSintatico("defauld", TokenDriver(""))
     # parser.validate(pura)
