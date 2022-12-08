@@ -1,6 +1,2 @@
-# Mesmo que:
-letter_:[C-Dd-g]
-numbers_: [0-9]
-simbols:!|/
-
->regex: (letter_|numbers_*) . simbols.b | &
+# Regex com ? (talvez) e + (fecho positivo)
+>regex:(a | b)+abb?

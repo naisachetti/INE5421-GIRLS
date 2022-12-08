@@ -15,8 +15,6 @@ class ArvoreSintatica:
         self.raiz = None
         self.simbolos: dict[int,Simbolo] = {} # Guarda cada nodo do tipo Simbolo por seu id, para busca rapida.
         self.cont_id = 1
-        # Cria uma Arvore Sintatica para testes
-        # self.criar_teste()
         # Cria a Arvore Sintatica para uma regex. regex deve ser recebido como argumento
         self.from_regex(regex)
         self.calcula_infos_nodos()
@@ -154,6 +152,7 @@ class ArvoreSintatica:
 
         return arvore
 
+    # Funcao auxiliar a get_arvore().
     # Retorna uma string com informações sobre nodos anulaveis, seus firstpos, lastpos e/ou followpos.
     # Pode-se selecionar as informações desejadas mudando os parâmetros de controle para True.
     def infos_nodo(self, nodo, anulaveis = False, firstpos = False, lastpos = False, followpos = False):
@@ -189,7 +188,14 @@ class ArvoreSintatica:
 
         return infos
 
-    # Cria uma AS a partir de uma regex prefixada
+    # Cria uma AS a partir de uma regex tratada.
+    # Sobre a regex de entrada:
+    #           Notacao: Prefixada
+    #           Operadores: *, +, ?, . e |
+    #           Definicoes regulares: Nao
+    #           Definicoes de sequencias: Nao
+    #           Concatenacoes implicitas: Nao
+    #           Literais: Sim
     def from_regex(self, regex: str):
         regex_processar = '.'+regex+'#'
 
@@ -198,9 +204,10 @@ class ArvoreSintatica:
         is_literal = False
         for caracter in regex_processar:
             if caracter == '\\' and not is_literal:
+                # Identifica literal
                 is_literal = True
             elif caracter == '*' and not is_literal:
-                # print("Add *")
+                # Adiciona *
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
                     operadores.pop()
@@ -208,7 +215,7 @@ class ArvoreSintatica:
                 op = self.add_operador(TipoOp.FECHO, nodo_pai)
                 operadores.push(op)
             elif caracter == '+' and not is_literal:
-                # print("Add +")
+                # Adiciona +
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
                     operadores.pop()
@@ -216,7 +223,7 @@ class ArvoreSintatica:
                 op = self.add_operador(TipoOp.FECHO_POSITIVO, nodo_pai)
                 operadores.push(op)            
             elif caracter == '?' and not is_literal:
-                # print("Add ?")
+                # Adiciona ?
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
                     operadores.pop()
@@ -224,7 +231,7 @@ class ArvoreSintatica:
                 op = self.add_operador(TipoOp.TALVEZ, nodo_pai)
                 operadores.push(op)
             elif caracter == '.' and not is_literal:
-                # print("Add .")
+                # Adiciona .
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
                     operadores.pop()
@@ -232,7 +239,7 @@ class ArvoreSintatica:
                 op = self.add_operador(TipoOp.CONCAT, nodo_pai)
                 operadores.push(op)
             elif caracter == '|' and not is_literal:
-                # print("Add |")
+                # Adiciona |
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
                     operadores.pop()
@@ -240,7 +247,7 @@ class ArvoreSintatica:
                 op = self.add_operador(TipoOp.OU, nodo_pai)
                 operadores.push(op)
             else:
-                # print("Add simbolo " + caracter)
+                # Adiciona simbolo, criando um ID unico para ele.
                 nodo_pai = operadores.top()
                 while (nodo_pai is not None) and (nodo_pai.cheio()):
                     operadores.pop()
@@ -259,25 +266,38 @@ class ArvoreSintatica:
         nodos.push(self.raiz)
         filhos_visit.push(0)
         while (nodos.size() > 0):
+            # Caso seja nodo Fecho.
             if isinstance(nodos.top(), Fecho):
+                # Se o filho (unico) não foi visitado, registra visita e segue 
+                # busca em profundidade.
                 if (filhos_visit.top() == 0):
                     num_visit = filhos_visit.pop()
                     filhos_visit.push(num_visit + 1)
                     nodos.push(nodos.top().get_filho())
                     filhos_visit.push(0)
+                # Se o filho (unico) foi visitado, retorna da busca em 
+                # profundidade neste nodo.
                 else:
                     nodos.pop()
                     filhos_visit.pop()
+            # Caso seja nodo FechoPositivo.
             elif isinstance(nodos.top(), FechoPositivo):
+                # Se o filho (unico) não foi visitado, registra visita e segue 
+                # busca em profundidade.
                 if (filhos_visit.top() == 0):
                     num_visit = filhos_visit.pop()
                     filhos_visit.push(num_visit + 1)
                     nodos.push(nodos.top().get_filho())
                     filhos_visit.push(0)
+                # Se o filho (unico) foi visitado.
                 else:
+                    # Retorna da busca emprofundidade neste nodo.
                     fecho_pos = nodos.pop()
                     filhos_visit.pop()
                     
+                    # Cria um nodo Concat equivalente ao nodo FechoPositivo, com um filho igual a subarvore 
+                    # do filho de FechoPositivo e outro filho nodo Fecho com uma copia da subarvore filha 
+                    # de FechoPositivo.
                     filho_fecho_pos = fecho_pos.get_filho()
                     novo_concat = Concat()
                     novo_concat.add_filho(filho_fecho_pos)
@@ -289,6 +309,7 @@ class ArvoreSintatica:
                         raiz_copia_subarvore = self.copiar_arvore(filho_fecho_pos)
                     novo_fecho.add_filho(raiz_copia_subarvore)
                     
+                    # Substituicao de FechoPositivo pelo novo Concat equivalente criado no pai de FechoPositivo.
                     nodo_pai = nodos.top()
                     if isinstance(nodo_pai, Fecho) or isinstance(nodo_pai, FechoPositivo) or isinstance(nodo_pai, Talvez):
                         nodo_pai.set_filho(novo_concat)
@@ -297,21 +318,29 @@ class ArvoreSintatica:
                             nodo_pai.set_filho_esq(novo_concat)
                         else:
                             nodo_pai.set_filho_dir(novo_concat)
+            # Caso seja nodo Talvez.
             elif isinstance(nodos.top(), Talvez):
+                # Se o filho (unico) não foi visitado, registra visita e segue 
+                # busca em profundidade.
                 if (filhos_visit.top() == 0):
                     num_visit = filhos_visit.pop()
                     filhos_visit.push(num_visit + 1)
                     nodos.push(nodos.top().get_filho())
                     filhos_visit.push(0)
+                # Se o filho (unico) foi visitado.
                 else:
+                    # Retorna da busca emprofundidade neste nodo.
                     talvez = nodos.pop()
                     filhos_visit.pop()
                     
+                    # Cria um nodo Ou equivalente ao nodo Talvez, com um filho '&' e outro 
+                    # igual a subarvore do filho de Talvez.
                     filho_talvez = talvez.get_filho()
                     novo_ou = Ou()
                     self.add_simbolo('&', novo_ou)
                     novo_ou.add_filho(filho_talvez)
                     
+                    # Substituicao de Talvez pelo novo Ou equivalente criado no pai de Talvez.
                     nodo_pai = nodos.top()
                     if isinstance(nodo_pai, Fecho) or isinstance(nodo_pai, FechoPositivo) or isinstance(nodo_pai, Talvez):
                         nodo_pai.set_filho(novo_ou)
@@ -320,21 +349,27 @@ class ArvoreSintatica:
                             nodo_pai.set_filho_esq(novo_ou)
                         else:
                             nodo_pai.set_filho_dir(novo_ou)
+            # Caso seja nodo Concat ou Ou.
             elif isinstance(nodos.top(), Concat) or isinstance(nodos.top(), Ou):
+                # Se nenhum filho foi visitado, segue visita em profundidade pelo filho da esquerda.
                 if (filhos_visit.top() == 0):
                     num_visit = filhos_visit.pop()
                     filhos_visit.push(num_visit + 1)
                     nodos.push(nodos.top().get_filho_esq())
                     filhos_visit.push(0)
+                # Se apenas um filho foi visitado, segue visita em profundidade pelo filho da direita.
                 elif (filhos_visit.top() == 1):
                     num_visit = filhos_visit.pop()
                     filhos_visit.push(num_visit + 1)
                     nodos.push(nodos.top().get_filho_dir())
                     filhos_visit.push(0)
+                # Se os dois filhos foram visitados, volta da visita em profundidade neste nodo.
                 else:
                     nodos.pop()
                     filhos_visit.pop()
+            # Caso seja nodo Simbolo.
             elif isinstance(nodos.top(), Simbolo):
+                # Apenas volta da visita em profundidade neste nodo.
                 nodos.pop()
                 filhos_visit.pop()
 
@@ -426,7 +461,7 @@ class ArvoreSintatica:
 
         return tipo
 
-    # Adiciona um operador como filho de um determinado nodo da AS
+    # Adiciona um operador como filho de um determinado nodo da AS.
     def add_operador(self, tipo: TipoOp, nodo_pai = None):
         if tipo == TipoOp.FECHO:
             op = Fecho()
@@ -448,14 +483,15 @@ class ArvoreSintatica:
 
         return op
 
-    # Adiciona um simbolo como filho de um determinado nodo da AS
+    # Adiciona um simbolo com um ID unico como filho de um determinado nodo da AS.
     def add_simbolo(self, nome: str, nodo_pai):
         simbolo = Simbolo(self.cont_id, nome)
         self.simbolos[self.cont_id] = simbolo
         self.cont_id += 1
         nodo_pai.add_filho(simbolo)
 
-    # Faz o calculo para definir nodos anulaveis, firstpos, lastpos e followpos da AS
+    # Em uma busca em profundidade, faz o calculo para definir nodos anulaveis, 
+    # firstpos, lastpos e followpos da AS.
     def calcula_infos_nodos(self):
         nodos = Pilha()
         filhos_visit = Pilha()
@@ -554,7 +590,7 @@ class Fecho(Nodo):
 
 class FechoPositivo(Nodo):
 
-    # Cria nodo do tipo Fecho (*) da AS
+    # Cria nodo do tipo FechoPositivo (+) da AS
     def __init__(self):
         super().__init__(anulavel=True)
         self.filho = None
@@ -579,7 +615,7 @@ class FechoPositivo(Nodo):
 
 class Talvez(Nodo):
 
-    # Cria nodo do tipo Fecho (*) da AS
+    # Cria nodo do tipo Talvez (+) da AS
     def __init__(self):
         super().__init__(anulavel=True)
         self.filho = None
@@ -664,7 +700,7 @@ class Concat(Nodo):
 
 class Ou(Nodo):
 
-    # Cria nodo do tipo Ou (+) da AS
+    # Cria nodo do tipo Ou (|) da AS
     def __init__(self):
         super().__init__(anulavel=False)
         self.filho_esq = None

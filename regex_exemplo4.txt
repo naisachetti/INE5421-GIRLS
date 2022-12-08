@@ -1,4 +1,4 @@
-# Comentário
+# Regex com definições regulares simples
 letter_1:a|b|c|d|e|f|g
 letter_2:letter_1|h|i|j|k|l
 letter_3:letter_2|m|n|o|p|q

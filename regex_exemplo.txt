@@ -1,2 +1,2 @@
-# Comentário
->regex:(a | b)*abb
+# Regex com operações simples
+>regex:((a | b)* . (a.b)) | a

@@ -314,7 +314,7 @@ class Automato:
                 estado[simbolo] = [destino_deterministico(estado["fecho"], simbolo)]
         return determinizado
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
     # epico = Automato().from_regex("regex_exemplo4.txt")
     # Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
     # a = Automato().from_file("unido_a.txt")
@@ -328,25 +328,3 @@ if __name__ == '__main__':
     # v = Automato().from_file("determinizado.txt")
     # ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
     # # # ab.to_file("epico.txt")
-    # regex_exemplo = read_regex("regex_exemplo.txt")
-    # Automato().from_regex(regex_exemplo[list(regex_exemplo.keys())[0]], list(regex_exemplo.keys())[0]).to_file("from_regex_exemplo.txt")
-    # regex_exemplo2 = read_regex("regex_exemplo2.txt")
-    # Automato().from_regex(regex_exemplo2[list(regex_exemplo2.keys())[0]], list(regex_exemplo2.keys())[0]).to_file("from_regex_exemplo2.txt")
-    # regex_exemplo3 = read_regex("regex_exemplo3.txt")
-    # Automato().from_regex(regex_exemplo3[list(regex_exemplo3.keys())[0]], list(regex_exemplo3.keys())[0]).to_file("from_regex_exemplo3.txt")
-    # regex_exemplo4 = read_regex("regex_exemplo4.txt")
-    # Automato().from_regex(regex_exemplo4[list(regex_exemplo4.keys())[0]], list(regex_exemplo4.keys())[0]).to_file("from_regex_exemplo4.txt")
-    # regex_exemplo5 = read_regex("regex_exemplo5.txt")
-    # Automato().from_regex(regex_exemplo5[list(regex_exemplo5.keys())[0]], list(regex_exemplo5.keys())[0]).to_file("from_regex_exemplo5.txt")
-    # regex_exemplo6 = read_regex("regex_exemplo6.txt")
-    # Automato().from_regex(regex_exemplo6[list(regex_exemplo6.keys())[0]], list(regex_exemplo6.keys())[0]).to_file("from_regex_exemplo6.txt")
-    # regex_exemplo7 = read_regex("regex_exemplo7.txt")
-    # Automato().from_regex(regex_exemplo7[list(regex_exemplo7.keys())[0]], list(regex_exemplo7.keys())[0]).to_file("from_regex_exemplo7.txt")
-    regex_exemplo8 = read_regex("regex_exemplo8.txt")
-    Automato().from_regex(regex_exemplo8[list(regex_exemplo8.keys())[0]], list(regex_exemplo8.keys())[0]).to_file("from_regex_exemplo8.txt")
-    regex_exemplo9 = read_regex("regex_exemplo9.txt")
-    Automato().from_regex(regex_exemplo9[list(regex_exemplo9.keys())[0]], list(regex_exemplo9.keys())[0]).to_file("from_regex_exemplo9.txt")
-
-    regex_exemplo10 = read_regex("regex_exemplo10.txt")
-    for nome_regex in regex_exemplo10.keys():
-        Automato().from_regex(regex_exemplo10[nome_regex], nome_regex).to_file(("from_regex_exemplo10_"+nome_regex+".txt"))
