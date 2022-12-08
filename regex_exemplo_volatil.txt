@@ -1,2 +1,0 @@
-# Arquivo para testes rápidos com regex.
->regex:\r\e\g\e\x

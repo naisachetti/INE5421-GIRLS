@@ -1,0 +1,15 @@
+# Arquivo para testes rápidos com regex.
+letters:[A-Za-z]
+numbers:[0-9]
+
+>begin:begin
+>end:end
+>inteiro:inteiro
+>com:com
+>,:\,
+>;:\;
+>=:\=
+>+:\+
+>[:\[
+>]:\]
+>id:letters(letters|numbers)*

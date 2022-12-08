@@ -1,3 +1,4 @@
+import sys
 from ArvoreSintatica import *
 from Pilha import *
 from regex_lib import read_regex
@@ -313,18 +314,3 @@ class Automato:
             for simbolo in determinizado.alfabeto:
                 estado[simbolo] = [destino_deterministico(estado["fecho"], simbolo)]
         return determinizado
-
-# if __name__ == '__main__':
-    # epico = Automato().from_regex("regex_exemplo4.txt")
-    # Automato().from_file("automato_exemplo.txt").to_file("veremos.txt")
-    # a = Automato().from_file("unido_a.txt")
-    # while True:
-    #     entrada = input()
-    #     if entrada == "stop":
-    #         break
-    #     else:
-    #         print(a.reconhece(entrada))
-    # b = Automato().from_file("unido_b.txt")
-    # v = Automato().from_file("determinizado.txt")
-    # ab = a.uniao_com(b).uniao_com(v).determinizado().rename()
-    # # # ab.to_file("epico.txt")
