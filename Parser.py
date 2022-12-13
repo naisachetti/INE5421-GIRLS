@@ -1,3 +1,4 @@
+from tokenize import Token
 from Gramatica import Gramatica
 from Pilha import Pilha
 
@@ -16,7 +17,8 @@ class ParsingTable:
         terminais += "$"
         firstpos = gramatica.firspost()
         followpos = gramatica.followpost()
-        # print(firstpos, followpos)
+        print(firstpos)
+        print(followpos)
         for nt in gramatica.nao_terminais:
             if firstpos[nt].intersection(followpos[nt]) and nt in gramatica.anulaveis():
                 print(gramatica)
@@ -32,19 +34,21 @@ class ParsingTable:
         for nt, producoes in gramatica.producoes.items():
             for producao in producoes:
 
+                # Preenchimento de first
+                # print("prod",producao)
+                first = gramatica.first_prod(producao)
+                # print(nt, first)
+
                 # Preenchimento de quando for follow
-                if producao == "&":
+                if producao == "&" or "&" in first:
                     for terminal in followpos[nt]:
                         if not self.table[nt][terminal] is None:
                             raise RuntimeError(f"Tentei colocar duas producoes na tabela LL1 {nt} {terminal}")
                         self.table[nt][terminal] = producao
-                    continue
+                    # continue
 
-                # Preenchimento de first
-                # print("prod",producao)
-                first = gramatica.first_prod(producao)
-                if "&" in first:
-                    raise RuntimeError
+                # if "&" in first:
+                #     raise RuntimeError
                 # print(nt, first)
                 for terminal in first:
                     if not self.table[nt][terminal] is None:
@@ -78,7 +82,7 @@ class ParsingTable:
 
 class AnalisadorSintatico:
     def __init__(self, folder: str, Lexer:TokenDriver) -> None:
-        self.gramatica = Gramatica().from_file(folder+"/grammar").tratada()
+        self.gramatica = Gramatica().from_file(folder+"/grammar")#.tratada()
         self.token = Lexer.gerador()
         self.tabela = ParsingTable(self.gramatica)
         self.tabela.to_csv(folder+"/tabela_sintatica.csv")
@@ -169,4 +173,10 @@ class AnalisadorSintatico:
                 break
 
 if __name__ == "__main__":
-    pass
+    gramatica = Gramatica().from_file("q1/grammar")
+    # print(gramatica)
+    tabela = ParsingTable(gramatica)
+    print(tabela)
+    driver = TokenDriver("c v f com ; b e ; b e $".split())
+    parser = AnalisadorSintatico("q1", driver)
+    print(parser.parse(True))
