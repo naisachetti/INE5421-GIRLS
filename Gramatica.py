@@ -101,7 +101,9 @@ class Preprocessor:
     def __init__(self) -> None:
         self.starting_symbol: str = None
 
-    def get_simbol_context(self, producao: list, index: int):
+    # Recebe uma producao e o indice de um simbolo depois de um parenteses (pode ser len da producao)
+    # Retorna o indice do parenteses que completa ele
+    def get_simbol_context(self, producao: list, index: int) -> int:
         scope_count = 0
         for i in range(index-1, -1, -1):
             if producao[i] == ")": scope_count -= 1
@@ -136,29 +138,47 @@ class Preprocessor:
 
         self.starting_symbol = grammar[0][0]
 
-        # Processa os simbolos "? + *"
+        delete_stack = []
+
+        # Processa coisas entre () que nao tem simbolos ? + * depois, normalmente eh so um OU
         for linha in grammar:
-            flag = False
-            print(linha)
             nt, producao = linha
             for index, simbolo in enumerate(producao):
-                if simbolo in {"?", "*", "+"}:
-                    scope_start = self.get_simbol_context(producao, index)
-                    corte = producao[scope_start+1:index-1]
-                    if simbolo == "?":
-                        grammar.append([f"AUX{aux}"] + [corte + ["|", "&"]])
-                    elif simbolo == "*":
-                        grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|", "&"]])
-                    elif simbolo == "+":
-                        grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|"] + corte])
+                if simbolo == ")" and ((index != len(producao)-1 and producao[index+1] not in {"\?", "\*", "\+"}) or index == len(producao)-1):
+                    scope_start = self.get_simbol_context(producao, index + 1)
+                    corte = producao[scope_start+1:index]
                     grammar.append([nt, producao[:scope_start]+[f"AUX{aux}"]+producao[index+1:]])
-                    grammar.remove(linha)
-                    flag = True
+                    grammar.append([f"AUX{aux}"] + [corte])
+                    delete_stack.append(linha)
                     aux += 1
                     break
-            if flag: continue
+        for linha in delete_stack:
+            grammar.remove(linha)
+
+        # Linhas a serem deletadas depois de iterar tudo pq n se deleta elementos de um iterador enquanto se itera sobre ele
+        delete_stack = []
+
+        # Processa os simbolos "? + *"
+        for linha in grammar:
+            nt, producao = linha
+            for index, simbolo in enumerate(producao):
+                if simbolo in {"\?", "\*", "\+"}:
+                    scope_start = self.get_simbol_context(producao, index)
+                    corte = producao[scope_start+1:index-1]
+                    grammar.append([nt, producao[:scope_start]+[f"AUX{aux}"]+producao[index+1:]])
+                    if simbolo == "\?":
+                        grammar.append([f"AUX{aux}"] + [corte + ["|", "&"]])
+                    elif simbolo == "\*":
+                        grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|", "&"]])
+                    elif simbolo == "\+":
+                        grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|"] + corte])
+                    delete_stack.append(linha)
+                    aux += 1
+                    break
+        for linha in delete_stack:
+            grammar.remove(linha) 
     
-        with open(filename, "w") as arquivo:
+        with open(f"{filename}_post", "w") as arquivo:
 
             # Escreve a primeira producao primeiro, isso eh importante
             for nt, producoes in grammar:
@@ -868,8 +888,15 @@ class Gramatica:
         return follow
 
 if __name__ == "__main__":
-    arquivo = "teste"
+    arquivo = "compiladores/grammar"
     Preprocessor().from_file(arquivo)
-    g = Gramatica().from_file(arquivo)
-    for _ in range(30):
-        print(g.generate_word())
+    g = Gramatica().from_file(f"{arquivo}_post")
+    total = 0
+    with open("compiladores/words.txt", "w") as arquivo:
+        while True:
+            word = g.generate_word(300)
+            if not word in {None, "; $", " $"}:
+                arquivo.write(f"{word}\n")
+                total += 1
+            if total == 100:
+                break

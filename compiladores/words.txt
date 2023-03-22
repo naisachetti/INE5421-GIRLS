@@ -1,0 +1,100 @@
+print float constant / int constant ; $
+string ident [ int constant ] [ int constant ] [ int constant ] ; $
+read ident [ null ] ; $
+int ident ; $
+read ident [ float constant ] ; $
+float ident [ int constant ] [ int constant ] [ int constant ] ; $
+def ident { ident [ - string constant * + float constant + null * + + - ident [ + int constant ] % string constant * string constant / float constant - null * float constant % + int constant % float constant - + null ] = float constant / + ident [ ident [ float constant + - int constant / ident [ - float constant % + null % string constant ] / int constant ] + string constant + - null * + null ] * - int constant ; } $
+int ident ; $
+int ident ; $
+return ; $
+print + ident [ string constant + string constant ] ; $
+return ; $
+def ident float ident , { return ; return ; } $
+ident [ null * string constant ] = ident [ + string constant % null ] ; $
+return ; $
+def ident string ident { string ident [ int constant ] ; } $
+float ident ; $
+if - null + int constant * + int constant + + ident [ + float constant * float constant + float constant % int constant + + float constant % + float constant ] ident [ string constant ] = ident ; $
+return ; $
+ident [ string constant + - - int constant + int constant / int constant % null % + float constant * int constant ] = - int constant / + string constant + + ident [ - ident [ + float constant ] ] / + string constant - null - - string constant ; $
+float ident [ int constant ] [ int constant ] [ int constant ] ; $
+return ; $
+float ident [ int constant ] [ int constant ] ; $
+def ident string ident { break ; } $
+string ident [ int constant ] ; $
+break ; $
+{ if null * float constant return ; else int ident ; break ; } $
+def ident { read ident [ + null % string constant + string constant ] ; } $
+return ; $
+{ string ident [ int constant ] ; } $
+def ident { ; } $
+def ident { ident [ - float constant % - ident [ float constant ] % - int constant % + string constant ] = - int constant % int constant % + null ; } $
+return ; $
+return ; $
+def ident string ident , int ident { print - float constant ; } $
+return ; $
+def ident int ident , { ; } $
+def ident float ident { { { break ; } } } $
+def ident int ident { read ident [ + string constant - string constant * float constant * int constant - + int constant / null % ident [ int constant ] ] ; } def ident float ident , int ident , string ident { break ; } $
+{ float ident ; } $
+print string constant - + float constant ; $
+break ; $
+int ident ; $
+break ; $
+{ return ; } $
+read ident [ null / float constant / - float constant ] ; $
+break ; $
+read ident [ - float constant + ident [ + int constant + - string constant % string constant / string constant + null ] % + null ] ; $
+break ; $
+float ident [ int constant ] [ int constant ] [ int constant ] ; $
+def ident string ident { if string constant % - string constant % - - int constant + int constant % float constant % int constant read ident [ + null ] ; else { ; } } $
+break ; $
+def ident string ident { break ; } $
+def ident { { print - null * float constant >= - null * int constant ; } } $
+def ident string ident { string ident ; } $
+float ident [ int constant ] [ int constant ] ; $
+return ; $
+def ident int ident , { if int constant > - null return ; else { ; } } $
+print - null * string constant / ident [ string constant - string constant * null + float constant * - ident [ string constant % int constant ] * - ident [ - string constant + + int constant * + int constant - + string constant ] ] ; $
+return ; $
+def ident float ident , string ident { break ; } $
+break ; $
+break ; $
+def ident int ident , string ident , string ident { string ident ; } $
+break ; $
+def ident float ident { break ; ; } $
+ident [ - null ] = new int [ string constant % null + int constant % null / + int constant - + float constant ] [ - null ] ; $
+break ; $
+def ident string ident , string ident { read ident [ - null + - string constant / null + null ] ; } def ident int ident , { ; } $
+return ; $
+def ident { break ; } $
+def ident { ; print + + float constant + - int constant / + float constant % - int constant / - null - + float constant + string constant % string constant ; } def ident int ident , { return ; } $
+break ; $
+def ident { string ident ; ; } def ident string ident { break ; float ident ; } def ident float ident { ; } $
+def ident int ident { return ; } $
+def ident int ident , int ident , { break ; { return ; break ; string ident [ int constant ] ; break ; read ident [ - null / string constant + - - int constant * float constant * + null ] ; } } $
+def ident float ident , string ident , float ident { break ; } $
+{ { break ; } } $
+return ; $
+string ident ; $
+break ; $
+float ident [ int constant ] [ int constant ] ; $
+def ident { int ident ; } $
+def ident float ident , { { return ; break ; } } $
+return ; $
+def ident { break ; } def ident int ident , int ident { break ; } $
+def ident { break ; } $
+break ; $
+return ; $
+ident [ int constant * - float constant ] = ident ident , ; $
+string ident [ int constant ] [ int constant ] [ int constant ] ; $
+int ident [ int constant ] ; $
+return ; $
+print + string constant / + null ; $
+break ; $
+def ident { ident [ float constant + null / + float constant - ident [ string constant ] - null ] = new float [ - int constant + string constant ] ; print + float constant ; } $
+float ident ; $
+break ; $
+{ read ident [ + ident [ float constant ] / null ] ; { { read ident [ - null / string constant * string constant + int constant % string constant ] ; break ; } { { return ; } } } } $
+print - string constant * + int constant + int constant - - int constant / + float constant ; $
