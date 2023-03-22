@@ -109,6 +109,19 @@ class Preprocessor():
             if scope_count == 0:
                 return i
         raise RuntimeError(f"Nao consegui parsear essa producao: {producao}")
+    
+    def spread_symbol_right(self, corte: list, inserido: str):
+        corte = corte.copy()
+        flag = False
+        for index, simbolo in enumerate(corte):
+            if flag:
+                flag = False
+                continue
+            if simbolo == "|":
+                corte.insert(index, inserido)
+                flag = True
+        corte.append(inserido)
+        return corte
 
     def from_file(self, filename: str):
         
@@ -134,9 +147,9 @@ class Preprocessor():
                     if simbolo == "?":
                         grammar.append([f"AUX{aux}"] + [corte + ["|", "&"]])
                     elif simbolo == "*":
-                        grammar.append([f"AUX{aux}"] + [corte + [f"AUX{aux}", "|", "&"]])
+                        grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|", "&"]])
                     elif simbolo == "+":
-                        grammar.append([f"AUX{aux}"] + [corte + [f"AUX{aux}", "|"] + corte])
+                        grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|"] + corte])
                     grammar.append([nt, producao[:scope_start]+[f"AUX{aux}"]+producao[index+1:]])
                     grammar.remove(linha)
                     flag = True
