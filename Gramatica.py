@@ -97,9 +97,9 @@ class Production(str):
         # print(self.conteudo, valor)
         return self.conteudo.index(valor)
 
-class Preprocessor():
+class Preprocessor:
     def __init__(self) -> None:
-        pass
+        self.starting_symbol: str = None
 
     def get_simbol_context(self, producao: list, index: int):
         scope_count = 0
@@ -124,18 +124,19 @@ class Preprocessor():
         return corte
 
     def from_file(self, filename: str):
-        
         aux = 0
-
         grammar = []
         # Simplesmente Le o arquivo
         with open(filename, "r") as arquivo:
             for linha in arquivo:
                 nt, producao = linha.split("::=")
-                producao = producao.split()
+                nt = nt.strip()
+                producao = [elemento.strip() for elemento in producao.split()]
                 grammar.append([nt, producao])
 
-        # Processa o simbolo "?"
+        self.starting_symbol = grammar[0][0]
+
+        # Processa os simbolos "? + *"
         for linha in grammar:
             flag = False
             print(linha)
@@ -158,7 +159,16 @@ class Preprocessor():
             if flag: continue
     
         with open(filename, "w") as arquivo:
+
+            # Escreve a primeira producao primeiro, isso eh importante
             for nt, producoes in grammar:
+                if nt == self.starting_symbol:
+                    arquivo.write(f"{nt} ::= {' '.join(producoes)}\n")
+                    break 
+
+            # Escreve o resto
+            for nt, producoes in grammar:
+                if nt == self.starting_symbol: continue
                 arquivo.write(f"{nt} ::= {' '.join(producoes)}\n")                    
 
 class Gramatica:
@@ -857,7 +867,9 @@ class Gramatica:
             follow[nt] = self.__followpos_nt(nt)
         return follow
 
-
 if __name__ == "__main__":
     arquivo = "teste"
-    g1 = Preprocessor().from_file(arquivo)
+    Preprocessor().from_file(arquivo)
+    g = Gramatica().from_file(arquivo)
+    for _ in range(30):
+        print(g.generate_word())
