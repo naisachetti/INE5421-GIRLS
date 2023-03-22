@@ -128,21 +128,25 @@ class Preprocessor():
             print(linha)
             nt, producao = linha
             for index, simbolo in enumerate(producao):
-                if simbolo == "?":
+                if simbolo in {"?", "*", "+"}:
                     scope_start = self.get_simbol_context(producao, index)
-                    corte = producao[scope_start:index]
-                    grammar.append([f"AUX{aux}"] + [corte + ["|", "&"]])
+                    corte = producao[scope_start+1:index-1]
+                    if simbolo == "?":
+                        grammar.append([f"AUX{aux}"] + [corte + ["|", "&"]])
+                    elif simbolo == "*":
+                        grammar.append([f"AUX{aux}"] + [corte + [f"AUX{aux}", "|", "&"]])
+                    elif simbolo == "+":
+                        grammar.append([f"AUX{aux}"] + [corte + [f"AUX{aux}", "|"] + corte])
                     grammar.append([nt, producao[:scope_start]+[f"AUX{aux}"]+producao[index+1:]])
                     grammar.remove(linha)
                     flag = True
+                    aux += 1
                     break
             if flag: continue
     
         with open(filename, "w") as arquivo:
             for nt, producoes in grammar:
-                arquivo.write(f"{nt} ::= {' '.join(producoes)}\n")
-                    
-
+                arquivo.write(f"{nt} ::= {' '.join(producoes)}\n")                    
 
 class Gramatica:
     
