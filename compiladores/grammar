@@ -1,0 +1,17 @@
+PROGRAM ::= ( STATEMENT | FUNCLIST ) ?
+STATEMENT ::= ( VARDECL ; | ATRIBSTAT ; | PRINTSTAT ; | READSTAT ; | RETURNSTAT ; | IFSTAT | FORSTAT | { STATELIST } | break ; | ; ) 
+VARDECL ::= ( int | float | string ) ident ( [ int_constant ] ) *
+ATRIBSTAT ::= LVALUE = ( EXPRESSION | ALLOCEXPRESSION )
+PRINTSTAT ::= print EXPRESSION
+READSTAT ::= read LVALUE
+RETURNSTAT ::= return
+IFSTAT ::= if ( EXPRESSION ) STATEMENT ( else STATEMENT ) ?
+FORSTAT ::= for ( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT ) STATEMENT
+STATELIST ::= STATEMENT ( STATELIST ) ?
+ALLOCEXPRESSION ::= new ( int | float | string ) ( [ EXPRESSION ] ) +
+EXPRESSION ::= NUMEXPRESSION ( ( < | > | <= | >= | == | != ) NUMEXPRESSION ) ?
+NUMEXPRESSION ::= TERM ( ( + | − ) TERM ) *
+TERM ::= UNARYEXPR ( ( * | / | % ) UNARYEXPR ) *
+UNARYEXPR ::=  ( ( + | − ) ) ? FACTOR
+FACTOR ::= ( int_constant | float_constant | string_constant | null | | LVALUE | ( EXPRESSION ) )
+LVALUE ::= ident ( [ EXPRESSION ] )

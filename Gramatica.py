@@ -97,8 +97,55 @@ class Production(str):
         # print(self.conteudo, valor)
         return self.conteudo.index(valor)
 
-class Gramatica:
+class Preprocessor():
+    def __init__(self) -> None:
+        pass
 
+    def get_simbol_context(self, producao: list, index: int):
+        scope_count = 0
+        for i in range(index-1, -1, -1):
+            if producao[i] == ")": scope_count -= 1
+            elif producao[i] == "(": scope_count += 1
+            if scope_count == 0:
+                return i
+        raise RuntimeError(f"Nao consegui parsear essa producao: {producao}")
+
+    def from_file(self, filename: str):
+        
+        aux = 0
+
+        grammar = []
+        # Simplesmente Le o arquivo
+        with open(filename, "r") as arquivo:
+            for linha in arquivo:
+                nt, producao = linha.split("::=")
+                producao = producao.split()
+                grammar.append([nt, producao])
+
+        # Processa o simbolo "?"
+        for linha in grammar:
+            flag = False
+            print(linha)
+            nt, producao = linha
+            for index, simbolo in enumerate(producao):
+                if simbolo == "?":
+                    scope_start = self.get_simbol_context(producao, index)
+                    corte = producao[scope_start:index]
+                    grammar.append([f"AUX{aux}"] + [corte + ["|", "&"]])
+                    grammar.append([nt, producao[:scope_start]+[f"AUX{aux}"]+producao[index+1:]])
+                    grammar.remove(linha)
+                    flag = True
+                    break
+            if flag: continue
+    
+        with open(filename, "w") as arquivo:
+            for nt, producoes in grammar:
+                arquivo.write(f"{nt} ::= {' '.join(producoes)}\n")
+                    
+
+
+class Gramatica:
+    
     # Inicia a gramatica
     def __init__(self) -> None:
 
@@ -795,14 +842,5 @@ class Gramatica:
 
 
 if __name__ == "__main__":
-    arquivo = "gramatica_ex2.txt"
-    g1 = Gramatica().from_file(arquivo)
-    #print(g1)
-    #print("----- sem &-prod e loops ------")
-    #g2 = Gramatica().from_file(arquivo).tratamento_1()
-    #print(g2)
-    #print("------ sem recursao e fatorada -----")
-    #g3 = Gramatica().from_file(arquivo).tratada()
-    #print(g3)
-    for _ in range(20):
-        print(g1.generate_word())
+    arquivo = "teste"
+    g1 = Preprocessor().from_file(arquivo)
