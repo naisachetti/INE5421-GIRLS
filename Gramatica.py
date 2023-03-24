@@ -144,7 +144,7 @@ class Preprocessor:
         for linha in grammar:
             nt, producao = linha
             for index, simbolo in enumerate(producao):
-                if simbolo == ")" and ((index != len(producao)-1 and producao[index+1] not in {"\?", "\*", "\+"}) or index == len(producao)-1):
+                if simbolo == ")" and ((index != len(producao)-1 and producao[index+1] not in {"?", "*", "+"}) or index == len(producao)-1):
                     scope_start = self.get_simbol_context(producao, index + 1)
                     corte = producao[scope_start+1:index]
                     grammar.append([nt, producao[:scope_start]+[f"AUX{aux}"]+producao[index+1:]])
@@ -162,15 +162,15 @@ class Preprocessor:
         for linha in grammar:
             nt, producao = linha
             for index, simbolo in enumerate(producao):
-                if simbolo in {"\?", "\*", "\+"}:
+                if simbolo in {"?", "*", "+"}:
                     scope_start = self.get_simbol_context(producao, index)
                     corte = producao[scope_start+1:index-1]
                     grammar.append([nt, producao[:scope_start]+[f"AUX{aux}"]+producao[index+1:]])
-                    if simbolo == "\?":
+                    if simbolo == "?":
                         grammar.append([f"AUX{aux}"] + [corte + ["|", "&"]])
-                    elif simbolo == "\*":
+                    elif simbolo == "*":
                         grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|", "&"]])
-                    elif simbolo == "\+":
+                    elif simbolo == "+":
                         grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|"] + corte])
                     delete_stack.append(linha)
                     aux += 1
@@ -178,6 +178,15 @@ class Preprocessor:
         for linha in delete_stack:
             grammar.remove(linha) 
     
+        # AQUI A GRAMATICA JA TA PRE PROCESSADA
+
+        mapeamento = {"\*": "*", "\+": "+", "\)": ")", "\(": "("}
+
+        for nt, producoes in grammar:
+            for i, simbolo in enumerate(producoes):
+                if simbolo in mapeamento:
+                    producoes[i] = mapeamento[simbolo]
+
         with open(f"{filename}_post", "w") as arquivo:
 
             # Escreve a primeira producao primeiro, isso eh importante
