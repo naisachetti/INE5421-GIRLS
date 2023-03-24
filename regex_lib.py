@@ -36,13 +36,15 @@ def read_regex(filename):
                 # Se nao eh uma definicao regular, mas sim uma ER
                 else:
                     buffer = ""
-                    for char in linha:
-                        if char == '>':
-                            pass
-                        elif char != ':':
-                            buffer += char
-                        else:
-                            regexes[buffer] = linha[len(buffer)+2 : len(linha)]
+                    separador = linha.find(':')
+                    regexes[linha[1:separador]] = linha[separador+1:]
+                    #for char in linha:
+                     #   if char == '>':
+                      #      pass
+                       # elif char != ':':
+                        #    buffer += char
+                       # else:
+                        #    regexes[buffer] = linha[len(buffer)+2 : len(linha)]
                             #if len(buffer) > 1:
                             #    regexes[buffer] = linha[len(buffer)+2 : len(linha)]
                             #else:
@@ -124,6 +126,8 @@ def adiciona_sequencias(regex):
                 # Verifica se caracteres sao do mesmo tipo e se o caracter de inicio e fim estao na ordem correta
                 # Caso isso se verifique, retorna uma lista de caracteres do tipo em questao.
                 caracteres = []
+                #if new_regex == "[char]":
+                #    caracteres = [chr(i) for i in range(0x0021, 0x1EFF)]
                 if seq_init.isupper() and seq_end.isupper() and seq_init < seq_end:
                     caracteres = list(string.ascii_uppercase)
                 elif  seq_init.islower() and seq_end.islower() and seq_init < seq_end:
