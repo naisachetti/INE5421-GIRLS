@@ -6,10 +6,11 @@ from operator import iconcat
 from glob import glob
 
 class AnalisadorLexico:
-    def __init__(self, folder):
+    def __init__(self, folder, nome_programa=""):
         self.folder = folder
         self.automato = None
         self.tabela = []
+        self.nome_programa = nome_programa
         self.from_file()
         self.analisar()
 
@@ -30,7 +31,12 @@ class AnalisadorLexico:
 
     # Analisa o arquivo 'program'
     def analisar(self):
-        source = self.folder + '/program'
+        source = ""
+        if self.nome_programa != "":
+            source = self.folder+'/'+self.nome_programa
+        else:
+            source = self.folder + '/program'
+        
         with open(source, 'r') as file:
             code = file.read()
 
