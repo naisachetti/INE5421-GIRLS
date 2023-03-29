@@ -1,5 +1,6 @@
 from random import randrange
 from string import ascii_uppercase
+from sys import argv
 
 class Production(str):
     def __init__(self, conteudo: str, separation_par = "space", nt_identification = None):
@@ -112,6 +113,7 @@ class Preprocessor:
                 return i
         raise RuntimeError(f"Nao consegui parsear essa producao: {producao}")
     
+    # Recebe um simbolo e coloca ele no fim de cada sequencia num |
     def spread_symbol_right(self, corte: list, inserido: str):
         corte = corte.copy()
         flag = False
@@ -125,6 +127,7 @@ class Preprocessor:
         corte.append(inserido)
         return corte
 
+    # Recebe um arquivo com a gramtica, processa e escreve num arquivo <gramatica>_post
     def from_file(self, filename: str):
         aux = 0
         grammar = []
@@ -222,6 +225,11 @@ class Gramatica:
             saida += f"{nao_terminal} -> {producoes}\n"
         return saida[:-1]
 
+    # Le a gramatica a partir de um arquivo mas tenta pre processala antes
+    def from_file_preprocess(self, filename: str):
+        Preprocessor().from_file(filename)
+        return self.from_file(f"{filename}_post")
+    
     # Le a gramatica de um arquivo
     def from_file(self, filename: str):
         with open(filename, "r") as arquivo:
@@ -267,7 +275,7 @@ class Gramatica:
         with open(filename, "w") as arquivo:
             for nao_terminal, producoes in self.producoes.items():
                 producoes = " | ".join(producoes)
-                arquivo.write(f"{nao_terminal} -> {producoes}")
+                arquivo.write(f"{nao_terminal} ::= {producoes}\n")
 
     # Simplesmente retorna uma producao aleatoria dentre as possiveis
     def random_production(self, nao_terminal: str) -> str:
@@ -472,7 +480,7 @@ class Gramatica:
                             producoes.append(nova_prod)
         return self
 
-    ################## Simbolos alcancaveis, loops e producoes unitarias #################
+    ################## Simbolos alcancaveis, loops e producoes unitarias e repetidas #################
 
     # (RF) Marca nao terminais alcancaveis a partir do informado (nao necessariamente por unitarias)
     def alcance(self, nao_terminal):
@@ -574,8 +582,24 @@ class Gramatica:
                             "\n!------gramatica problematica fim------!"
                     # Producao do tipo S -> S S S S que eh ambigua inerentemente
                     raise SyntaxError(f"Gramatica ambigua {nt} -> {producao}\n{problema}")
+        self.sem_unitarias()
+        self.sem_repeticoes()
+        self.sem_inalcancaveis()
+        self.to_file("grammar_t1")
         return self
 
+    # Tira repeticoes
+    def sem_repeticoes(self):
+        gram = self.producoes.items()
+        for i, (nt_1, producao_1) in enumerate(gram):
+            for j, (nt_2, producao_2) in enumerate(gram):
+                if j <= i: continue
+                if producao_1 == producao_2:
+                    self.substitute(nt_2, nt_1)
+        self.sem_inalcancaveis()
+        return self
+
+    
     ###################### Recursao ##############################
 
     # Altera a gramatica para retirar recursao direta daquele nao terminal
@@ -744,13 +768,19 @@ class Gramatica:
         for nao_terminal in self.nao_terminais:
             self.eliminar_nd_direto(nao_terminal)
 
+        self.sem_repeticoes()
+        self.to_file("lixo.txt")
+        # print(self)
+        exit()
+
         # TODO: POSSIVEL PROBLEMA PRA GRAMATICAS COMPLEXAS
         # Se ha nao terminal a esquerda entao ta na hora de herdar producao
         nt_lista = list(self.producoes.keys())
 
-        for nao_terminal in nt_lista:
+        for i, nao_terminal in enumerate(nt_lista):
 
-            for _ in range(100):
+            for j in range(100):
+                # print(j)
 
                 # Guarda p/ crescimento muito grande
                 if len(self.producoes[nao_terminal]) > 100:
@@ -758,8 +788,8 @@ class Gramatica:
 
                 # TODO: VER SE VALE USAR ISSO OU NAO
                 # Nao ha nd indireto a ser resolvido
-                # if not self.ha_nd_indireto(nao_terminal):
-                #     break
+                if not self.ha_nd_indireto(nao_terminal):
+                    break
 
                 # Itera sobre as producoes herdando todos os iniciais sempre que possivel
                 for producao in self.producoes[nao_terminal]:
@@ -777,13 +807,18 @@ class Gramatica:
             # Elimina ND direto gerado
             novo_nt = self.eliminar_nd_direto(nao_terminal)
             if novo_nt:
+                print(self)
+                exit()
                 nt_lista.append(novo_nt)
 
         return self
 
     # Abreviacao de um monte de coisa
     def tratada(self):
-        return self.sem_recursao().fatorada().sem_inalcancaveis()
+        g = self.sem_recursao().sem_inalcancaveis()
+        g.to_file("grammar_tratada")
+        # g = self.sem_recursao().fatorada().sem_inalcancaveis()
+        return g
 
     ################### First e Follow #####################
 
@@ -897,15 +932,18 @@ class Gramatica:
         return follow
 
 if __name__ == "__main__":
+    print(argumento)
     arquivo = "compiladores/grammar"
-    Preprocessor().from_file(arquivo)
-    g = Gramatica().from_file(f"{arquivo}_post")
+    # arquivo = "grammar_tratada"
+    # g = Gramatica().from_file(arquivo)
+    g = Gramatica().from_file_preprocess(f"{arquivo}").tratada()
     total = 0
     with open("compiladores/words.txt", "w") as arquivo:
         while True:
-            word = g.generate_word(300)
-            if not word in {None, "; $", " $"}:
-                arquivo.write(f"{word}\n")
+            word = g.generate_word(2000)
+            if not word in {None, "; $", " $"} and len(word.split()) > 10:
+                arquivo.write(f"{word}\n\n")
                 total += 1
+                print(total)
             if total == 100:
                 break

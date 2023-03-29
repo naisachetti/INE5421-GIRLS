@@ -131,7 +131,7 @@ def adiciona_sequencias(regex):
                 elif seq_init.isdigit() and seq_end.isdigit() and seq_init < seq_end:
                     caracteres = list(string.digits)
                 else:
-                    raise RuntimeError("Erro. Regex mal formada. Sequência de letras ou dígitos inválida.")
+                    raise RuntimeError("Erro. Regex mal formada. Sequencia de letras ou digitos invalida: ", caracteres)
 
                 # Monta sequencia de caracteres a ser inserida na regex.
                 if len(seq_add) > 0:

@@ -1,11 +1,10 @@
 letter:[a-zA-Z]
 number:[0-9]
-char:[char]
 
 >comment:\~(char)*\~
 >ident:(letter)(letter|number)*
 >int_constant:(number)+
->float_constant:(number)((\.)(number)+)?
+>float_constant:(number)+((\.)(number)+)?
 >string_constant:(\")(letter)+(\")
 >null:null
 >def:def

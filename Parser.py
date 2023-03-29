@@ -82,7 +82,7 @@ class ParsingTable:
 
 class AnalisadorSintatico:
     def __init__(self, folder: str, Lexer:TokenDriver) -> None:
-        self.gramatica = Gramatica().from_file(folder+"/grammar")#.tratada()
+        self.gramatica = Gramatica().from_file_preprocess(folder+"/grammar")#.tratada()
         self.token = Lexer.gerador()
         self.tabela = ParsingTable(self.gramatica)
         self.tabela.to_csv(folder+"/tabela_sintatica.csv")

@@ -1,0 +1,29 @@
+A ::= & | def ident ( PARAMLIST ) { STATELIST } FUNCLIST | def ident ( ) { STATELIST } FUNCLIST | def ident ( PARAMLIST ) { STATELIST } | def ident ( ) { STATELIST } | break ; | PRINTSTAT ; | ATRIBSTAT ; | RETURNSTAT ; | READSTAT ; | { STATELIST } | ; | VARDECL ; | for ( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT ) STATEMENT | if ( EXPRESSION ) STATEMENT AUX14 | if ( EXPRESSION ) STATEMENT
+FUNCLIST ::= def ident ( PARAMLIST ) { STATELIST } FUNCLIST | def ident ( ) { STATELIST } FUNCLIST | def ident ( PARAMLIST ) { STATELIST } | def ident ( ) { STATELIST }
+PRINTSTAT ::= print EXPRESSION
+READSTAT ::= read LVALUE
+RETURNSTAT ::= return
+AUX0 ::= float | string | int
+STATEMENT ::= break ; | PRINTSTAT ; | ATRIBSTAT ; | RETURNSTAT ; | READSTAT ; | { STATELIST } | ; | VARDECL ; | for ( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT ) STATEMENT | if ( EXPRESSION ) STATEMENT AUX14 | if ( EXPRESSION ) STATEMENT
+ATRIBSTAT ::= LVALUE = AUX3
+AUX3 ::= ident ( PARAMLISTCALL ) | ident ( ) | null AUX20 AUX19 AUX18 | ( NUMEXPRESSION ) AUX20 AUX19 AUX18 | string_constant AUX20 AUX19 AUX18 | float_constant AUX20 AUX19 AUX18 | int_constant AUX20 AUX19 AUX18 | null AUX19 AUX18 | ( NUMEXPRESSION ) AUX19 AUX18 | string_constant AUX19 AUX18 | float_constant AUX19 AUX18 | int_constant AUX19 AUX18 | null AUX20 AUX18 | ( NUMEXPRESSION ) AUX20 AUX18 | string_constant AUX20 AUX18 | float_constant AUX20 AUX18 | int_constant AUX20 AUX18 | null AUX18 | ( NUMEXPRESSION ) AUX18 | string_constant AUX18 | float_constant AUX18 | int_constant AUX18 | null AUX20 AUX19 | ( NUMEXPRESSION ) AUX20 AUX19 | string_constant AUX20 AUX19 | float_constant AUX20 AUX19 | int_constant AUX20 AUX19 | null AUX19 | ( NUMEXPRESSION ) AUX19 | string_constant AUX19 | float_constant AUX19 | int_constant AUX19 | null AUX20 | ( NUMEXPRESSION ) AUX20 | string_constant AUX20 | float_constant AUX20 | int_constant AUX20 | null | ( NUMEXPRESSION ) | string_constant | float_constant | int_constant | ident AUX10 AUX20 AUX19 AUX18 | ident AUX10 AUX19 AUX18 | ident AUX10 AUX20 AUX18 | ident AUX10 AUX18 | ident AUX10 AUX20 AUX19 | ident AUX10 AUX19 | ident AUX10 AUX20 | ident AUX10 | new AUX0 AUX17 | AUX6 FACTOR AUX20 AUX19 AUX18 | AUX6 FACTOR AUX19 AUX18 | AUX6 FACTOR AUX20 AUX18 | AUX6 FACTOR AUX18 | AUX6 FACTOR AUX20 AUX19 | AUX6 FACTOR AUX19 | AUX6 FACTOR AUX20 | AUX6 FACTOR
+AUX5 ::= == | > | != | <= | >= | <
+AUX6 ::= - | +
+AUX7 ::= * | % | /
+FACTOR ::= null | ( NUMEXPRESSION ) | string_constant | float_constant | int_constant | ident AUX10
+LVALUE ::= ident AUX10
+AUX10 ::= [ NUMEXPRESSION ]
+PARAMLISTCALL ::= ident | ident , PARAMLISTCALL | ident ,
+AUX14 ::= else STATEMENT
+STATELIST ::= break ; | PRINTSTAT ; | ATRIBSTAT ; | RETURNSTAT ; | READSTAT ; | { STATELIST } | ; | VARDECL ; | for ( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT ) STATEMENT | if ( EXPRESSION ) STATEMENT AUX14 | if ( EXPRESSION ) STATEMENT | break ; STATELIST | PRINTSTAT ; STATELIST | ATRIBSTAT ; STATELIST | RETURNSTAT ; STATELIST | READSTAT ; STATELIST | { STATELIST } STATELIST | ; STATELIST | VARDECL ; STATELIST | for ( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT ) STATEMENT STATELIST | if ( EXPRESSION ) STATEMENT AUX14 STATELIST | if ( EXPRESSION ) STATEMENT STATELIST
+VARDECL ::= AUX0 ident AUX16 | AUX0 ident
+AUX16 ::= [ int_constant ] AUX16 | [ int_constant ]
+AUX17 ::= [ NUMEXPRESSION ] | [ NUMEXPRESSION ] AUX17
+EXPRESSION ::= null AUX20 AUX19 AUX18 | ( NUMEXPRESSION ) AUX20 AUX19 AUX18 | string_constant AUX20 AUX19 AUX18 | float_constant AUX20 AUX19 AUX18 | int_constant AUX20 AUX19 AUX18 | ident AUX10 AUX20 AUX19 AUX18 | null AUX19 AUX18 | ( NUMEXPRESSION ) AUX19 AUX18 | string_constant AUX19 AUX18 | float_constant AUX19 AUX18 | int_constant AUX19 AUX18 | ident AUX10 AUX19 AUX18 | null AUX20 AUX18 | ( NUMEXPRESSION ) AUX20 AUX18 | string_constant AUX20 AUX18 | float_constant AUX20 AUX18 | int_constant AUX20 AUX18 | ident AUX10 AUX20 AUX18 | null AUX18 | ( NUMEXPRESSION ) AUX18 | string_constant AUX18 | float_constant AUX18 | int_constant AUX18 | ident AUX10 AUX18 | null AUX20 AUX19 | ( NUMEXPRESSION ) AUX20 AUX19 | string_constant AUX20 AUX19 | float_constant AUX20 AUX19 | int_constant AUX20 AUX19 | ident AUX10 AUX20 AUX19 | null AUX19 | ( NUMEXPRESSION ) AUX19 | string_constant AUX19 | float_constant AUX19 | int_constant AUX19 | ident AUX10 AUX19 | null AUX20 | ( NUMEXPRESSION ) AUX20 | string_constant AUX20 | float_constant AUX20 | int_constant AUX20 | ident AUX10 AUX20 | null | ( NUMEXPRESSION ) | string_constant | float_constant | int_constant | ident AUX10 | AUX6 FACTOR AUX20 AUX19 AUX18 | AUX6 FACTOR AUX19 AUX18 | AUX6 FACTOR AUX20 AUX18 | AUX6 FACTOR AUX18 | AUX6 FACTOR AUX20 AUX19 | AUX6 FACTOR AUX19 | AUX6 FACTOR AUX20 | AUX6 FACTOR
+AUX18 ::= AUX5 NUMEXPRESSION
+NUMEXPRESSION ::= null AUX20 AUX19 | ( NUMEXPRESSION ) AUX20 AUX19 | string_constant AUX20 AUX19 | float_constant AUX20 AUX19 | int_constant AUX20 AUX19 | ident AUX10 AUX20 AUX19 | null AUX19 | ( NUMEXPRESSION ) AUX19 | string_constant AUX19 | float_constant AUX19 | int_constant AUX19 | ident AUX10 AUX19 | null AUX20 | ( NUMEXPRESSION ) AUX20 | string_constant AUX20 | float_constant AUX20 | int_constant AUX20 | ident AUX10 AUX20 | null | ( NUMEXPRESSION ) | string_constant | float_constant | int_constant | ident AUX10 | AUX6 FACTOR AUX20 AUX19 | AUX6 FACTOR AUX19 | AUX6 FACTOR AUX20 | AUX6 FACTOR
+AUX19 ::= AUX6 TERM AUX19 | AUX6 TERM
+TERM ::= null AUX20 | ( NUMEXPRESSION ) AUX20 | string_constant AUX20 | float_constant AUX20 | int_constant AUX20 | ident AUX10 AUX20 | null | ( NUMEXPRESSION ) | string_constant | float_constant | int_constant | ident AUX10 | AUX6 FACTOR AUX20 | AUX6 FACTOR
+AUX20 ::= AUX7 UNARYEXPR AUX20 | AUX7 UNARYEXPR
+UNARYEXPR ::= null | ( NUMEXPRESSION ) | string_constant | float_constant | int_constant | ident AUX10 | AUX6 FACTOR
+PARAMLIST ::= AUX0 ident , PARAMLIST | AUX0 ident , | AUX0 ident

@@ -1,1 +1,1 @@
-STATEMENT
+print 1.2 / + null / 2.2 / "stringConstant" / 3.3 % - 15.0 ;

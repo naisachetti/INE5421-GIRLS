@@ -3,7 +3,7 @@ from regex_lib import read_regex
 
 from functools import reduce
 from operator import iconcat
-from glob import glob
+import sys
 
 class AnalisadorLexico:
     def __init__(self, folder):
@@ -69,6 +69,7 @@ class AnalisadorLexico:
         # Itera sobre o código aplicando a função tokens
         self.tabela = reduce(iconcat, map(tokens, code.split()))
         self.to_csv()
+        return self.tabela
 
     # Escreve a tabela léxica num arquivo CSV
     def to_csv(self):
@@ -85,4 +86,7 @@ class AnalisadorLexico:
         yield '$'
 
 if __name__ == '__main__':
-    pass
+    if len(sys.argv) == 1:
+        print("A execucao de make lexer run exige o parametro DIR=<diretorio>")
+    analisador = AnalisadorLexico(sys.argv[1])
+

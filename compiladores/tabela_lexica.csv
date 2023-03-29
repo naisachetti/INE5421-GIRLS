@@ -1,0 +1,15 @@
+ident,print
+float_constant,1.2
+/,/
++,+
+ident,null
+/,/
+float_constant,2.2
+/,/
+string_constant,"stringConstant"
+/,/
+float_constant,3.3
+%,%
+-,-
+float_constant,15.0
+;,;
