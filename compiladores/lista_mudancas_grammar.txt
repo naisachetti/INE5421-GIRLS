@@ -20,3 +20,8 @@ TERM ::= UNARYEXPR (  ( \* | / | % ) UNARYEXPR ) *
 UNARYEXPR ::=  (  ( \+ | - )  ) ? FACTOR
 FACTOR ::=  ( int_constant | float_constant | string_constant | null | LVALUE |  \( NUMEXPRESSION \)  ) 
 LVALUE ::= ident ( [ NUMEXPRESSION ] ) 
+
+
+Lista de mudanças:
+1) Para suportar a passagem de listas como parâmetro: Colocado "LVALUE" no lugar de "ident" em ambas as produções de PARAMLIST. 
+2) Para suporta um STATEMENT só para a chamada de uma função, sem atribuir o resultado a uma variável:  Adicionada a produção "FUNCALL;" em STATEMENT.

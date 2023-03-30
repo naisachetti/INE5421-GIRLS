@@ -16,7 +16,7 @@ char:[char]
 >if:if
 >else:else
 >for:for
->ident:(letter)(letter|number)*
+>ident:(letter)(letter|number|\_)*
 >(:\(
 >):\)
 >[:\[
@@ -36,3 +36,4 @@ char:[char]
 >/:\/
 >%:\%
 >;:\;
+>,:\,
