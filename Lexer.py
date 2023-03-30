@@ -20,9 +20,9 @@ class AnalisadorLexico:
 
         # Le o arquivo de definições regulares e tokens
         tokens_regex = read_regex(tokens_path)
-        for reg in tokens_regex.items():
-            print(reg)
-        # Cria os automâtos a partir das regex
+        for reg in tokens_regex.keys():
+            print(reg+":"+tokens_regex[reg])
+        # Cria os autômatos a partir das regex
         autos = [Automato().from_regex(tokens_regex[token], token) for token in tokens_regex.keys()]
         # Faz a união dos automâtos
         self.automato = reduce(Automato.uniao_com, autos)
