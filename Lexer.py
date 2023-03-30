@@ -36,7 +36,7 @@ class AnalisadorLexico:
             source = self.folder+'/'+self.nome_programa
         else:
             source = self.folder + '/program'
-        
+
         with open(source, 'r') as file:
             code = file.read()
 
@@ -48,34 +48,50 @@ class AnalisadorLexico:
         def tokens(word):
             tokens = []
             begin = 0
-            forward = 1
+            forward = 0
             max_forward = 10
             try:
-                while forward <= len(word):
-                    lexeme = word[begin:forward]
-                    next = [word[begin:forward+i+1] for i in range(max_forward)]
-                    # Enquanto (não reconhecer o lexema ou reconhecer o lexema adicionado de um caractere)
-                    # e não passamos do fim da palavra
-
-                    while (not self.automato.reconhece(lexeme) or any(map(self.automato.reconhece, next))) \
-                            and forward <= len(word):
-                        forward += 1
-                        lexeme = word[begin:forward]
-                        next = [word[begin:forward+i+1] for i in range(max_forward)]
-                    tk = self.automato.token(lexeme)
-                    tokens.append((tk, lexeme))
-                    print(f'{tk:>10} {lexeme}')
+                while 1:
                     begin = forward
                     forward = begin + 1
+                    lexeme = word[begin:forward]
+                    if lexeme == ' ': continue
+                    if lexeme == '': break
+
+                    next = [word[begin:forward+i+1] for i in range(max_forward) if not ' ' in word[begin:forward+i+1]]
+
+                    if lexeme == '"':
+                        forward = word[begin+1:].find('"') + begin + 2
+                        lexeme = word[begin:word[begin+1:].find('"')]
+                        token = 'string_constant'
+                    elif lexeme == '~':
+                        forward = word[begin+1:].find('~') + begin + 2
+                        lexeme = word[begin:forward]
+                        token = 'comment'
+                    else:
+                        # Enquanto (não reconhecer o lexema ou reconhecer o lexema adicionado de um caractere)
+                        # e não passamos do fim da palavra
+                        while (not self.automato.reconhece(lexeme) or any(map(self.automato.reconhece, next))) \
+                                and forward <= len(word):
+                            forward += 1
+                            lexeme = word[begin:forward]
+                            next.pop(0)
+                            if not ' ' in word[begin:forward+max_forward+1]:
+                                next.append(word[begin:forward+max_forward+1])
+                        token = self.automato.token(lexeme)
+
+                    tokens.append((token, lexeme))
+                    print(f'{token:>10} {lexeme}')
+
             # Caso o automâto não tenha uma transição, o lexema não faz parte da linguagem
             except KeyError:
-                print(f'Lexema {lexeme} não faz parte da linguagem')
+                print(f'Lexema "{lexeme}" não faz parte da linguagem')
                 exit()
 
             return tokens
 
         # Itera sobre o código aplicando a função tokens
-        self.tabela = reduce(iconcat, map(tokens, code.split()))
+        self.tabela = reduce(iconcat, map(tokens, [code]))
         self.to_csv()
 
     # Escreve a tabela léxica num arquivo CSV
@@ -88,7 +104,8 @@ class AnalisadorLexico:
 
     # Interface para o analisador sintático
     def gerador(self):
-        for item in self.tabela:
+        tabela = filter(lambda item: item[0] != 'comment', self.tabela)
+        for item in tabela:
             yield item[0]
         yield '$'
 

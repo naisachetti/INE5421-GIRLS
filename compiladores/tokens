@@ -1,6 +1,6 @@
 letter:[a-zA-Z]
 number:[0-9]
-simbols:[s]
+symbols:[s]
 
 >null:null
 >def:def
@@ -8,9 +8,11 @@ simbols:[s]
 >int:int
 >float:float
 >string:string
->int_constant:(number)+
->float_constant:(number)((\.)(number)+)?
->string_constant:\"(letter)+\"
+>return:return
+>int_constant:number+
+>float_constant:number+\.number*
+>string_constant:\"\"
+>comment:\~\~
 >print:print
 >read:read
 >if:if
