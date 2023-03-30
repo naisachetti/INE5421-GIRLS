@@ -1,27 +1,4 @@
-PROGRAM ::=  ( STATEMENT | FUNCLIST ) ?
-FUNCLIST ::= FUNCDEF FUNCLIST | FUNCDEF
-FUNCDEF ::= def ident \( PARAMLIST \) { STATELIST }
-PARAMLIST ::=  (  ( int | float | string ) LVALUE , PARAMLIST |  ( int | float | string ) LVALUE ) ?
-STATEMENT ::=  ( VARDECL ;  | ATRIBSTAT ;  | PRINTSTAT ;  | READSTAT ; | FUNCALL; | RETURNSTAT ;  | IFSTAT | FORSTAT | { STATELIST } | break ;  |  ;  ) 
-VARDECL ::=  ( int | float | string ) ident ( [ int_constant ] ) *
-ATRIBSTAT ::= LVALUE = ( EXPRESSION | ALLOCEXPRESSION | FUNCCALL ) 
-FUNCCALL ::= ident \( PARAMLISTCALL \) 
-PARAMLISTCALL ::=  ( ident , PARAMLISTCALL | ident ) ?
-PRINTSTAT ::= print EXPRESSION
-READSTAT ::= read LVALUE
-RETURNSTAT ::= return
-IFSTAT ::= if \( EXPRESSION \) STATEMENT ( else STATEMENT ) ?
-FORSTAT ::= for \( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT \) STATEMENT
-STATELIST ::= STATEMENT ( STATELIST ) ?
-ALLOCEXPRESSION ::= new ( int | float | string )  ( [ NUMEXPRESSION ] ) +
-EXPRESSION ::= NUMEXPRESSION (  ( < | > | <= | >= | == | != ) NUMEXPRESSION ) ?
-NUMEXPRESSION ::= TERM (  ( \+ | - ) TERM ) *
-TERM ::= UNARYEXPR (  ( \* | / | % ) UNARYEXPR ) *
-UNARYEXPR ::=  (  ( \+ | - )  ) ? FACTOR
-FACTOR ::=  ( int_constant | float_constant | string_constant | null | LVALUE |  \( NUMEXPRESSION \)  ) 
-LVALUE ::= ident ( [ NUMEXPRESSION ] ) 
-
-
 Lista de mudanças:
 1) Para suportar a passagem de listas como parâmetro: Colocado "LVALUE" no lugar de "ident" em ambas as produções de PARAMLIST. 
-2) Para suporta um STATEMENT só para a chamada de uma função, sem atribuir o resultado a uma variável:  Adicionada a produção "FUNCALL;" em STATEMENT.
+2) Para suportar um STATEMENT só para a chamada de uma função, sem atribuir o resultado a uma variável:  Adicionada a produção "FUNCALL;" em STATEMENT.
+3) Para suportar retorno de múltiplos valores de funções: Adicionado o símbolo não terminal "RETURNLIST", para ser utilizado na produção de "RETURNSTAT", e os não terminais "MULTIATRIBSTAT", "LEFTMULTIATRIBSTAT" e "RIGHTMULTIATRIBSTAT".
