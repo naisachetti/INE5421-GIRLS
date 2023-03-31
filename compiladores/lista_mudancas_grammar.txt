@@ -1,0 +1,4 @@
+Lista de mudanças:
+1) Para suportar a passagem de listas como parâmetro: Colocado "LVALUE" no lugar de "ident" em ambas as produções de PARAMLIST. 
+2) Para suportar um STATEMENT só para a chamada de uma função, sem atribuir o resultado a uma variável:  Adicionada a produção "FUNCALL;" em STATEMENT.
+3) Para suportar retorno de múltiplos valores de funções: Adicionado o símbolo não terminal "RETURNLIST", para ser utilizado na produção de "RETURNSTAT", e os não terminais "MULTIATRIBSTAT", "LEFTMULTIATRIBSTAT" e "RIGHTMULTIATRIBSTAT".

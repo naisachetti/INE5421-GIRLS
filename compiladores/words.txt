@@ -1,200 +1,200 @@
-if ( float_constant ) read ident [ int_constant ] ; $
-
-read ident [ int_constant - null / string_constant * string_constant ] ; $
-
-def ident ( string ident , ) { break ; } $
-
-def ident ( ) { string ident [ int_constant ] [ int_constant ] ; } $
-
-def ident ( int ident , string ident , ) { int ident [ int_constant ] [ int_constant ] [ int_constant ] ; } $
-
-print string_constant / null * float_constant / + int_constant ; $
-
-ident [ string_constant % string_constant * int_constant / int_constant ] = float_constant % int_constant == null % float_constant ; $
-
-print float_constant / - ident [ - ident [ float_constant * - ident [ null ] * string_constant / ident [ null * float_constant / + string_constant % - null * int_constant ] ] ] ; $
-
-def ident ( float ident ) { float ident [ int_constant ] ; int ident [ int_constant ] ; } $
-
-print ident [ float_constant % string_constant * + null * null ] % null ; $
-
-print ( + float_constant ) - string_constant / string_constant + int_constant ; $
-
-print string_constant / int_constant % + null % float_constant % null / null ; $
-
-ident [ + string_constant ] = null - + null % float_constant % string_constant * + null - string_constant != - float_constant % + ident [ string_constant + int_constant / string_constant * int_constant ] ; $
-
-{ break ; read ident [ null ] ; } $
-
-def ident ( int ident ) { break ; float ident ; } def ident ( ) { ; break ; } $
-
-def ident ( float ident , string ident ) { ; } $
-
-ident [ ( - null % null ) / null ] = ( - int_constant ) ; $
-
-int ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
-
-def ident ( ) { { return ; ; { ; } } return ; } $
-
-float ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
-
-{ { if ( string_constant % float_constant + string_constant - null ) ; break ; } break ; } $
-
-def ident ( ) { break ; { int ident [ int_constant ] [ int_constant ] [ int_constant ] ; } } $
-
-int ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
-
-def ident ( int ident , ) { ; } $
-
-if ( float_constant + string_constant > - string_constant ) break ; else return ; $
-
-read ident [ float_constant - ident [ float_constant ] + string_constant ] ; $
-
-int ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
-
-string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
-
-def ident ( ) { { string ident ; if ( - ( float_constant - + null - string_constant * - ( string_constant ) + - ( ( + int_constant ) ) ) + + null - null - + ident [ int_constant + string_constant / float_constant / ( + null - null / + ( - float_constant - string_constant / null % float_constant % float_constant % float_constant % null / + null / int_constant * int_constant ) ) % float_constant / null / int_constant % string_constant - null ] * + ( string_constant % + float_constant % + int_constant / float_constant * int_constant / float_constant / string_constant % ident [ - null ] * int_constant ) / int_constant ) if ( null ) break ; } } def ident ( ) { float ident [ int_constant ] ; } $
-
-{ { read ident [ ( ident [ string_constant ] * int_constant / ident [ float_constant * float_constant % ( int_constant ) * float_constant ] % - float_constant / ident [ - ident [ ( null / - float_constant ) ] + null % int_constant ] - float_constant ) ] ; } float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
-
-def ident ( ) { { return ; } } $
-
-ident [ float_constant ] = string_constant <= + ( null + + null / string_constant ) / null % null % null ; $
-
-def ident ( ) { float ident [ int_constant ] [ int_constant ] ; } $
-
-print float_constant / int_constant / ident [ + null % float_constant ] < int_constant ; $
-
-def ident ( float ident ) { print string_constant ; ; ; print null ; } $
-
-ident [ float_constant * string_constant ] = ident [ ( string_constant ) / - float_constant / string_constant % string_constant / + null * string_constant ] <= null ; $
-
-def ident ( float ident , float ident , ) { string ident ; } $
-
-def ident ( float ident ) { return ; } $
-
-def ident ( int ident , int ident , ) { if ( + ( int_constant / null / string_constant - + string_constant % string_constant % null / null ) * string_constant ) ; } def ident ( ) { return ; } $
-
-def ident ( string ident , int ident ) { break ; } $
-
-def ident ( ) { string ident [ int_constant ] ; } $
-
-{ ; ident [ ( float_constant ) ] = ( int_constant ) ; } $
-
-print int_constant % null % int_constant - + int_constant * float_constant % int_constant / string_constant * ident [ null * int_constant ] % int_constant / - null + float_constant ; $
+string ident [ int_constant ] ; $
 
 def ident ( int ident ) { return ; } $
 
-if ( int_constant ) string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+def ident ( int ident , float ident , ) { int ident [ int_constant ] ; } $
 
-def ident ( string ident ) { break ; break ; } $
+break ; $
 
-def ident ( int ident ) { int ident [ int_constant ] [ int_constant ] ; string ident [ int_constant ] ; } $
+def ident ( string ident , string ident , string ident ) { { return ; } } $
 
-def ident ( int ident , string ident , float ident , float ident , int ident , float ident , int ident ) { print float_constant ; } $
+print float_constant / + null / float_constant / string_constant / float_constant % - float_constant ; $
 
-{ string ident [ int_constant ] [ int_constant ] ; } $
+break ; $
 
-ident [ string_constant - null % - float_constant * null + int_constant + string_constant / - float_constant % - null % int_constant * int_constant ] = ( - float_constant / float_constant % + int_constant + - ( - float_constant + string_constant % null % null * - float_constant ) * int_constant ) + - int_constant * string_constant * float_constant / float_constant * - null ; $
+print ( null ) ; $
 
-read ident [ float_constant - string_constant - float_constant % string_constant - int_constant ] ; $
+float ident ; $
 
-def ident ( ) { int ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+return ; $
 
-ident [ float_constant % float_constant * string_constant ] = int_constant ; $
+return ; $
 
-{ float ident [ int_constant ] [ int_constant ] ; ; } $
+return ; $
 
-read ident [ + string_constant * null % int_constant * int_constant / + float_constant % + int_constant % string_constant * float_constant + null ] ; $
+break ; $
 
-{ ident [ ( string_constant ) ] = + ident [ float_constant + string_constant ] % string_constant % float_constant ; } $
+print float_constant ; $
 
-ident [ - ( null * null / string_constant ) / ident [ string_constant - int_constant ] ] = ( string_constant - + int_constant / string_constant + null + string_constant ) < string_constant ; $
+break ; $
 
-ident [ ident [ null - null - null * float_constant % - null % null % float_constant / - null + ident [ float_constant ] ] - float_constant * ident [ string_constant % float_constant - int_constant / + ( string_constant ) * + null + string_constant / + int_constant * - string_constant ] ] = ( null ) / int_constant * int_constant / string_constant / int_constant ; $
+return ; $
 
-read ident [ string_constant % ( null ) ] ; $
+return ; $
 
-def ident ( ) { return ; } def ident ( ) { ident [ null ] = int_constant ; } $
+def ident ( ) { return ; } $
 
-def ident ( ) { break ; } def ident ( int ident ) { break ; } $
+break ; $
 
-def ident ( ) { int ident [ int_constant ] [ int_constant ] ; } $
+read ident [ null ] ; $
 
-read ident [ ( int_constant ) * null + float_constant / string_constant ] ; $
+int ident [ int_constant ] ; $
 
-def ident ( ) { ident [ - null - string_constant + int_constant ] = string_constant / ( int_constant % null - null + string_constant % null ) * string_constant / null * null / + float_constant % float_constant * int_constant / - int_constant <= int_constant ; } $
+read ident [ null / string_constant + float_constant * float_constant / string_constant ] ; $
 
-if ( ident [ int_constant * + string_constant ] ) return ; $
+return ; $
 
-def ident ( ) { if ( int_constant ) return ; } $
+break ; $
 
-ident [ null + float_constant - + int_constant * string_constant * ( + float_constant ) - float_constant ] = string_constant - null * + null * null % + float_constant / + null ; $
+def ident ( ) { string ident [ int_constant ] ; { float ident ; ; } } $
+
+print int_constant % float_constant / - float_constant * + string_constant % + ident [ - null * string_constant ] ; $
+
+read ident [ ident [ float_constant / null % int_constant * float_constant ] + ident [ - null + string_constant ] % ident [ + string_constant ] ] ; $
+
+read ident [ string_constant * ident [ null % ( string_constant + float_constant % int_constant - int_constant / int_constant ) ] * ( int_constant ) * null / null / + ( float_constant ) / + null - string_constant ] ; $
+
+{ return ; read ident [ ident [ + float_constant ] ] ; ; } $
+
+break ; $
+
+ident [ int_constant % null / null % + string_constant ] = null ; $
+
+break ; $
+
+break ; $
+
+print float_constant ; $
+
+int ident ; $
+
+break ; $
+
+break ; $
+
+break ; $
+
+def ident ( ) { return ; } $
+
+def ident ( ) { read ident [ null ] ; } def ident ( ) { int ident [ int_constant ] ; string ident [ int_constant ] ; } $
+
+int ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+
+return ; $
 
 float ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
 
-read ident [ int_constant - float_constant % int_constant % float_constant * int_constant ] ; $
+break ; $
 
-def ident ( ) { { print ( int_constant ) >= + ( - ident [ - ( int_constant ) * + float_constant ] / float_constant % string_constant % - float_constant / ( null ) ) ; read ident [ float_constant ] ; } } $
+{ int ident ; } $
 
-def ident ( int ident , string ident , int ident , int ident , int ident , float ident , float ident , string ident , int ident ) { break ; } $
+return ; $
 
-def ident ( float ident , ) { break ; } $
+{ ident [ ident [ float_constant * int_constant % float_constant ] ] = string_constant * string_constant > float_constant ; } $
 
-def ident ( ) { return ; } def ident ( float ident , ) { ; } $
+return ; $
 
-if ( ident [ string_constant / + null / + string_constant ] != int_constant ) return ; else float ident [ int_constant ] [ int_constant ] ; $
+ident [ int_constant ] = ident [ int_constant % string_constant ] ; $
 
-int ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
+read ident [ int_constant * float_constant * null % int_constant / - ( string_constant % null ) + float_constant ] ; $
 
-int ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
+return ; $
 
-string ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
+read ident [ string_constant - int_constant / + string_constant / string_constant / - null % - float_constant * + float_constant ] ; $
 
-read ident [ float_constant * string_constant * null % int_constant % - float_constant % + null / null ] ; $
+def ident ( float ident , float ident ) { int ident [ int_constant ] ; } def ident ( int ident , string ident ) { string ident ; } $
 
-string ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
+float ident ; $
 
-read ident [ ( int_constant / int_constant % null ) % float_constant % null % int_constant ] ; $
+int ident [ int_constant ] ; $
 
-def ident ( ) { print float_constant * - null ; } $
+def ident ( ) { int ident [ int_constant ] ; } $
 
-read ident [ float_constant % null % int_constant ] ; $
+return ; $
 
-{ int ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+int ident ; $
 
-int ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
+float ident ; $
 
-if ( + null / int_constant % ( + null % float_constant - - string_constant + string_constant ) / ( float_constant ) / string_constant % - ident [ - float_constant ] % string_constant * ( int_constant / float_constant / ident [ int_constant ] / ( + int_constant ) * ident [ int_constant ] / - string_constant % - null ) ) { ; float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+break ; $
 
-def ident ( string ident , int ident , string ident ) { print null ; break ; ; } $
+return ; $
 
-def ident ( int ident , string ident , int ident , string ident , ) { float ident [ int_constant ] ; read ident [ float_constant / ( int_constant / int_constant / - string_constant / + int_constant * null / string_constant ) ] ; } $
+break ; $
 
-def ident ( int ident ) { print - float_constant / int_constant == null ; } $
+break ; $
 
-if ( int_constant ) float ident [ int_constant ] [ int_constant ] ; $
+break ; $
 
-def ident ( float ident ) { return ; } def ident ( ) { break ; } def ident ( ) { return ; } $
+float ident [ int_constant ] [ int_constant ] ; $
 
-def ident ( int ident , int ident ) { float ident ; } $
+{ break ; } $
+
+print ident [ ident [ int_constant ] % string_constant / int_constant / null + int_constant - string_constant % null ] ; $
+
+string ident [ int_constant ] ; $
 
 float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
 
-ident [ string_constant * null / null / + float_constant ] = ( null ) < null - - null / ( null ) * + null / - null * ( float_constant % ( string_constant * ident [ null / - float_constant ] % float_constant ) - float_constant * ident [ - int_constant * float_constant % + float_constant / float_constant % + float_constant ] * null % int_constant / - null ) ; $
+if ( string_constant ) ; else break ; $
 
-def ident ( float ident ) { break ; } def ident ( string ident , ) { break ; break ; } $
+float ident [ int_constant ] ; $
 
-if ( float_constant % float_constant % int_constant / + int_constant * - int_constant % + ident [ ident [ int_constant - - int_constant ] ] * float_constant % + null % ident [ - null % null ] * + float_constant % + ident [ null % null * string_constant ] % - int_constant > int_constant ) { ; } $
+read ident [ int_constant ] ; $
 
-def ident ( int ident ) { { print string_constant - float_constant % float_constant % string_constant - string_constant < int_constant ; } read ident [ - string_constant % - int_constant / ( ident [ float_constant - int_constant - int_constant ] + null + float_constant ) % - null + int_constant - int_constant * ident [ int_constant ] * - ident [ string_constant - float_constant - string_constant ] + + ( - string_constant / + null % int_constant - float_constant - int_constant - ( string_constant + + ident [ - int_constant / string_constant - - null * - float_constant % null / null * float_constant / null * null ] - string_constant ) ) / - null % null % int_constant ] ; } $
+float ident ; $
 
-def ident ( ) { return ; read ident [ float_constant + string_constant + + ident [ float_constant % null % - ident [ + float_constant + float_constant - null / string_constant + null / + ( float_constant ) / string_constant / ident [ null / string_constant % string_constant ] - int_constant ] - float_constant ] % float_constant % float_constant ] ; } $
+print ( null ) == null ; $
 
-def ident ( int ident , ) { print string_constant ; } $
+{ return ; } $
 
-print int_constant * int_constant >= ( + null % string_constant % null ) ; $
+string ident [ int_constant ] ; $
 
-def ident ( ) { ; } def ident ( ) { return ; string ident ; } $
+break ; $
+
+float ident ; $
+
+float ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
+
+def ident ( float ident , float ident , int ident , int ident , string ident ) { { return ; } ; if ( null == int_constant ) ; return ; break ; } def ident ( ) { break ; } $
+
+string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+
+def ident ( int ident ) { ; } def ident ( string ident ) { break ; } $
+
+print ( + null ) ; $
+
+if ( + null * - string_constant / null * null % float_constant / float_constant % float_constant / int_constant * float_constant * float_constant ) break ; $
+
+ident [ float_constant % string_constant / - ident [ string_constant ] % float_constant ] = int_constant ; $
+
+read ident [ ( ident [ int_constant % string_constant * null % int_constant ] ) ] ; $
+
+break ; $
+
+int ident [ int_constant ] ; $
+
+return ; $
+
+print float_constant / + null * string_constant - ( float_constant ) + string_constant * null != float_constant / null / int_constant - string_constant ; $
+
+return ; $
+
+return ; $
+
+return ; $
+
+int ident ; $
+
+def ident ( float ident , float ident ) { { break ; } } def ident ( int ident ) { break ; ; } $
+
+return ; $
+
+break ; $
+
+string ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
+
+int ident [ int_constant ] [ int_constant ] ; $
+
+read ident [ ( null - - float_constant % string_constant / - float_constant ) % string_constant / null ] ; $
 

@@ -36,13 +36,15 @@ def read_regex(filename):
                 # Se nao eh uma definicao regular, mas sim uma ER
                 else:
                     buffer = ""
-                    for char in linha:
-                        if char == '>':
-                            pass
-                        elif char != ':':
-                            buffer += char
-                        else:
-                            regexes[buffer] = linha[len(buffer)+2 : len(linha)]
+                    separador = linha.find(':')
+                    regexes[linha[1:separador]] = linha[separador+1:]
+                    #for char in linha:
+                     #   if char == '>':
+                      #      pass
+                       # elif char != ':':
+                        #    buffer += char
+                       # else:
+                        #    regexes[buffer] = linha[len(buffer)+2 : len(linha)]
                             #if len(buffer) > 1:
                             #    regexes[buffer] = linha[len(buffer)+2 : len(linha)]
                             #else:
@@ -114,51 +116,72 @@ def adiciona_sequencias(regex):
             if (i+inc_i-1 >= 0) and (new_regex[i+inc_i-1] == '\\'):
                 continue
 
-            seq_add = ""
-            index_init = i+inc_i
-            init_i = i+inc_i
-            while new_regex[init_i+1] != ']':
-                seq_init = new_regex[init_i+1]
-                seq_end = new_regex[init_i+3] # Motivo da verificação "if init_i+3 >= len(new_regex)"
-
-                # Verifica se caracteres sao do mesmo tipo e se o caracter de inicio e fim estao na ordem correta
-                # Caso isso se verifique, retorna uma lista de caracteres do tipo em questao.
-                caracteres = []
-                if seq_init.isupper() and seq_end.isupper() and seq_init < seq_end:
-                    caracteres = list(string.ascii_uppercase)
-                elif  seq_init.islower() and seq_end.islower() and seq_init < seq_end:
-                    caracteres = list(string.ascii_lowercase)
-                elif seq_init.isdigit() and seq_end.isdigit() and seq_init < seq_end:
-                    caracteres = list(string.digits)
-                else:
-                    raise RuntimeError("Erro. Regex mal formada. Sequencia de letras ou digitos invalida: ", caracteres)
-
+            if (i+inc_i+2 < len(new_regex)) and (new_regex[i+inc_i+1:i+inc_i+3] == 's]'):
+                caracteres = list(string.printable)[62:-6]
+                seq_add = ""
+                index_init = i+inc_i
+                init_i = i+inc_i
                 # Monta sequencia de caracteres a ser inserida na regex.
-                if len(seq_add) > 0:
-                    seq_add += '|('
-                else:
-                    seq_add += '('
+                seq_add += '('
                 for char in caracteres:
-                    if char >= seq_init and char <= seq_end:
-                        seq_add += char+'|'
+                    seq_add += '\\'+char+'|'
                 seq_add = seq_add[:-1]
                 seq_add += ')'
 
-                # Para suportar definicoes de sequencias do tipo [A-Za-z], e não somente [A-Z] ou [a-z]
-                init_i += 3
+                # Adiciona sequencia a regex
+                seq_add = '(' + seq_add + ')'
+                index_end = init_i+1
+                new_regex = new_regex[0:index_init] + seq_add + new_regex[index_end+2:len(new_regex)]
+                inc_i += len(seq_add)-(index_end-index_init)-2
+            else:             
+                seq_add = ""
+                index_init = i+inc_i
+                init_i = i+inc_i
+                while new_regex[init_i+1] != ']':
+                    seq_init = new_regex[init_i+1]
+                    seq_end = new_regex[init_i+3] # Motivo da verificação "if init_i+3 >= len(new_regex)"
 
-                # Para prevenir acesso a indices inexistentes na string por conta do nao fechamento da
-                # definicao de sequencias, com ']'.
-                if (init_i+3) >= len(new_regex):
-                    raise RuntimeError("Erro. Regex mal formada. Sequência de letras ou dígitos inválida.")
+                    # Verifica se caracteres sao do mesmo tipo e se o caracter de inicio e fim estao na ordem correta
+                    # Caso isso se verifique, retorna uma lista de caracteres do tipo em questao.
+                    caracteres = []
+                    #if new_regex == "[char]":
+                    #    caracteres = [chr(i) for i in range(0x0021, 0x1EFF)]
+                    if seq_init.isupper() and seq_end.isupper() and seq_init < seq_end:
+                        caracteres = list(string.ascii_uppercase)
+                    elif  seq_init.islower() and seq_end.islower() and seq_init < seq_end:
+                        caracteres = list(string.ascii_lowercase)
+                    elif seq_init.isdigit() and seq_end.isdigit() and seq_init < seq_end:
+                        caracteres = list(string.digits)
+                    else:
+                        raise RuntimeError("Erro. Regex mal formada. Sequência de letras ou dígitos inválida.")
 
-            # Adiciona sequencia a regex
-            seq_add = '(' + seq_add + ')'
-            index_end = init_i+1
-            new_regex = new_regex[0:index_init] + seq_add + new_regex[index_end+1:len(new_regex)]
-            inc_i += len(seq_add)-(index_end-index_init)-1
+                    # Monta sequencia de caracteres a ser inserida na regex.
+                    if len(seq_add) > 0:
+                        seq_add += '|('
+                    else:
+                        seq_add += '('
+                    for char in caracteres:
+                        if char >= seq_init and char <= seq_end:
+                            seq_add += char+'|'
+                    seq_add = seq_add[:-1]
+                    seq_add += ')'
 
+                    # Para suportar definicoes de sequencias do tipo [A-Za-z], e não somente [A-Z] ou [a-z]
+                    init_i += 3
+
+                    # Para prevenir acesso a indices inexistentes na string por conta do nao fechamento da
+                    # definicao de sequencias, com ']'.
+                    if (init_i+3) >= len(new_regex):
+                        raise RuntimeError("Erro. Regex mal formada. Sequência de letras ou dígitos inválida.")
+
+                # Adiciona sequencia a regex
+                seq_add = '(' + seq_add + ')'
+                index_end = init_i+1
+                new_regex = new_regex[0:index_init] + seq_add + new_regex[index_end+1:len(new_regex)]
+                inc_i += len(seq_add)-(index_end-index_init)-1
+    
     return new_regex
+
 
 # Coloca literais entre parenteses. Assim, "protege" literais da adicao de concatenacoes implicitas indevidas.
 # Retorna a regex passada como parametro com os literais entre parenteses.
