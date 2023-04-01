@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-print 1.2 / + null / 2.2 / "stringConstant" / 3.3 % - 15.0 ;
-=======
 {
 {
-  ~isso eh um comentario~
+  ~isso nao eh um cachimbo~
   float x;
   float z;
   int i;
@@ -43,4 +40,3 @@ print 1.2 / + null / 2.2 / "stringConstant" / 3.3 % - 15.0 ;
   return;
 }
 }
->>>>>>> 658aea823253117b003e28a2540b668c78c8d6e2

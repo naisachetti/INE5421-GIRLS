@@ -1,33 +1,6 @@
-<,<
-<,<
-<,<
-<,<
-<,<
-<,<
-<,<
-ident,HEAD
-print,print
-float_constant,1.2
-/,/
-+,+
-null,null
-/,/
-float_constant,2.2
-/,/
-string_constant,
-/,/
-float_constant,3.3
-%,%
--,-
-float_constant,15.0
-;,;
-==,==
-==,==
-==,==
-=,=
 {,{
 {,{
-comment,~isso eh um comentario~
+comment,~isso nao eh um cachimbo~
 float,float
 ident,x
 ;,;
@@ -189,12 +162,3 @@ return,return
 ;,;
 },}
 },}
->,>
->,>
->,>
->,>
->,>
->,>
->,>
-int_constant,658
-ident,aea823253117b003e28a2540b668c78c8d6e2

@@ -932,7 +932,7 @@ class Gramatica:
         return follow
 
 if __name__ == "__main__":
-    print(argumento)
+    # print(argumento)
     arquivo = "compiladores/grammar"
     # arquivo = "grammar_tratada"
     # g = Gramatica().from_file(arquivo)

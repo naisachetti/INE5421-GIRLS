@@ -44,6 +44,7 @@ class AnalisadorLexico:
         for char in ['\t', '\r']:
             code = code.replace(char, '')
         code = code.split('\n')
+
         # Obtem todos os tokens de uma string
         def tokens(word):
             tokens = []
@@ -94,7 +95,6 @@ class AnalisadorLexico:
         for index, line in enumerate(code):
             aux = tokens(line)
             for t in filter(lambda x: x[0] == 'ident', aux):
-                print(t)
                 if t[1] in self.tabela_simbolos:
                     self.tabela_simbolos[t[1]].append(index)
                 else:
@@ -114,7 +114,6 @@ class AnalisadorLexico:
         with open(self.folder+'/tabela_simbolos.csv', 'w') as csv:
             for item in self.tabela_simbolos.items():
                 a = escape(list_to_text(item[1]))
-                print(a)
                 csv.write(f"{escape(item[0])},{a}\n")
 
     # Interface para o analisador sintático
@@ -125,6 +124,6 @@ class AnalisadorLexico:
         yield '$'
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        print("A execucao de make lexer run exige o parametro DIR=<diretorio>")
-    analisador = AnalisadorLexico(sys.argv[1])
+    if len(sys.argv) <= 2:
+        print("A execucao de make lexer run exige os parametros DIR=<diretorio> PROGRAM=<programa>")
+    analisador = AnalisadorLexico(sys.argv[1], sys.argv[2])
