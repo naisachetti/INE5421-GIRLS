@@ -38,11 +38,12 @@ class AnalisadorLexico:
             source = self.folder + '/program'
 
         with open(source, 'r') as file:
-            code = file.read()
+            code = file.readlines()
 
         # Substitui caracteres especiais por espaços
         for char in ["\n", '\t', '\r']:
-            code = code.replace(char, ' ')
+            for line in code:
+                line = line.replace(char, ' ')
 
         # Obtem todos os tokens de uma string
         def tokens(word):
@@ -91,7 +92,7 @@ class AnalisadorLexico:
             return tokens
 
         # Itera sobre o código aplicando a função tokens
-        self.tabela = reduce(iconcat, map(tokens, [code]))
+        self.tabela = reduce(iconcat, map(tokens, code))
         self.to_csv()
         return self.tabela
 
@@ -111,7 +112,7 @@ class AnalisadorLexico:
         yield '$'
 
 if __name__ == '__main__':
-    if len(sys.argv) == 1:
-        print("A execucao de make lexer run exige o parametro DIR=<diretorio>")
-    analisador = AnalisadorLexico(sys.argv[1])
+    if len(sys.argv) <= 2:
+        print("A execucao de make lexer run exige os parametros DIR=<diretorio> PROGRAM=<programa>")
+    analisador = AnalisadorLexico(sys.argv[1], sys.argv[2])
 
