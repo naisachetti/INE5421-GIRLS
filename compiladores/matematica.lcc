@@ -1,0 +1,81 @@
+~Somar dois polinômios.~
+def addPolinomials(int coefA[], int coefB[], int number_coef) {
+    int coefAB[number_coef];
+    int i;
+    for (i=0; i<number_coef; i=i+1) {
+        coefAB[i] = coefA[i] + coefB[i];
+    }
+    return coefAB;
+}
+
+~Multiplicar dois polinômios.~
+def multiplyPolinomials(int coefA[], int coefB[], int number_coef) {
+    int coefAB[number_coef];
+    int i;
+    for (i=0; i<number_coef; i=i+1) {
+        coefAB[i] = coefA[i] * coefB[i];
+    }
+    return coefAB;
+}
+
+~Calcular fatorial.~
+def factorial(int x) {
+    int fac;
+    fac = x;
+    int i;
+    for (i=x-1; i>0; i=i-1) {
+        fac = fac*i;
+    }
+    return fac;
+}
+
+~Calcular número de Fibonacci.~
+def fibonacci(int x) {
+    if (x == 0) {
+        return 0;
+    }
+    if (x == 1) {
+        return 1;
+    }
+    int fib;
+    fib = fibonacci(x-1)+fibonacci(x-2);
+}
+
+~Encontrar o MDC (GCD - Greatest Common Divisor) de dois números. Adaptado de <https://www.geeksforgeeks.org/eulers-totient-function/>.~
+def gcd(int x, int y) {
+    if (x == 0) {
+        return b;
+    }
+    int gcd_xy;
+    gcd_xy =  gcd(b%a, a);
+}
+
+~Função Totiente de Euler. Adaptado de <https://www.geeksforgeeks.org/eulers-totient-function/>.~
+def eulersTotient(int x) {
+    int result;
+    result = 1;
+    int i;
+    for (i = 2; i<x; i=i+1) {
+        int gcd_ix;
+        gcd_ix = gcd(i, x);
+        if (gcd_ix == 1) {
+                result = result+1;
+        }
+    }
+    return result;
+}
+
+~Calcular a fórmula de Bhaskara.~
+def bhaskara(int a, int b, int c){
+
+}
+
+~Encontrar o MMC (LCM - Least Common Multiplier) de dois números. Adaptado de <https://www.geeksforgeeks.org/lcm-of-given-array-elements/>.~
+def lcm(int x, int y) {
+    if (y == 0) {
+        return x;
+    }
+    int lcm_xy;
+    lcm_xy = gcd(y, x%y);
+}
+

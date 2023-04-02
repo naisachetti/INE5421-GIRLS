@@ -1,0 +1,124 @@
+~Busca Linear.~
+
+def LinearSearch(int array[], int array_size, int key) {
+	int i;
+    for (i=0; i<array_size; i=i+1) {
+        if (array[i] == key) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+~Busca binária. Adaptado de <https://www.geeksforgeeks.org/binary-search/>.~
+def binarySearch(int sorted_array, int key, int initial_index, int final_index) {
+    if (initial_index >= final_index) {
+        int mid;
+        mid = l+(r-l)/2;
+        if (sorted_array[mid] == key) {
+            return mid;
+        }
+
+        int index_key;
+        if (sorted_array[mid] == key) {
+           int index_key = binarySearch(sorted_array, key, initial_index, mid-1); 
+            return index_key;
+        }
+        
+        index_key = binarySearch(sorted_array, mid+1, final_index);
+        return index_key;
+    }
+    return -1;
+}
+
+~Busca ternária. Adaptado de <https://www.geeksforgeeks.org/ternary-search/>.~
+def ternarySearch(int sorted_array, int initial_index, int final_index, int key) {
+    if (final_index >= initial_index) {
+        int mid1;
+        int mid2;
+        mid1 = initial_index + (final_index - initial_index) / 3;
+        mid2 = final_index + (final_index - initial_index) / 3;
+
+        if (sorted_array[mid1] == key) {
+            return mid1;
+        }
+        if (sorted_array[mid2] == key) {
+            return mid2;
+        }
+
+        int index_key;
+        if (key < sorted_array[mid1]) {
+            index_key = ternarySearch(initial_index, mid1-1, key, sorted_array);
+        } else {
+            if (key > sorted_array[mid2]) {
+                index_key = ternarySearch(mid2+1, final_index, key, sorted_array);
+            } else {
+                index_key = ternarySearch(mid1+1, mid2-1, key, sorted_array);
+            }
+        }
+    }
+
+    return -1;
+}
+
+~Busca por interpolação. Adaptado de <https://www.geeksforgeeks.org/interpolation-search/>.~
+def interpolationSearch(int sorted_array, int lo, int hi, int key) {
+    int pos;
+    if (lo <= hi) {
+        if (key >= sorted_array[lo]) {
+            if (key <= sorted_array[hi]) {
+                pos = lo + ( ((hi-lo) / (sorted_array[hi] - sorted_array[lo])) * (key - sorted_array[lo]));
+
+                if (sorted_array[pos] == key) {
+                    return pos;
+                }
+
+                if (sorted_array[pos] < key) {
+                    pos = interpolationSearch(sorted_array, pos+1, hi, key);
+                    return pos;
+                }
+
+                if (sorted_array[pos] > key) {
+                    pos = interpolationSearch(sorted_array, lo, pos-1, key);
+                    return pos;
+                }
+            }
+        }
+    }
+    return -1;
+}
+
+~Busca Exponencial. Adaptado de <https://www.geeksforgeeks.org/exponential-search/>.~
+def exponentialSearch(int sorted_array, int array_size, int key) {
+    if (sorted_array[0] == key) {
+        return 0;
+    }
+
+    int i;
+    i=1;
+    int j;
+    ~Equivalente a um while(True).~
+    for (j=1; j==j; j=j) {
+        if (i < n) {
+            if (sorted_array[i] <= x) {
+                i = i*2;
+            } else {
+                break;
+            }
+        } else {
+            break;
+        }
+    }
+
+    int index_key;
+    index_key = binarySearch(sorted_array, i/2, min(i, array_size-1), key);
+    return index_key;
+}
+
+def min(int x, int y) {
+    if (x < y) {
+        return x
+    } else {
+        return y;
+    }
+}
