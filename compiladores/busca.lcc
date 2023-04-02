@@ -1,6 +1,6 @@
 ~Busca Linear.~
 
-def LinearSearch(int array[], int array_size, int key) {
+def linearSearch(int array[], int array_size, int key) {
 	int i;
     for (i=0; i<array_size; i=i+1) {
         if (array[i] == key) {
