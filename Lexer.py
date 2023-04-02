@@ -112,7 +112,9 @@ class AnalisadorLexico:
         yield '$'
 
 if __name__ == '__main__':
-    if len(sys.argv) <= 2:
+    if len(sys.argv) <= 1:
         print("A execucao de make lexer run exige os parametros DIR=<diretorio> PROGRAM=<programa>")
-    analisador = AnalisadorLexico(sys.argv[1], sys.argv[2])
+    else:
+        analisador = AnalisadorLexico(sys.argv[1], sys.argv[2])
+        print("Arquivos tabela_lexica.csv e tabela_simbolos.csv criadas no diretorio")
 

@@ -1,4 +1,4 @@
-lexer run: 
+lexer: 
 	python3 Lexer.py $(DIR) $(PROGRAM)
 
 clean:
