@@ -18,6 +18,7 @@ symbols:[s]
 >if:if
 >else:else
 >for:for
+>break:break
 >ident:(letter)(letter|number|\_)*
 >(:\(
 >):\)

@@ -1,4 +1,4 @@
-## Como usar o GIRLS (Gerador IRado de analisador Léxico e Sintático)
+## Como usar o WOMEN (Words Organized by Meaningful Elements and Notation)
 
 Acompanhe este documento com os arquivos de exemplo da pasta "pasca".
 
@@ -7,10 +7,10 @@ Acompanhe este documento com os arquivos de exemplo da pasta "pasca".
     - tokens: Expressões regulares para os tokens da linguagem (Veja a seção "Arquivo de tokens").<br>
     - grammar: Gramática da linguagem (Veja a seção "Arquivo de gramática").<br>
     - program: Código fonte do programa a ser analisado.<br>
-3) Rode o GIRLS com o seguinte comando, em um terminal dentro da pasta INE5421-GIRLS:
+3) Rode o Analisador Lexido do WOMEN com o seguinte comando:
 
 ```
-$ python3 GIRLS.py <nome_da_pasta_do_projeto>
+$ make lexer DIR=<nome_da_pasta_do_projeto> PROGRAM=<nome do arquivo do programa>
 ```
 
 ## Arquivo de tokens
@@ -81,7 +81,7 @@ Definições de sequências são feitas da seguinte forma:
 ```
 
 
-## Arquivo de gramática
+## Arquivo de gramática (Ignorar para entrega do analisador lexico)
 
 O arquivo onde está definida a gramática deve estar no seguinte formato, no qual:
 

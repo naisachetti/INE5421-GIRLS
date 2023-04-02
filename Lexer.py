@@ -9,10 +9,12 @@ class AnalisadorLexico:
     def __init__(self, folder, nome_programa=""):
         self.folder = folder
         self.automato = None
-        self.tabela = []
+        self.tabela_lexica = []
+        self.tabela_simbolos = {}
         self.nome_programa = nome_programa
         self.from_file()
         self.analisar()
+        self.to_csv()
 
     # Pega o arquivo 'tokens' e monta o automâto que reconhece a linguagem a partir das definições no arquivo
     def from_file(self):
@@ -20,8 +22,6 @@ class AnalisadorLexico:
 
         # Le o arquivo de definições regulares e tokens
         tokens_regex = read_regex(tokens_path)
-        for reg in tokens_regex.keys():
-            print(reg+":"+tokens_regex[reg])
         # Cria os autômatos a partir das regex
         autos = [Automato().from_regex(tokens_regex[token], token) for token in tokens_regex.keys()]
         # Faz a união dos automâtos
@@ -38,12 +38,12 @@ class AnalisadorLexico:
             source = self.folder + '/program'
 
         with open(source, 'r') as file:
-            code = file.readlines()
+            code = file.read()
 
         # Substitui caracteres especiais por espaços
-        for char in ["\n", '\t', '\r']:
-            for line in code:
-                line = line.replace(char, ' ')
+        for char in ['\t', '\r']:
+            code = code.replace(char, '')
+        code = code.split('\n')
 
         # Obtem todos os tokens de uma string
         def tokens(word):
@@ -82,7 +82,7 @@ class AnalisadorLexico:
                         token = self.automato.token(lexeme)
 
                     tokens.append((token, lexeme))
-                    print(f'{token:>10} {lexeme}')
+                    # print(f'{token:>10} {lexeme}')
 
             # Caso o automâto não tenha uma transição, o lexema não faz parte da linguagem
             except KeyError:
@@ -92,27 +92,39 @@ class AnalisadorLexico:
             return tokens
 
         # Itera sobre o código aplicando a função tokens
-        self.tabela = reduce(iconcat, map(tokens, code))
-        self.to_csv()
-        return self.tabela
+        for index, line in enumerate(code):
+            aux = tokens(line)
+            for t in filter(lambda x: x[0] == 'ident', aux):
+                if t[1] in self.tabela_simbolos:
+                    self.tabela_simbolos[t[1]].append(index)
+                else:
+                    self.tabela_simbolos[t[1]] = [index]
+            self.tabela_lexica += aux
 
     # Escreve a tabela léxica num arquivo CSV
     def to_csv(self):
         def escape(str):
-            return str if str not in [',', '"'] else '"'+str+'"'
+            return str if (',' not in str and '"' not in str) else '"'+str+'"'
+        def list_to_text(l):
+            return str(l)[1:-1]
+
         with open(self.folder+'/tabela_lexica.csv', 'w') as csv:
-            for item in self.tabela:
+            for item in self.tabela_lexica:
                 csv.write(f"{escape(item[0])},{escape(item[1])}\n")
+        with open(self.folder+'/tabela_simbolos.csv', 'w') as csv:
+            for item in self.tabela_simbolos.items():
+                a = escape(list_to_text(item[1]))
+                csv.write(f"{escape(item[0])},{a}\n")
 
     # Interface para o analisador sintático
     def gerador(self):
-        tabela = filter(lambda item: item[0] != 'comment', self.tabela)
+        tabela = filter(lambda item: item[0] != 'comment', self.tabela_lexica)
         for item in tabela:
             yield item[0]
         yield '$'
 
 if __name__ == '__main__':
-    if len(sys.argv) <= 1:
+    if len(sys.argv) <= 2:
         print("A execucao de make lexer run exige os parametros DIR=<diretorio> PROGRAM=<programa>")
     else:
         analisador = AnalisadorLexico(sys.argv[1], sys.argv[2])
