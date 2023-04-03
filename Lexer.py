@@ -53,14 +53,13 @@ class AnalisadorLexico:
             max_forward = 10
             try:
                 while 1:
-                    begin = forward
+                    token = ''
+                    begin = forward if (forward - begin) <= max_forward + 1 else forward + 1
                     forward = begin + 1
+
                     lexeme = word[begin:forward]
                     if lexeme == ' ': continue
                     if lexeme == '': break
-
-                    next = [word[begin:forward+i+1] for i in range(max_forward) if not ' ' in word[begin:forward+i+1]]
-
                     if lexeme == '"':
                         forward = word[begin+1:].find('"') + begin + 2
                         lexeme = word[begin:word[begin+1:].find('"')]
@@ -70,17 +69,18 @@ class AnalisadorLexico:
                         lexeme = word[begin:forward]
                         token = 'comment'
                     else:
+                        next = [word[begin:forward+i+1] for i in range(max_forward) if not ' ' in word[begin:forward+i+1]]
                         # Enquanto (não reconhecer o lexema ou reconhecer o lexema adicionado de um caractere)
                         # e não passamos do fim da palavra
                         while (not self.automato.reconhece(lexeme) or any(map(self.automato.reconhece, next))) \
                                 and forward <= len(word):
                             forward += 1
-                            lexeme = word[begin:forward]
-                            next.pop(0)
+                            lexeme = next.pop(0)
                             if not ' ' in word[begin:forward+max_forward+1]:
                                 next.append(word[begin:forward+max_forward+1])
-                        token = self.automato.token(lexeme)
 
+                        token = self.automato.token(lexeme)
+                    print((token,lexeme))
                     tokens.append((token, lexeme))
                     # print(f'{token:>10} {lexeme}')
 
@@ -94,12 +94,12 @@ class AnalisadorLexico:
         # Itera sobre o código aplicando a função tokens
         for index, line in enumerate(code):
             aux = tokens(line)
+            self.tabela_lexica += aux
             for t in filter(lambda x: x[0] == 'ident', aux):
                 if t[1] in self.tabela_simbolos:
                     self.tabela_simbolos[t[1]].append(index)
                 else:
                     self.tabela_simbolos[t[1]] = [index]
-            self.tabela_lexica += aux
 
     # Escreve a tabela léxica num arquivo CSV
     def to_csv(self):
@@ -129,4 +129,3 @@ if __name__ == '__main__':
     else:
         analisador = AnalisadorLexico(sys.argv[1], sys.argv[2])
         print("Arquivos tabela_lexica.csv e tabela_simbolos.csv criadas no diretorio")
-
