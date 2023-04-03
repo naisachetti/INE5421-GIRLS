@@ -54,7 +54,7 @@ class AnalisadorLexico:
             try:
                 while 1:
                     token = ''
-                    begin = forward if (forward - begin) <= max_forward + 1 else forward + 1
+                    begin = forward
                     forward = begin + 1
 
                     lexeme = word[begin:forward]
@@ -70,17 +70,20 @@ class AnalisadorLexico:
                         token = 'comment'
                     else:
                         next = [word[begin:forward+i+1] for i in range(max_forward) if not ' ' in word[begin:forward+i+1]]
+
                         # Enquanto (não reconhecer o lexema ou reconhecer o lexema adicionado de um caractere)
                         # e não passamos do fim da palavra
                         while (not self.automato.reconhece(lexeme) or any(map(self.automato.reconhece, next))) \
                                 and forward <= len(word):
-                            forward += 1
-                            lexeme = next.pop(0)
-                            if not ' ' in word[begin:forward+max_forward+1]:
-                                next.append(word[begin:forward+max_forward+1])
 
+                            forward += 1
+                            lexeme = word[begin:forward]
+                            next.pop(0)
+                            if not ' ' in word[begin:forward+max_forward]:
+                                next.append(word[begin:forward+max_forward])
                         token = self.automato.token(lexeme)
-                    print((token,lexeme))
+
+                    print((token, lexeme))
                     tokens.append((token, lexeme))
                     # print(f'{token:>10} {lexeme}')
 
