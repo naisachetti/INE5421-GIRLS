@@ -507,6 +507,7 @@ class Gramatica:
         return self
 
     # (RF) Retorna um conjunto com todos nao terminais que o nao terminal chega atraves de producoes unitarias (usada pra detectar loops)
+    # TODO: E SE TIVER SIMBOLOS ANULAVEIS?
     def unitary_reach(self, nt: str, alcance_unitario = None):
         if alcance_unitario is None:
             alcance_unitario = set()
@@ -572,10 +573,12 @@ class Gramatica:
 
     # Tira loops e &-producoes da gramatica e verifica se ha ambiguidade
     def tratamento_1(self):
+        self.sem_repeticoes()
         self.e_livre()
         self.sem_loop()
         for nt, producoes in self.producoes.items():
             for producao in producoes:
+                # print(producao)
                 if producao[0] == nt and len(producao) > 1 and len(set(list(producao))) == 1:
                     problema = "!-----gramatica problematica inicio-----!\n"+\
                              repr(self)+\
@@ -588,18 +591,22 @@ class Gramatica:
         self.to_file("grammar_t1")
         return self
 
-    # Tira repeticoes
+    # Tira os nao terminais exatamente iguais com as msms producoes
     def sem_repeticoes(self):
         gram = self.producoes.items()
         for i, (nt_1, producao_1) in enumerate(gram):
             for j, (nt_2, producao_2) in enumerate(gram):
                 if j <= i: continue
-                if producao_1 == producao_2:
+                print(nt_1)
+                if nt_1 in ["AUX21'''", "AUX21''''''", "AUX21'''''''", "AUX21''''''''"]:
+                    print(nt_1, nt_2, producao_1)
+                if producao_1 == producao_2: # Aqui producao eh todas as producoes nao uma soh
+                    if producao_1[0] == "TERM' AUX21":
+                        print("subs:", nt_1, nt_2, producao_1)
                     self.substitute(nt_2, nt_1)
         self.sem_inalcancaveis()
         return self
 
-    
     ###################### Recursao ##############################
 
     # Altera a gramatica para retirar recursao direta daquele nao terminal
@@ -634,7 +641,7 @@ class Gramatica:
 
             self.producoes[nao_terminal].append(Production(producao+" "+novo_simbolo))
 
-        # Criacao das producoes do novo simbolo
+        # Criacao das producoes do novo simbolo TODO: ESSE PRODUCAO AQUI TA SUS
         self.producoes[novo_simbolo] += [Production(" ".join(producao[1:])+" "+novo_simbolo) for producao in producoes_recursivas]
 
     # Retorna a gramatica sem recursao a esquerda
@@ -693,6 +700,10 @@ class Gramatica:
             anulaveis = self.anulaveis()
             for simbolo in producao:
 
+                # Guarda
+                if simbolo == "&":
+                    continue
+
                 # Simbolo repetido, implica recursao indireta
                 if simbolo in derivaveis:
                     return True
@@ -706,20 +717,22 @@ class Gramatica:
                 elif simbolo in self.nao_terminais:
 
                     # Tem que ver se de fato nao tem nao determinismo
-                    eh_nao_det = self.ha_nd_indireto(simbolo, derivaveis) #(A funcao o coloca no conjunto de derivaveis)
-                    if eh_nao_det:
+                    if self.ha_nd_indireto(simbolo, derivaveis): #(A funcao o coloca no conjunto de derivaveis)
                         return True
 
                     # Se o simbolo nao eh anulavel nao tem que ver os proximos, se eh tem
                     # (Nota que na chamada de funcao o nt chamado ja se colocou no conjunto)
                     if not simbolo in anulaveis:
                         break
+                
+                else: raise RuntimeError(f"Simbolo {simbolo} nao eh terminal ou nao-terminal ????")
+
         return False
 
     # Altera a gramatica para retirar nao determinismo direto
     def eliminar_nd_direto(self, nao_terminal: str):
         houve_alteracao = True
-        novo_nt = None
+        novos_nt = []
         simbolos_tratados = set()
         # Elimina quantos nao determinismos diretos forem necessarios
         while houve_alteracao:
@@ -728,21 +741,25 @@ class Gramatica:
             houve_alteracao = False
             simbolos_iniciais = [producao[0] for producao in self.producoes[nao_terminal]]
 
-            for simbolo in simbolos_iniciais:
+            for simbolo_nd in simbolos_iniciais:
                 # ha nao determinismo com este simbolo
-                if simbolos_iniciais.count(simbolo) > 1 and not simbolo in simbolos_tratados:
-                    simbolos_tratados.add(simbolo)
-
+                if simbolos_iniciais.count(simbolo_nd) > 1 and not simbolo_nd in simbolos_tratados:
+                    simbolos_tratados.add(simbolo_nd)
                     houve_alteracao = True
 
-                    # Separa os indices das producoes que sao repetidas (sim esse codigo ta horrivel)
-                    indices = [index for index, simbolo_repetido in enumerate(simbolos_iniciais) if simbolo == simbolo_repetido]
+                    # Separa os indices das producoes que sao repetidas
+                    producoes_nd = [producao for producao in self.producoes[nao_terminal] if producao[0] == simbolo_nd]
+                    
+                    # Elimina as producoes nao deterministicas
+                    for producao in producoes_nd:
+                        self.producoes[nao_terminal].remove(producao)
 
                     # Cria um novo nao terminal que produz dos nao deterministicos
                     novo_nt = self.novo_nao_terminal(nao_terminal)
+                    novos_nt.append(novo_nt)
 
-                    # Cria as producoes do novo nao terminal (confia)
-                    self.producoes[novo_nt] = [Production(" ".join(producao[1:])) for producao in self.producoes[nao_terminal] if self.producoes[nao_terminal].index(producao) in indices]
+                    # Cria as producoes do novo nao terminal
+                    self.producoes[novo_nt] = [Production(" ".join(producao[1:])) for producao in producoes_nd]
 
                     # Edge case onde o simbolo nao terminal era uma producao unica
                     for producao in self.producoes[novo_nt]:
@@ -750,16 +767,12 @@ class Gramatica:
                             self.producoes[novo_nt].remove("")
                             self.producoes[novo_nt].append(Production("&"))
 
-                    # Elimina as producoes nao deterministicas
-                    for offset, indice in enumerate(indices):
-                        self.producoes[nao_terminal].pop(indice-offset)
-
                     # Transicao que leva pro novo nao terminal
-                    self.producoes[nao_terminal].append(Production(simbolo+" "+novo_nt))
+                    self.producoes[nao_terminal].append(Production(simbolo_nd+" "+novo_nt))
 
                     break
 
-        return novo_nt # Retorna o novo terminal criado
+        return novos_nt
 
     # Retorna a gramatica fatorada (Codigo ta um lixo mas funciona)
     def fatorada(self):
@@ -768,22 +781,24 @@ class Gramatica:
         for nao_terminal in self.nao_terminais:
             self.eliminar_nd_direto(nao_terminal)
 
-        self.sem_repeticoes()
-        self.to_file("lixo.txt")
+        self.sem_repeticoes() # Essa linha em teoria nao machuca
+        
+        # self.to_file("lixo.txt")
         # print(self)
-        exit()
 
         # TODO: POSSIVEL PROBLEMA PRA GRAMATICAS COMPLEXAS
-        # Se ha nao terminal a esquerda entao ta na hora de herdar producao
-        nt_lista = list(self.producoes.keys())
+        nts = list(self.producoes.keys())
 
-        for i, nao_terminal in enumerate(nt_lista):
+        for nao_terminal in nts:
+            # print("-----------")
+            # print("to limpando:",nao_terminal)
+            # print(self)
 
-            for j in range(100):
-                # print(j)
-
+            for _ in range(100):
+                self.sem_repeticoes()
                 # Guarda p/ crescimento muito grande
-                if len(self.producoes[nao_terminal]) > 100:
+                self.to_file("error_grammar")
+                if len(self.producoes[nao_terminal]) > 100 or len(self.producoes) > 300:
                     raise RuntimeError("Nao consegui fatorar a gramatica (muita producao)")
 
                 # TODO: VER SE VALE USAR ISSO OU NAO
@@ -795,6 +810,7 @@ class Gramatica:
                 for producao in self.producoes[nao_terminal]:
                     # Comeca de fato com um nao terminal
                     if producao[0] in self.nao_terminais:
+                        # print(f"estou herdando {producao[0]}")
                         self.herdar_primeiro(nao_terminal, producao[0])
                         break
                 # Se ele nao conseguiu herdar nada
@@ -805,17 +821,15 @@ class Gramatica:
                 raise RuntimeError("Nao consegui fatorar a gramatica (limite de derivacoes)")
 
             # Elimina ND direto gerado
-            novo_nt = self.eliminar_nd_direto(nao_terminal)
-            if novo_nt:
-                print(self)
-                exit()
-                nt_lista.append(novo_nt)
+            novos_nt = self.eliminar_nd_direto(nao_terminal)
+            for nt in novos_nt:
+                nts.append(nt)
 
         return self
 
     # Abreviacao de um monte de coisa
     def tratada(self):
-        g = self.sem_recursao().sem_inalcancaveis()
+        g = self.sem_recursao().sem_inalcancaveis().fatorada()
         g.to_file("grammar_tratada")
         # g = self.sem_recursao().fatorada().sem_inalcancaveis()
         return g
@@ -937,13 +951,15 @@ if __name__ == "__main__":
     # arquivo = "grammar_tratada"
     # g = Gramatica().from_file(arquivo)
     g = Gramatica().from_file_preprocess(f"{arquivo}").tratada()
-    total = 0
-    with open("compiladores/words.txt", "w") as arquivo:
-        while True:
-            word = g.generate_word(2000)
-            if not word in {None, "; $", " $"} and len(word.split()) > 10:
-                arquivo.write(f"{word}\n\n")
-                total += 1
-                print(total)
-            if total == 100:
-                break
+    print("--------")
+    print(g)
+    # total = 0
+    # with open("compiladores/words.txt", "w") as arquivo:
+    #     while True:
+    #         word = g.generate_word(2000)
+    #         if not word in {None, "; $", " $"} and len(word.split()) > 10:
+    #             arquivo.write(f"{word}\n\n")
+    #             total += 1
+    #             print(total)
+    #         if total == 100:
+    #             break
