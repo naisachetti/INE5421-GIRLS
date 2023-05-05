@@ -22,5 +22,7 @@ EXPRESSION ::= NUMEXPRESSION (  ( < | > | <= | >= | == | != ) NUMEXPRESSION ) ?
 NUMEXPRESSION ::= TERM (  ( \+ | - ) TERM ) *
 TERM ::= UNARYEXPR (  ( \* | / | % ) UNARYEXPR ) *
 UNARYEXPR ::=  (  ( \+ | - )  ) ? FACTOR
-FACTOR ::=  ( int_constant | float_constant | string_constant | null | LVALUE |  \( NUMEXPRESSION \)  ) 
+FACTOR ::=  ( int_constant | float_constant | string_constant | null | LVALUE |  \( NUMEXPRESSION \) | ARRAY ) 
 LVALUE ::= ident ( [ NUMEXPRESSION ] ) *
+ARRAY ::= \[ ARRAYCONTENTS \]
+ARRAYCONTENTS ::== EXPRESSION ( , ARRAYCONTENTS ) ?
