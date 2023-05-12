@@ -16,8 +16,8 @@ class ParsingTable:
         terminais = gramatica.terminais.copy()
         terminais += "$"
         firstpos = gramatica.firspost()
-        followpos = gramatica.followpost()
         print(firstpos)
+        followpos = gramatica.followpost()
         print(followpos)
         for nt in gramatica.nao_terminais:
             if firstpos[nt].intersection(followpos[nt]) and nt in gramatica.anulaveis():
@@ -156,11 +156,11 @@ class AnalisadorSintatico:
         return True
 
     # Gera palavras 100 palavras aleatorias a partir da gramatica e faz o parsgin delas
-    def validate(self, gramatica):
+    def validate(self, gramatica_original):
         total = 100
         validas = 0
         for _ in range(10000):
-            sentenca = gramatica.generate_word(100)
+            sentenca = gramatica_original.generate_word(100)
             if not sentenca is None:
                 driver = TokenDriver(sentenca.split())
                 # TODO: ARRUMAR AQUIIII
@@ -173,10 +173,11 @@ class AnalisadorSintatico:
                 break
 
 if __name__ == "__main__":
-    gramatica = Gramatica().from_file("q1/grammar")
-    # print(gramatica)
+    gramatica = Gramatica().from_file_preprocess("compiladores/grammar").tratada()
+    print("Gramatica tratada gerada!")
     tabela = ParsingTable(gramatica)
-    print(tabela)
-    driver = TokenDriver("c v f com ; b e ; b e $".split())
+    print("Tabela de Parsing gerada!")
+    driver = TokenDriver("None".split())
     parser = AnalisadorSintatico("q1", driver)
-    print(parser.parse(True))
+    print("Analisador Sintatico gerado!")
+    parser.validate(Gramatica().from_file_preprocess("compiladores/grammar"))

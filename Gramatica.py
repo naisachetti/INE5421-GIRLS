@@ -1,7 +1,80 @@
 from random import randrange
 from string import ascii_uppercase
-from sys import argv
 
+class Nodo:
+    def __init__(self, grammar, simbolo: str, pai, folhas: list, anulaveis: list, debt: list = None):
+        self.simbolo = simbolo
+        self.pai = pai
+        self.folha = simbolo in grammar.terminais and simbolo != "&"
+        self.filhos = []
+        if self.folha:
+            folhas.append(self)
+            return
+        # Caso especial que envolve debito de followpos
+        if simbolo == "&":
+            if not len(debt):
+                pass
+            # Followpos com simbolo inicial nao anulavel
+            elif not debt[0] in anulaveis:
+                self.filhos.append(Nodo(grammar, debt[0], self, folhas, anulaveis))
+            # Passa o restante do debito
+            else:
+                self.filhos.append(Nodo(grammar, debt[0], self, folhas, anulaveis, debt[1:]))
+            return
+        for producao in grammar.producoes[simbolo]:
+            # Tratamento simples para simbolos nao anulaveis
+            if not producao[0] in anulaveis:
+                self.filhos.append(Nodo(grammar, producao[0], self, folhas, anulaveis))
+                continue
+
+            # Simbolo nao terminal anulavel
+            if debt is None: debt = producao[1:]
+            self.filhos.append(Nodo(grammar, producao[0], self, folhas, anulaveis, debt))
+
+    def __repr__(self):
+        return f"{None if self.pai is None else self.pai.simbolo} -> {self.simbolo}{'' if not len(self.filhos) else f' -> {[filho.simbolo for filho in self.filhos]}'}"
+
+class ArvoreAuxiliar:
+    def __init__(self, grammar, raiz: str, anulaveis: list) -> None:
+        self.folhas = []
+        self.raiz: str = Nodo(grammar, raiz, None, self.folhas, anulaveis)
+        self.nd = False
+        self.folhas_simbolos = [folha.simbolo for folha in self.folhas]
+        for simbolo in self.folhas_simbolos:
+            if self.folhas_simbolos.count(simbolo) > 1:
+                self.nd = True
+                break
+    
+    def derivacoes_ate(self, simbolo: Nodo):
+        path = [simbolo]
+        while not simbolo.pai is None:
+            path.insert(0,simbolo.pai)
+            simbolo = simbolo.pai
+        return path
+    
+    def ancestral_comum_derivativo(self, terminal: str):
+        # Guarda simples
+        if self.folhas_simbolos.count(terminal) == 1:
+                return None, None
+
+        ocorrencias = list(filter(lambda e: e.simbolo == terminal, self.folhas))
+        
+        caminhos = [self.derivacoes_ate(ocorrencia) for ocorrencia in ocorrencias]
+        caminho_comum = set(caminhos[0])
+        for i, caminho in enumerate(caminhos):
+            if not i: continue
+            caminho_comum.intersection_update(set(caminho))
+        
+        for caminho in caminhos:
+            for comum in caminho_comum:
+                caminho.remove(comum)
+
+        caminho_raiz = self.derivacoes_ate(ocorrencias[0])
+        for nodo in caminhos[0]:
+            caminho_raiz.remove(nodo)
+        
+        return caminho_raiz, caminhos
+        
 class Production(str):
     def __init__(self, conteudo: str, separation_par = "space", nt_identification = None):
         self.conteudo = conteudo.strip().split()
@@ -597,12 +670,7 @@ class Gramatica:
         for i, (nt_1, producao_1) in enumerate(gram):
             for j, (nt_2, producao_2) in enumerate(gram):
                 if j <= i: continue
-                print(nt_1)
-                if nt_1 in ["AUX21'''", "AUX21''''''", "AUX21'''''''", "AUX21''''''''"]:
-                    print(nt_1, nt_2, producao_1)
                 if producao_1 == producao_2: # Aqui producao eh todas as producoes nao uma soh
-                    if producao_1[0] == "TERM' AUX21":
-                        print("subs:", nt_1, nt_2, producao_1)
                     self.substitute(nt_2, nt_1)
         self.sem_inalcancaveis()
         return self
@@ -774,6 +842,35 @@ class Gramatica:
 
         return novos_nt
 
+    # Monta a arvore de derivacores da gramatica
+    def eliminar_nd_indireto(self, nao_terminal: str):
+        # print(f"tratando {len(self.producoes)}")
+        alterations = True
+        self.eliminar_nd_direto(nao_terminal)
+        self.to_file("error_grammar")
+        while alterations:
+            alterations = False
+            anulaveis = self.anulaveis()
+            arvore =  ArvoreAuxiliar(self, nao_terminal, anulaveis)
+            if not arvore.nd:
+                return
+            for simbolo in set(arvore.folhas_simbolos):
+                # Nao precisamos tratar
+                caminho_comum, caminhos = arvore.ancestral_comum_derivativo(simbolo)
+                # Se aquele simbolo nao causa nao determinismo nao o tratamos
+                if caminho_comum is None: continue
+
+                alterations = True
+                # print(simbolo, caminho_comum, caminhos)
+                for caminho in caminhos:
+                    for nodo in caminho:
+                        if nodo.folha: break
+                        if nodo.simbolo == "&":
+                            print(f"comum: {caminho_comum} caminho: {caminho}")
+                        self.herdar_primeiro(caminho_comum[-1].simbolo, nodo.simbolo)
+                self.eliminar_nd_direto(caminho_comum[-1].simbolo)
+                self.sem_repeticoes()
+    
     # Retorna a gramatica fatorada (Codigo ta um lixo mas funciona)
     def fatorada(self):
 
@@ -783,6 +880,13 @@ class Gramatica:
 
         self.sem_repeticoes() # Essa linha em teoria nao machuca
         
+        self.to_file("compiladores/grammar_pretratada")
+
+        for nao_terminal in self.nao_terminais:
+            self.eliminar_nd_indireto(nao_terminal)
+
+        return self
+
         # self.to_file("lixo.txt")
         # print(self)
 
@@ -894,14 +998,30 @@ class Gramatica:
                 first.add("&")
 
         return first
-
+    
     # Calcula o firstpos da gramatica
     def firspost(self):
         first = {nt:[] for nt in self.nao_terminais}
         for nt in self.nao_terminais:
             first[nt] = self.__firstpos_simbol(nt)
-        # print(first)
         return first
+
+    # Calcula o firspos de um simbolo sem derivar nt, retornando eles de forma crua
+    def first_nt_simple(self, nt: str):
+        firstpos = []
+        if nt in self.terminais or nt == "&": return firstpos
+        anulaveis = self.anulaveis()
+        for producao in self.producoes[nt]:
+            firstpos.append(producao[0])
+            continue
+            for simbolo in producao:
+                # TODO: E &? n lembro se fica em anulaveis
+
+                # Atua como guarda
+                firstpos.append(simbolo)
+                if simbolo in self.terminais or simbolo not in anulaveis:
+                    break
+        return firstpos
 
     # Calcula o followpos de um nao terminal
     def __followpos_nt(self, nt: str, analisys_set = None):
@@ -941,18 +1061,26 @@ class Gramatica:
     # Calcula o firstpos da gramatica
     def followpost(self):
         follow = {nt:[] for nt in self.nao_terminais}
-        for nt in self.nao_terminais:
+        for i, nt in enumerate(self.nao_terminais):
+            print(i, len(self.nao_terminais), nt)
             follow[nt] = self.__followpos_nt(nt)
         return follow
 
 if __name__ == "__main__":
-    # print(argumento)
-    arquivo = "compiladores/grammar"
+    arquivo = "grammar"
+    path = "compiladores/"
     # arquivo = "grammar_tratada"
-    # g = Gramatica().from_file(arquivo)
-    g = Gramatica().from_file_preprocess(f"{arquivo}").tratada()
-    print("--------")
-    print(g)
+    g = Gramatica().from_file_preprocess(path+arquivo).tratamento_1().sem_recursao().fatorada()
+    g.to_file(path+arquivo+"_tratada")
+    # g = Gramatica().from_file_preprocess(f"{arquivo}").tratada()
+    # for nt in g.nao_terminais:
+    #     print("--------")
+    #     print(nt)
+    #     arvore =  ArvoreAuxiliar(g, nt)
+    #     for simbolo in set(arvore.folhas_simbolos):
+    #         # Nao precisamos tratar
+    #         print(arvore.ancestral_comum_derivativo(simbolo))
+
     # total = 0
     # with open("compiladores/words.txt", "w") as arquivo:
     #     while True:
