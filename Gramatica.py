@@ -20,6 +20,7 @@ class Nodo:
             # Passa o restante do debito
             else:
                 self.filhos.append(Nodo(grammar, debt[0], self, folhas, anulaveis, debt[1:]))
+            # print(self)
             return
         for producao in grammar.producoes[simbolo]:
             # Tratamento simples para simbolos nao anulaveis
@@ -30,7 +31,7 @@ class Nodo:
             # Simbolo nao terminal anulavel
             if debt is None: debt = producao[1:]
             self.filhos.append(Nodo(grammar, producao[0], self, folhas, anulaveis, debt))
-
+        # print(self)
     def __repr__(self):
         return f"{None if self.pai is None else self.pai.simbolo} -> {self.simbolo}{'' if not len(self.filhos) else f' -> {[filho.simbolo for filho in self.filhos]}'}"
 
@@ -341,6 +342,7 @@ class Gramatica:
                 if simbolo in self.nao_terminais:
                     conjunto_simbolos.remove(simbolo)
                 self.terminais = list(conjunto_simbolos)
+        self.to_file("debug/source")
         return self
 
     # Escreve a gramatica num arquivo
@@ -378,31 +380,33 @@ class Gramatica:
             return None
         # Retorna a forma sentencial com o simbolo de fim de sentenca no final
         return Production(" ".join(forma_sentencial)+" $")
-
+    
     ################ Alteracao fundamentais da gramatica ################
 
     # Retorna um novo nao terminal
-    def novo_nao_terminal(self, original = None, first = False):
+    def novo_nao_terminal(self, original: str = None, first: bool = False):
         alfabeto = list(ascii_uppercase)
         found = False
-        sufix = 0
+        sufix = 1
+        if not original is None and "'" in original:
+            original = original[:original.index("'")]
         for _ in range(10000):
-            # Tenta retornar o original com um ' depois, se isso ja existir ele fica enchendo de '
+            # Tenta retornar o original com um 'X
             if not original is None:
-                proposta = original+"".join(["'" for _ in range(sufix)])
+                proposta = original + "'" + str(sufix)
                 # Proposta eh um simbolo novo
                 if not proposta in self.nao_terminais:
                     break
             else:
-                # Tenta retornar uma letra do alfabeto nao usada, e enche de ' tbm se precisar
+                # Tenta retornar uma letra do alfabeto nao usada, e enche coloca 'X se necessario
                 for letra in alfabeto:
-                    proposta = letra+"".join(["'" for _ in range(sufix)])
+                    proposta = letra + "'" + str(sufix)
                     # Proposta eh um simbolo novo
                     if not proposta in self.nao_terminais:
                         found = True
                         break
 
-            # Eis que tu quer dar brek 2 vezes pra sair de um for dentro do outro
+            # Eis que tu quer dar break 2 vezes pra sair de um for dentro do outro
             if found: break
 
             # Aumenta o numero de '
@@ -417,8 +421,9 @@ class Gramatica:
             self.nao_terminais.insert(0, proposta)
         return proposta
 
-    # Substitui em todas as producoes um simbolo velho por um novo
+    # Substitui em todas as PRODUCOES um simbolo velho por um novo
     def substitute(self, old: str, new: str):
+        if old == new: return
         # Tratamento assumindo que simbolos sao separados por espacos
         old = " "+old+" "
         new = " "+new+" "
@@ -430,6 +435,36 @@ class Gramatica:
                     self.producoes[nt].remove(producao)
                     self.producoes[nt].append(Production(nova_producao.strip()))
 
+    # Substitui em toda gramatica um simbolo velho por um novo
+    def update_symbol(self, old: str, new: str):
+        if old == new: return
+        self.substitute(old, new) #Substitui nas producoes
+        # Atualiza um terminal
+        if old in self.terminais:
+            self.terminais.remove(old)
+            self.terminais.append(new)
+            return self
+        
+        # Nao terminal nao inicial
+        if old != self.inicial:
+            self.producoes[new] = self.producoes[old]
+            self.producoes.pop(old)
+
+            self.nao_terminais.append(new)
+            self.nao_terminais.remove(old)
+            return self
+        
+        # O simbolo incial tem que ser o primeiro do dicionario
+        self.inicial = new
+
+        self.nao_terminais.insert(0, new)
+        self.nao_terminais.remove(old)
+
+        novas_producoes = {new: self.producoes[old]}
+        self.producoes.pop(old)
+        novas_producoes.update(self.producoes)
+        self.producoes = novas_producoes
+        
     # Substitui o simbolo nt_corpo por suas producoes se for o primeiro de um producao do nt_cabeca
     def herdar_primeiro(self, nt_cabeca: str, nt_corpo: str):
 
@@ -438,39 +473,87 @@ class Gramatica:
 
         # Itera sobre cada producao
         for producao in self.producoes[nt_cabeca].copy():
-            # Simbolo inicial eh o que vai ser substituido por suas producoes
-            if producao[0] == nt_corpo:
+            if producao[0] != nt_corpo: continue
 
-                # Itera sore as producos do simbolo "herdado"
-                for herdada in self.producoes[nt_corpo]:
+            # Itera sore as producos do simbolo "herdado"
+            for herdada in self.producoes[nt_corpo]:
 
-                    # Simbolo herdado eh anulavel (n acontece se ja for e-livre)
-                    if herdada == "&":
+                # Simbolo herdado eh anulavel (n acontece se ja for e-livre)
+                if herdada == "&":
+                    # Anula o simbolo
+                    if len(producao) > 1:
 
-                        # Anula o simbolo
-                        if len(producao) > 1:
-                            # Impede a criacao de loops
-                            if producao[1:] != nt_cabeca:
-                                # Simplesmente recoloca a producao sem o nt_corpo
-                                novas_producoes.append(Production((" ".join(producao[1:]).strip())))
-                        # O nt_cabeca eh anulavel pq tinha producao unitaria pro corpo
-                        else:
-                            novas_producoes.append(Production("&"))
+                        # Impede a criacao de loops
+                        if producao[1:] == nt_cabeca: continue
+
+                        # Simplesmente recoloca a producao sem o nt_corpo
+                        novas_producoes.append(Production((" ".join(producao[1:]).strip())))
+                    # O nt_cabeca eh anulavel pq tinha producao unitaria pro corpo
                     else:
-                        # Cria a nova producao
-                        nova_prod = (herdada+" "+" ".join(producao[1:])).strip()
-                        novas_producoes.append(Production(nova_prod))
+                        novas_producoes.append(Production("&"))
+                else:
+                    # Cria a nova producao
+                    nova_prod = (herdada+" "+" ".join(producao[1:])).strip()
+                    novas_producoes.append(Production(nova_prod))
 
-                self.producoes[nt_cabeca].remove(producao)
+            self.producoes[nt_cabeca].remove(producao)
 
         # Incorpora novas producoes se nao forem repetiras ou loops (sim ele impede loops 2 vezes eu odeio loops)
         for producao in novas_producoes:
             if not producao in self.producoes[nt_cabeca] and producao != nt_cabeca:
                 self.producoes[nt_cabeca].append(producao)
+    
+    # Retira producoes diretas da gramatica (NT0 -> a b c d NT1)
+    def sem_diretas(self):
+        for nt in self.nao_terminais:
+            # Apenas uma producao
+            if len(self.producoes[nt]) != 1: continue
+            # Fecha com NT
+            if not self.producoes[nt][0][-1] in self.nao_terminais: continue
+            # Soh terminal no caminho
+            if len(set(self.producoes[nt][0][:-1]).difference(set(self.terminais))): continue
+            # Realiza a sobstituicao da producao simples
+            self.substitute(nt, self.producoes[nt][0])
+
+        self.sem_inalcancaveis()
+        return self
+
+    # Minimiza o numero de apostrofos
+    def pretify(self):
+        # Reduz o numero de simbolos tipo S S'3 S'10 pro minimo
+        simbolos_sem_apostrofe = set(map(lambda e: e if not "'" in e else e[:e.index("'")], self.nao_terminais))
+        for simbolo in simbolos_sem_apostrofe:
+            ocorrencias = list(filter(lambda e : simbolo == (e if not "'" in e else e[:e.index("'")]) , self.nao_terminais))
+            ocorrencias.sort(key=lambda e: -1 if not "'" in e else int(e[e.rindex("'")+1:]))
+            for i, ocorrencia in enumerate(ocorrencias):
+                if not i:
+                    self.update_symbol(ocorrencia, simbolo)
+                    continue
+                self.update_symbol(ocorrencia, simbolo+"'"+str(i))
+        # Renomeacoes pertinentes
+        nts = self.nao_terminais.copy()
+        for nt in nts:
+            prods = set(map(lambda e: repr(e), self.producoes[nt]))
+            if prods == {"-","+"}:
+                self.update_symbol(nt, "SIGNAL")
+            elif prods == {"/","%","*"}:
+                self.update_symbol(nt, "OPERATION")
+            elif prods == {"float","string","int"}:
+                self.update_symbol(nt, "TYPE")
+            elif prods == {">",">=","!=","<","<=","=="}:
+                self.update_symbol(nt, "COMPARE")
+        # print(self)
+        return self
 
     ##################### &-Producoes #######################
 
-     # Retorna uma lista com os nao terminais anulaveis da gramatica
+    # Informa se uma forma sentencial eh anulavel
+    def nullable_sentence(self, sentence: Production, simbolos_anulaveis: list = None):
+        if simbolos_anulaveis is None:
+            simbolos_anulaveis = self.anulaveis()
+        return len(list(filter(lambda e: not e in simbolos_anulaveis, sentence))) == 0        
+
+    # Retorna uma lista com os nao terminais anulaveis da gramatica
     def anulaveis(self):
 
         # Encontra os simbolos anulaveis
@@ -555,7 +638,7 @@ class Gramatica:
 
     ################## Simbolos alcancaveis, loops e producoes unitarias e repetidas #################
 
-    # (RF) Marca nao terminais alcancaveis a partir do informado (nao necessariamente por unitarias)
+    # (Recursiva) Marca nao terminais alcancaveis a partir do informado (nao necessariamente por unitarias)
     def alcance(self, nao_terminal):
         for producao in self.producoes[nao_terminal]:
             for simbolo in producao:
@@ -579,7 +662,7 @@ class Gramatica:
                 self.producoes.pop(nt)
         return self
 
-    # (RF) Retorna um conjunto com todos nao terminais que o nao terminal chega atraves de producoes unitarias (usada pra detectar loops)
+    # (Recursiva) Retorna um conjunto com todos nao terminais que o nao terminal chega atraves de producoes unitarias (usada pra detectar loops)
     # TODO: E SE TIVER SIMBOLOS ANULAVEIS?
     def unitary_reach(self, nt: str, alcance_unitario = None):
         if alcance_unitario is None:
@@ -593,7 +676,6 @@ class Gramatica:
 
     # Retorna a gramatica sem loops
     def sem_loop(self):
-
         # Tratamento de loops diretos
         for nt, producoes in self.producoes.items():
             if nt in producoes:
@@ -649,6 +731,7 @@ class Gramatica:
         self.sem_repeticoes()
         self.e_livre()
         self.sem_loop()
+        self.sem_diretas()
         for nt, producoes in self.producoes.items():
             for producao in producoes:
                 # print(producao)
@@ -659,34 +742,39 @@ class Gramatica:
                     # Producao do tipo S -> S S S S que eh ambigua inerentemente
                     raise SyntaxError(f"Gramatica ambigua {nt} -> {producao}\n{problema}")
         self.sem_unitarias()
-        self.sem_repeticoes()
         self.sem_inalcancaveis()
-        self.to_file("grammar_t1")
+        self.sem_repeticoes()
+        self.pretify()
+        self.to_file("debug/grammar_t1")
         return self
 
     # Tira os nao terminais exatamente iguais com as msms producoes
     def sem_repeticoes(self):
-        gram = self.producoes.items()
-        for i, (nt_1, producao_1) in enumerate(gram):
-            for j, (nt_2, producao_2) in enumerate(gram):
-                if j <= i: continue
-                if producao_1 == producao_2: # Aqui producao eh todas as producoes nao uma soh
-                    self.substitute(nt_2, nt_1)
-        self.sem_inalcancaveis()
+        houve_alteracao = True
+        while houve_alteracao:
+            houve_alteracao = False
+            gram = self.producoes.items()
+            for i, (nt_1, producao_1) in enumerate(gram):
+                for j, (nt_2, producao_2) in enumerate(gram):
+                    if j <= i: continue
+                    if producao_1 == producao_2: # Aqui producao eh todas as producoes nao uma soh
+                        self.substitute(nt_2, nt_1)
+                        houve_alteracao = True
+            self.sem_inalcancaveis()
         return self
 
     ###################### Recursao ##############################
 
     # Altera a gramatica para retirar recursao direta daquele nao terminal
-    def eliminar_recursao_direta(self, nao_terminal: str):
+    def eliminar_recursao_direta(self, nt: str):
 
         # Separa producoes recursivas de nao recursivas
         producoes_recursivas = []
         producoes_nao_recursivas = []
-        for producao in self.producoes[nao_terminal]:
-            if nao_terminal != producao[0]:
+        for producao in self.producoes[nt]:
+            if nt != producao[0]:
                 producoes_nao_recursivas.append(producao)
-            if nao_terminal == producao[0]:
+            if nt == producao[0]:
                 producoes_recursivas.append(producao)
 
         # Se nao ha producoes recursivas nao ha o que fazer
@@ -694,20 +782,20 @@ class Gramatica:
             return
 
         # Criacao do novo nao terminal auxiliar
-        novo_simbolo = self.novo_nao_terminal(nao_terminal)
+        novo_simbolo = self.novo_nao_terminal(nt)
         self.producoes[novo_simbolo] = [Production("&")]
 
         # Apaga as producoes do nao terminal com recursivas
-        self.producoes[nao_terminal] = []
+        self.producoes[nt] = []
 
         # Itera sobre producoes sem recursao direta
         for producao in producoes_nao_recursivas:
             # Corner case, talvez o & tenha que continuar mas acho que nao (nao tem nao)
             if producao == "&":
-                self.producoes[nao_terminal].append(Production(novo_simbolo))
+                self.producoes[nt].append(Production(novo_simbolo))
                 continue
 
-            self.producoes[nao_terminal].append(Production(producao+" "+novo_simbolo))
+            self.producoes[nt].append(Production(producao+" "+novo_simbolo))
 
         # Criacao das producoes do novo simbolo TODO: ESSE PRODUCAO AQUI TA SUS
         self.producoes[novo_simbolo] += [Production(" ".join(producao[1:])+" "+novo_simbolo) for producao in producoes_recursivas]
@@ -750,7 +838,7 @@ class Gramatica:
 
     ######################## Fatoracao ########################
 
-    # (RF) Retorna se ha ou nao nd_indireto neste nao terminal
+    # (Recursiva) Retorna se ha ou nao nd_indireto neste nao terminal
     def ha_nd_indireto(self, nt, derivaveis = None):
         # Cria o conjunto de simbolos derivaveis caso necessario
         if derivaveis == None:
@@ -871,16 +959,25 @@ class Gramatica:
                 self.eliminar_nd_direto(caminho_comum[-1].simbolo)
                 self.sem_repeticoes()
     
+    # Retira o nd direto da gramatica toda
+    def sem_nd_direto(self):
+        houve_alteracao = True
+        while houve_alteracao:
+            antes = len(self.nao_terminais)
+            for nao_terminal in self.nao_terminais:
+                self.eliminar_nd_direto(nao_terminal)
+            depois = len(self.nao_terminais)
+            houve_alteracao = antes != depois
+            self.sem_diretas().sem_repeticoes()
+        return self
+    
     # Retorna a gramatica fatorada (Codigo ta um lixo mas funciona)
     def fatorada(self):
 
-        # Elimina ND direto iniciais
-        for nao_terminal in self.nao_terminais:
-            self.eliminar_nd_direto(nao_terminal)
-
-        self.sem_repeticoes() # Essa linha em teoria nao machuca
+        self.sem_nd_direto()
+        self.pretify()
         
-        self.to_file("compiladores/grammar_pretratada")
+        self.to_file("debug/grammar_sem_nd_direto")
 
         for nao_terminal in self.nao_terminais:
             self.eliminar_nd_indireto(nao_terminal)
@@ -891,51 +988,51 @@ class Gramatica:
         # print(self)
 
         # TODO: POSSIVEL PROBLEMA PRA GRAMATICAS COMPLEXAS
-        nts = list(self.producoes.keys())
+        # nts = list(self.producoes.keys())
 
-        for nao_terminal in nts:
-            # print("-----------")
-            # print("to limpando:",nao_terminal)
-            # print(self)
+        # for nao_terminal in nts:
+        #     # print("-----------")
+        #     # print("to limpando:",nao_terminal)
+        #     # print(self)
 
-            for _ in range(100):
-                self.sem_repeticoes()
-                # Guarda p/ crescimento muito grande
-                self.to_file("error_grammar")
-                if len(self.producoes[nao_terminal]) > 100 or len(self.producoes) > 300:
-                    raise RuntimeError("Nao consegui fatorar a gramatica (muita producao)")
+        #     for _ in range(100):
+        #         self.sem_repeticoes()
+        #         # Guarda p/ crescimento muito grande
+        #         self.to_file("error_grammar")
+        #         if len(self.producoes[nao_terminal]) > 100 or len(self.producoes) > 300:
+        #             raise RuntimeError("Nao consegui fatorar a gramatica (muita producao)")
 
-                # TODO: VER SE VALE USAR ISSO OU NAO
-                # Nao ha nd indireto a ser resolvido
-                if not self.ha_nd_indireto(nao_terminal):
-                    break
+        #         # TODO: VER SE VALE USAR ISSO OU NAO
+        #         # Nao ha nd indireto a ser resolvido
+        #         if not self.ha_nd_indireto(nao_terminal):
+        #             break
 
-                # Itera sobre as producoes herdando todos os iniciais sempre que possivel
-                for producao in self.producoes[nao_terminal]:
-                    # Comeca de fato com um nao terminal
-                    if producao[0] in self.nao_terminais:
-                        # print(f"estou herdando {producao[0]}")
-                        self.herdar_primeiro(nao_terminal, producao[0])
-                        break
-                # Se ele nao conseguiu herdar nada
-                else:
-                    break
-            # Impede mais que 100 derivacoes sucessivas
-            else:
-                raise RuntimeError("Nao consegui fatorar a gramatica (limite de derivacoes)")
+        #         # Itera sobre as producoes herdando todos os iniciais sempre que possivel
+        #         for producao in self.producoes[nao_terminal]:
+        #             # Comeca de fato com um nao terminal
+        #             if producao[0] in self.nao_terminais:
+        #                 # print(f"estou herdando {producao[0]}")
+        #                 self.herdar_primeiro(nao_terminal, producao[0])
+        #                 break
+        #         # Se ele nao conseguiu herdar nada
+        #         else:
+        #             break
+        #     # Impede mais que 100 derivacoes sucessivas
+        #     else:
+        #         raise RuntimeError("Nao consegui fatorar a gramatica (limite de derivacoes)")
 
-            # Elimina ND direto gerado
-            novos_nt = self.eliminar_nd_direto(nao_terminal)
-            for nt in novos_nt:
-                nts.append(nt)
+        #     # Elimina ND direto gerado
+        #     novos_nt = self.eliminar_nd_direto(nao_terminal)
+        #     for nt in novos_nt:
+        #         nts.append(nt)
 
-        return self
+        # return self
 
     # Abreviacao de um monte de coisa
     def tratada(self):
-        g = self.sem_recursao().sem_inalcancaveis().fatorada()
-        g.to_file("grammar_tratada")
-        # g = self.sem_recursao().fatorada().sem_inalcancaveis()
+        g = self.sem_recursao()
+        g = g.sem_diretas().sem_inalcancaveis().fatorada().sem_diretas().sem_unitarias().pretify()
+        g.to_file("debug/grammar_tratada")
         return g
 
     ################### First e Follow #####################
@@ -1005,24 +1102,7 @@ class Gramatica:
         for nt in self.nao_terminais:
             first[nt] = self.__firstpos_simbol(nt)
         return first
-
-    # Calcula o firspos de um simbolo sem derivar nt, retornando eles de forma crua
-    def first_nt_simple(self, nt: str):
-        firstpos = []
-        if nt in self.terminais or nt == "&": return firstpos
-        anulaveis = self.anulaveis()
-        for producao in self.producoes[nt]:
-            firstpos.append(producao[0])
-            continue
-            for simbolo in producao:
-                # TODO: E &? n lembro se fica em anulaveis
-
-                # Atua como guarda
-                firstpos.append(simbolo)
-                if simbolo in self.terminais or simbolo not in anulaveis:
-                    break
-        return firstpos
-
+    
     # Calcula o followpos de um nao terminal
     def __followpos_nt(self, nt: str, analisys_set = None):
 
@@ -1030,7 +1110,12 @@ class Gramatica:
             analisys_set = set()
 
         analisys_set.add(nt)
+        # Memoizacao do problema
+        if nt in self.follow.keys():
+            return self.follow[nt]
+        
         follow = set()
+        anulaveis = self.anulaveis()
 
         # Fim de arquivo sempre ao fim do simbolo inicial
         if nt is self.inicial:
@@ -1042,36 +1127,39 @@ class Gramatica:
 
                 # Encontra o simbolo em outras producoes
                 for i, simbolo in enumerate(producao):
-                    if nt == simbolo:
+                    if nt != simbolo: continue
 
-                        # Firstpos de tudo que vem depois dele
-                        first_beta = self.first_prod(producao[i+1:])
+                    # Firstpos de tudo que vem depois dele
+                    post = self.first_prod(producao[i+1:])
 
-                        # Firstpos do resto da producao anulavel
-                        if "&" in first_beta:
-                            if not nt_analisado in analisys_set:
-                                follow = follow.union(self.__followpos_nt(nt_analisado, analisys_set.copy()))
-                        # Firstpos do resto da producao nao eh literalmente so &
-                        if {"&"} != first_beta:
-                            if "&" in first_beta:
-                                first_beta.remove("&")
-                            follow = follow.union(first_beta)
+                    # Firstpos do resto da producao anulavel
+                    if self.nullable_sentence(post, anulaveis):
+                        if not nt_analisado in analisys_set:
+                            follow = follow.union(self.__followpos_nt(nt_analisado, analisys_set.copy()))
+                    # Firstpos do resto da producao nao eh literalmente so &
+                    if {"&"} != post:
+                        if "&" in post:
+                            post.remove("&")
+                        follow = follow.union(post)
+        self.follow[nt] = follow
         return follow
 
     # Calcula o firstpos da gramatica
     def followpost(self):
-        follow = {nt:[] for nt in self.nao_terminais}
+        self.follow = {}
         for i, nt in enumerate(self.nao_terminais):
-            print(i, len(self.nao_terminais), nt)
-            follow[nt] = self.__followpos_nt(nt)
-        return follow
+            # print(i, len(self.nao_terminais), nt)
+            self.__followpos_nt(nt)
+        return self.follow
 
 if __name__ == "__main__":
     arquivo = "grammar"
     path = "compiladores/"
     # arquivo = "grammar_tratada"
-    g = Gramatica().from_file_preprocess(path+arquivo).tratamento_1().sem_recursao().fatorada()
+    g = Gramatica().from_file_preprocess(path+arquivo).tratada()
     g.to_file(path+arquivo+"_tratada")
+    # print("Arvore de FACTOR")
+    # a = ArvoreAuxiliar(g, "FACTOR", g.anulaveis())
     # g = Gramatica().from_file_preprocess(f"{arquivo}").tratada()
     # for nt in g.nao_terminais:
     #     print("--------")

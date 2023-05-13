@@ -1,9 +1,5 @@
-Z ::= S z | z
-S ::= b S'
-B ::= b B'
-D ::= d D'
-B' ::= B | &
-D' ::= D | &
-S' ::= B c d | c S''
-S'' ::= d S'''
-S''' ::= D' | &
+Z ::= z | b S z
+D ::= & | d D
+S ::= c d S'1 | b B c d
+S'1 ::= & | D
+B ::= & | b B

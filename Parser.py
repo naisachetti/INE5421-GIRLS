@@ -16,9 +16,9 @@ class ParsingTable:
         terminais = gramatica.terminais.copy()
         terminais += "$"
         firstpos = gramatica.firspost()
-        print(firstpos)
+        # print("fi", firstpos)
         followpos = gramatica.followpost()
-        print(followpos)
+        # print("fo", followpos)
         for nt in gramatica.nao_terminais:
             if firstpos[nt].intersection(followpos[nt]) and nt in gramatica.anulaveis():
                 print(gramatica)
@@ -35,23 +35,24 @@ class ParsingTable:
             for producao in producoes:
 
                 # Preenchimento de first
-                # print("prod",producao)
                 first = gramatica.first_prod(producao)
-                # print(nt, first)
 
                 # Preenchimento de quando for follow
                 if producao == "&" or "&" in first:
                     for terminal in followpos[nt]:
                         if not self.table[nt][terminal] is None:
+                            for e in self.table:
+                                print(e, self.table[e])
                             raise RuntimeError(f"Tentei colocar duas producoes na tabela LL1 {nt} {terminal}")
                         self.table[nt][terminal] = producao
                     # continue
 
                 # if "&" in first:
-                #     raise RuntimeError
-                # print(nt, first)
+                #     raise RuntimeError(f"epslon no first de {nt, first}")
                 for terminal in first:
+                    if terminal == "&": continue
                     if not self.table[nt][terminal] is None:
+                        print(self.table)
                         raise RuntimeError(f"Tentei colocar duas producoes na tabela LL1 {nt} {terminal}")
                     self.table[nt][terminal] = producao
 
@@ -82,12 +83,12 @@ class ParsingTable:
 
 class AnalisadorSintatico:
     def __init__(self, folder: str, Lexer:TokenDriver) -> None:
-        self.gramatica = Gramatica().from_file_preprocess(folder+"/grammar")#.tratada()
+        self.gramatica = Gramatica().from_file_preprocess(folder+"/grammar").tratada()
         self.token = Lexer.gerador()
         self.tabela = ParsingTable(self.gramatica)
         self.tabela.to_csv(folder+"/tabela_sintatica.csv")
         self.pilha = Pilha()
-        self.validate(self.gramatica)
+        self.validate(Gramatica().from_file_preprocess(folder+"/grammar"))
 
     # Faz o parsing dos tokens e valida a sintaxe
     def parse(self, show_stack = False, token: TokenDriver = None):
@@ -157,27 +158,28 @@ class AnalisadorSintatico:
 
     # Gera palavras 100 palavras aleatorias a partir da gramatica e faz o parsgin delas
     def validate(self, gramatica_original):
-        total = 100
+        total = 1000
         validas = 0
-        for _ in range(10000):
-            sentenca = gramatica_original.generate_word(100)
-            if not sentenca is None:
-                driver = TokenDriver(sentenca.split())
-                # TODO: ARRUMAR AQUIIII
-                try:
-                    self.parse(token=driver.gerador())
-                except SyntaxError:
-                    raise RuntimeError(f"Parseei errado uma sentenca gerada pela minha propria gramatica: {sentenca}")
-                validas += 1
-            if validas == total:
-                break
+        done = set()
+        with open("validation.txt", "w") as _:
+            pass
+        with open("validation.txt", "a") as arq_val:
+            for _ in range(total * 100):
+                if validas >= total: return
+                sentenca: str = gramatica_original.generate_word(200)
+                if not sentenca is None and sentenca not in done:
+                    done.add(sentenca)
+                    arq_val.write(sentenca + "\n")
+                    driver = TokenDriver(sentenca.split())
+                    # TODO: ARRUMAR AQUIIII
+                    try:
+                        self.parse(token=driver.gerador())
+                    except SyntaxError:
+                        raise RuntimeError(f"Parseei errado uma sentenca gerada pela minha propria gramatica: {sentenca}")
+                    validas += 1
 
 if __name__ == "__main__":
-    gramatica = Gramatica().from_file_preprocess("compiladores/grammar").tratada()
-    print("Gramatica tratada gerada!")
-    tabela = ParsingTable(gramatica)
-    print("Tabela de Parsing gerada!")
+    pasta = "compiladores"
     driver = TokenDriver("None".split())
-    parser = AnalisadorSintatico("q1", driver)
+    parser = AnalisadorSintatico(pasta, driver)
     print("Analisador Sintatico gerado!")
-    parser.validate(Gramatica().from_file_preprocess("compiladores/grammar"))

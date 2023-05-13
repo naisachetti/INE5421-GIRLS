@@ -1,0 +1,6 @@
+
+gramatica original  -> def ident ( int ident ) { float ident ;}
+gramatica simples -> def ident ( int ident ) { float ident ; }
+gramatica tratada -> def ident ( ) { STATELIST } A'7 | PARAMLIST ) { A'5 | ident A'4
+gramatica pretratada -> def ident ( int ident ) { float ident ; }
+gramatoda nd_direto -> def ident ( int ident ) { float ident ; }

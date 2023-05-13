@@ -1,9 +1,9 @@
-A ::= & | ; | VARDECL ; | break ; | { STATELIST } | print EXPRESSION ; | for ( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT ) AUX1 | read ident AUX10'1 ; | return RETURNSTAT ; | if ( A'1 | def ident ( A'2 | ident A'7
-AUX1 ::= ; | VARDECL ; | break ; | { STATELIST } | print EXPRESSION ; | for ( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT ) AUX1 | read ident AUX10'1 ; | return AUX1'1 | if ( A'1 | ident AUX1'3
+A ::= & | ATRIBSTAT ; | ; | VARDECL ; | break ; | { STATELIST } | print EXPRESSION ; | for ( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT ) AUX1 | read ident AUX10'1 ; | return RETURNSTAT ; | ident ( FUNCCALL ; | if ( A'1 | def ident ( A'2
+AUX1 ::= ATRIBSTAT ; | ; | VARDECL ; | break ; | { STATELIST } | print EXPRESSION ; | for ( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT ) AUX1 | read ident AUX10'1 ; | return AUX1'1 | ident ( AUX1'2 | if ( A'1
 ATRIBSTAT ::= ident AUX10'1 = AUX3
 AUX3 ::= ident AUX3'1 | int_constant AUX3'2 | float_constant AUX3'2 | null AUX3'2 | string_constant AUX3'2 | new TYPE [ AUX20 | ( AUX3'3 | [ AUX3'4 | SIGNAL AUX3'5
 AUX10 ::= int_constant | float_constant | null | string_constant | ( NUMEXPRESSION ) | ident AUX10'1 | [ = ARRAYCONTENTS ]
-AUX14 ::= int_constant AUX14'1 | ( AUX14'3 | ident AUX14'4 | [ AUX14'5 | SIGNAL AUX14'6 | float_constant AUX14'1 | null AUX14'1 | string_constant AUX14'1
+AUX14 ::= int_constant AUX14'1 | float_constant AUX14'2 | null AUX14'2 | string_constant AUX14'2 | ( AUX14'3 | ident AUX14'4 | [ AUX14'5 | SIGNAL AUX14'6
 STATELIST ::= ; STATELIST'1 | VARDECL ; STATELIST'1 | break ; STATELIST'1 | ident STATELIST'2 | { STATELIST'3 | print STATELIST'4 | read STATELIST'5 | return STATELIST'6 | for ( STATELIST'7 | if ( STATELIST'8
 VARDECL ::= TYPE ident VARDECL'1
 EXPRESSION ::= int_constant AUX3'2 | float_constant AUX3'2 | null AUX3'2 | string_constant AUX3'2 | ident EXPRESSION'1 | ( AUX3'3 | [ AUX3'4 | SIGNAL AUX3'5
@@ -22,6 +22,7 @@ AUX3'1 ::= AUX21 | & | [ AUX17 AUX3'2 | ( FUNCCALL | AUX23 AUX3'6 | AUX22 AUX3'7
 AUX3'2 ::= AUX21 | & | AUX23 AUX3'6 | AUX22 AUX3'7
 AUX10'1 ::= & | [ AUX17
 AUX14'1 ::= & | , RETURNSTAT | AUX23 AUX14'7 | AUX22 AUX14'8
+AUX14'2 ::= & | , RETURNSTAT | AUX23 AUX14'7 | AUX22 AUX14'8
 STATELIST'1 ::= STATELIST | &
 NUMEXPRESSION'1 ::= AUX22 | & | AUX23 NUMEXPRESSION'6
 AUX22'1 ::= TERM NUMEXPRESSION'6
@@ -36,10 +37,10 @@ RETURNSTAT ::= AUX14 | &
 AUX17 ::= NUMEXPRESSION ] AUX10'1
 AUX1'1 ::= ; | AUX14 ;
 AUX1'2 ::= ) ; | ident AUX13 ) ;
-AUX14'3 ::= NUMEXPRESSION ) AUX14'1
-AUX14'4 ::= & | , RETURNSTAT | AUX23 AUX14'7 | AUX22 AUX14'8 | [ AUX17 AUX14'1
-AUX14'5 ::= = ARRAYCONTENTS ] AUX14'1
-AUX14'6 ::= AUX10 AUX14'1
+AUX14'3 ::= NUMEXPRESSION ) AUX14'2
+AUX14'4 ::= & | , RETURNSTAT | [ AUX17 AUX14'2 | AUX23 AUX14'7 | AUX22 AUX14'8
+AUX14'5 ::= = ARRAYCONTENTS ] AUX14'2
+AUX14'6 ::= AUX10 AUX14'2
 AUX14'7 ::= & | , RETURNSTAT | AUX22 AUX14'8
 AUX14'8 ::= & | , RETURNSTAT
 AUX20 ::= NUMEXPRESSION ] AUX20'1
@@ -83,5 +84,3 @@ AUX3'6 ::= AUX21 | & | AUX22 AUX3'7
 AUX3'7 ::= AUX21 | &
 AUX13 ::= & | , AUX13'1
 AUX13'1 ::= & | ident AUX13
-A'7 ::= ( FUNCCALL ; | AUX10'1 = AUX3 ;
-AUX1'3 ::= ( AUX1'2 | AUX10'1 = AUX3 ;
