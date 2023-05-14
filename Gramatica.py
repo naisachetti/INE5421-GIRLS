@@ -167,6 +167,9 @@ class Production(str):
 
     def __repr__(self) -> str:
         return " ".join(self.conteudo)
+    
+    def __contains__(self, __key: str) -> bool:
+        return __key in self.conteudo
 
     def index(self, valor) -> int:
         # print(self.conteudo, valor)
@@ -509,9 +512,11 @@ class Gramatica:
             # Apenas uma producao
             if len(self.producoes[nt]) != 1: continue
             # Fecha com NT
-            if not self.producoes[nt][0][-1] in self.nao_terminais: continue
+            # if not self.producoes[nt][0][-1] in self.nao_terminais: continue
             # Soh terminal no caminho
-            if len(set(self.producoes[nt][0][:-1]).difference(set(self.terminais))): continue
+            # if len(set(self.producoes[nt][0][:-1]).difference(set(self.terminais))): continue
+            # Impede de fazer isso com uma producao semi recursiva
+            if nt in self.producoes[nt][0]: continue
             # Realiza a sobstituicao da producao simples
             self.substitute(nt, self.producoes[nt][0])
 
@@ -530,7 +535,8 @@ class Gramatica:
                     self.update_symbol(ocorrencia, simbolo)
                     continue
                 self.update_symbol(ocorrencia, simbolo+"'"+str(i))
-        # Renomeacoes pertinentes
+        
+        # Renomeacoes pertinentes para gramatica da materia de compiladores
         nts = self.nao_terminais.copy()
         for nt in nts:
             prods = set(map(lambda e: repr(e), self.producoes[nt]))
@@ -542,7 +548,16 @@ class Gramatica:
                 self.update_symbol(nt, "TYPE")
             elif prods == {">",">=","!=","<","<=","=="}:
                 self.update_symbol(nt, "COMPARE")
-        # print(self)
+        
+        # Ordena as producoes por ordem alfabetica dos NTs
+        nts = self.nao_terminais.copy()
+        nts.sort()
+        ordenado = {self.inicial: self.producoes[self.inicial]}
+        nts.remove(self.inicial)
+        ajuntado = {nt: self.producoes[nt] for nt in nts}
+        ordenado.update(ajuntado)
+        self.producoes = ordenado
+
         return self
 
     ##################### &-Producoes #######################
@@ -745,7 +760,7 @@ class Gramatica:
         self.sem_inalcancaveis()
         self.sem_repeticoes()
         self.pretify()
-        self.to_file("debug/grammar_t1")
+        self.to_file("debug/e_livre_enxuta")
         return self
 
     # Tira os nao terminais exatamente iguais com as msms producoes
@@ -834,6 +849,7 @@ class Gramatica:
             self.eliminar_recursao_direta(ai)
             # tratamento_improvisado(ai)
 
+        self.to_file("debug/sem_recursao")
         return self
 
     ######################## Fatoracao ########################
@@ -1155,27 +1171,5 @@ class Gramatica:
 if __name__ == "__main__":
     arquivo = "grammar"
     path = "compiladores/"
-    # arquivo = "grammar_tratada"
     g = Gramatica().from_file_preprocess(path+arquivo).tratada()
     g.to_file(path+arquivo+"_tratada")
-    # print("Arvore de FACTOR")
-    # a = ArvoreAuxiliar(g, "FACTOR", g.anulaveis())
-    # g = Gramatica().from_file_preprocess(f"{arquivo}").tratada()
-    # for nt in g.nao_terminais:
-    #     print("--------")
-    #     print(nt)
-    #     arvore =  ArvoreAuxiliar(g, nt)
-    #     for simbolo in set(arvore.folhas_simbolos):
-    #         # Nao precisamos tratar
-    #         print(arvore.ancestral_comum_derivativo(simbolo))
-
-    # total = 0
-    # with open("compiladores/words.txt", "w") as arquivo:
-    #     while True:
-    #         word = g.generate_word(2000)
-    #         if not word in {None, "; $", " $"} and len(word.split()) > 10:
-    #             arquivo.write(f"{word}\n\n")
-    #             total += 1
-    #             print(total)
-    #         if total == 100:
-    #             break

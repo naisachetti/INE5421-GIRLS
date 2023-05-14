@@ -126,15 +126,12 @@ class AnalisadorSintatico:
                     token_analisado = next(token)
                 except StopIteration:
                     return False
-                    # raise SyntaxError("Erro de Sintaxe no arquivo fonte (Arquivo terminou muito cedo)")
             # Token no topo da pilha incorreto
             elif topo in self.gramatica.terminais:
-                return False
-                #raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
+                return False#raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
             # Producao inexistente
             elif self.tabela[topo][token_analisado] is None:
-                return False
-                #raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
+                return False#raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
             # Producao na pilha
             else:
                 producao = self.tabela[topo][token_analisado]
@@ -158,7 +155,7 @@ class AnalisadorSintatico:
 
     # Gera palavras 100 palavras aleatorias a partir da gramatica e faz o parsgin delas
     def validate(self, gramatica_original):
-        total = 1000
+        total = 100
         validas = 0
         done = set()
         with open("validation.txt", "w") as _:
@@ -171,15 +168,12 @@ class AnalisadorSintatico:
                     done.add(sentenca)
                     arq_val.write(sentenca + "\n")
                     driver = TokenDriver(sentenca.split())
-                    # TODO: ARRUMAR AQUIIII
-                    try:
-                        self.parse(token=driver.gerador())
-                    except SyntaxError:
-                        raise RuntimeError(f"Parseei errado uma sentenca gerada pela minha propria gramatica: {sentenca}")
+                    if not self.parse(token=driver.gerador()):
+                        raise SyntaxError(f"Parseei errado uma sentenca gerada pela minha propria gramatica: {sentenca}")
                     validas += 1
 
 if __name__ == "__main__":
     pasta = "compiladores"
     driver = TokenDriver("None".split())
     parser = AnalisadorSintatico(pasta, driver)
-    print("Analisador Sintatico gerado!")
+    parser.parse(True, TokenDriver("def ident ( ) { { ident ( ; ) ; } ident ( ident , ident , ) ; { read ident ; } } $".split()).gerador())

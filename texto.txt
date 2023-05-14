@@ -1,6 +1,14 @@
-
-gramatica original  -> def ident ( int ident ) { float ident ;}
-gramatica simples -> def ident ( int ident ) { float ident ; }
-gramatica tratada -> def ident ( ) { STATELIST } A'7 | PARAMLIST ) { A'5 | ident A'4
-gramatica pretratada -> def ident ( int ident ) { float ident ; }
-gramatoda nd_direto -> def ident ( int ident ) { float ident ; }
+meta: def ident ( float ident [ - null - + int_constant ] , string ident , string ident ) { break ; } $
+tratada:
+A
+def ident ( A'2
+def ident ( TYPE ident AUX10'1 AUX25 ) { STATELIST } A'4
+def ident ( float ident AUX10'1 AUX25 ) { STATELIST }
+def ident ( float ident [ NUMEXPRESSION ] AUX10'1 AUX25 ) { STATELIST }
+def ident ( float ident [ NUMEXPRESSION ] AUX25 ) { STATELIST }
+def ident ( float ident [ SIGNAL AUX10 NUMEXPRESSION'4 ] AUX25 ) { STATELIST }
+def ident ( float ident [ - null NUMEXPRESSION'4 ] AUX25 ) { STATELIST }
+def ident ( float ident [ - null SIGNAL TERM NUMEXPRESSION'3 ] AUX25 ) { STATELIST }
+def ident ( float ident [ - null - SIGNAL AUX10 TERM'1 NUMEXPRESSION'3 ] AUX25 ) { STATELIST }
+def ident ( float ident [ - null - + int_constant ] AUX25 ) { STATELIST }
+def ident ( float ident [ - null - + int_constant ] , TYPE ident AUX10'1 AUX25 ) { STATELIST }
