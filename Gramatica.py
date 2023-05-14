@@ -566,7 +566,7 @@ class Gramatica:
     def nullable_sentence(self, sentence: Production, simbolos_anulaveis: list = None):
         if simbolos_anulaveis is None:
             simbolos_anulaveis = self.anulaveis()
-        return len(list(filter(lambda e: not e in simbolos_anulaveis, sentence))) == 0        
+        return len(list(filter(lambda e: e in simbolos_anulaveis, sentence))) != 0     
 
     # Retorna uma lista com os nao terminais anulaveis da gramatica
     def anulaveis(self):
@@ -1126,7 +1126,7 @@ class Gramatica:
             analisys_set = set()
 
         analisys_set.add(nt)
-        # Memoizacao do problema
+        # Memorizacao do problema
         if nt in self.follow.keys():
             return self.follow[nt]
         
@@ -1148,19 +1148,26 @@ class Gramatica:
                     # Firstpos de tudo que vem depois dele
                     post = self.first_prod(producao[i+1:])
 
+                    # Firstpos do resto da producao nao eh literalmente so &
+                    if {'&'} != post:
+                        if '&' in post:
+                            follow = follow.union(post-{'&'})
+                        else:
+                            follow = follow.union(post)
+                    self.follow[nt] = follow
+
                     # Firstpos do resto da producao anulavel
                     if self.nullable_sentence(post, anulaveis):
-                        if not nt_analisado in analisys_set:
-                            follow = follow.union(self.__followpos_nt(nt_analisado, analisys_set.copy()))
-                    # Firstpos do resto da producao nao eh literalmente so &
-                    if {"&"} != post:
-                        if "&" in post:
-                            post.remove("&")
-                        follow = follow.union(post)
+                        if not nt_analisado in self.follow.keys():
+                            if not nt_analisado in analisys_set.copy():
+                                follow = follow.union(self.__followpos_nt(nt_analisado, analisys_set.copy()))
+                        else:
+                            follow = follow.union(self.follow[nt_analisado])
+
         self.follow[nt] = follow
         return follow
 
-    # Calcula o firstpos da gramatica
+    # Calcula o followpos da gramatica
     def followpost(self):
         self.follow = {}
         for i, nt in enumerate(self.nao_terminais):
