@@ -1,1 +1,1000 @@
-c c $
+ $
+def ident ( ) { ; } $
+break ; $
+def ident ( string ident [ + string_constant / + null + + ident [ ] [ ] / int_constant ] [ - string_constant * + int_constant * int_constant ] , float ident [ ] ) { int ident ; } $
+def ident ( ) { ident ( ident , ident , ident ) ; ; } $
+{ ident ( ident , ident , ident , ident ) ; } $
+{ break ; } $
+read ident ; $
+def ident ( string ident , ) { read ident ; } $
+ident = ident ( ) ; $
+int ident ; $
+ident ( ) ; $
+ident ( ident , ident ) ; $
+read ident [ ] [ ] ; $
+; $
+ident [ ] [ ] [ ] [ ] = ident ( ident , ident ) ; $
+def ident ( ) { int ident [ int_constant ] ; break ; read ident [ ident [ ] [ ] % + int_constant ] ; read ident ; } $
+ident [ ] = ident ( ident ) ; $
+{ print ident [ string_constant - float_constant ] + - null ; } $
+def ident ( ) { ident = new int [ + int_constant ] ; ; } $
+ident = new string [ + int_constant / + null + int_constant * - int_constant / string_constant + - float_constant - + null - - float_constant ] ; $
+float ident [ int_constant ] ; $
+ident ( ident ) ; $
+ident = ident ( ident ) ; $
+string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+{ ; ; ident ( ident ) ; } $
+def ident ( ) { break ; } def ident ( int ident ) { read ident ; } $
+{ read ident ; ident ( ident ) ; } $
+string ident ; $
+def ident ( ) { ident ( ) ; } $
+def ident ( ) { ident ( ) ; } def ident ( ) { int ident ; } $
+ident [ ] = ident ( ident , ident ) ; $
+float ident ; $
+return + null / - float_constant / - string_constant / string_constant * null % float_constant / int_constant ; $
+ident ( ident , ) ; $
+print null ; $
+{ string ident ; } $
+def ident ( ) { break ; } $
+def ident ( ) { ; return ; } def ident ( int ident ) { ident ( ident ) ; } $
+def ident ( string ident [ + string_constant ] [ ] , ) { ; } def ident ( float ident [ ( float_constant / - string_constant ) + + ident ] ) { ident ( ident ) ; } $
+def ident ( string ident , float ident [ ] [ ] ) { ident ( ident ) ; } $
+ident [ ] [ + int_constant * float_constant % float_constant + null ] [ ] = ident ( ident ) ; $
+def ident ( float ident [ ] ) { break ; ident ( ident , ident ) ; } $
+def ident ( string ident ) { print ( + string_constant ) ; } $
+def ident ( int ident ) { break ; } $
+def ident ( ) { return ; ident ( ) ; } $
+def ident ( string ident [ ] ) { float ident ; } $
+if ( - int_constant >= - ( - float_constant / - float_constant ) ) ; $
+def ident ( ) { break ; ident ( ident ) ; read ident ; ident ( ident ) ; string ident [ int_constant ] ; } $
+return null * null , - string_constant , ; $
+{ string ident [ int_constant ] ; } $
+def ident ( int ident , float ident ) { break ; } $
+return ; $
+def ident ( float ident , string ident [ ] [ float_constant ] [ ] , ) { ident ( ident ) ; ; } $
+def ident ( ) { break ; { read ident ; break ; } { float ident ; ident ( ident ) ; ; } } $
+if ( - ( int_constant - + string_constant ) ) ident = new int [ - [ = string_constant != float_constant / + ( ident / int_constant ) / - float_constant ] * + string_constant % + null ] ; $
+def ident ( float ident [ ] ) { break ; ident ( ident , ident , ) ; float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+def ident ( string ident [ ] ) { ident ( ) ; } $
+float ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
+def ident ( int ident ) { { ident ( ident ) ; } } $
+def ident ( ) { ident = ident ( ident ) ; print - float_constant * - float_constant * null / float_constant / int_constant + - ( int_constant % - string_constant ) + - float_constant ; { print ident ; } read ident [ ] ; } $
+def ident ( ) { ; } def ident ( float ident [ - ( + int_constant ) * + int_constant ] [ ] ) { ; } $
+def ident ( ) { float ident ; read ident ; } def ident ( float ident ) { ident = new string [ float_constant ] ; } $
+{ ; } $
+int ident [ int_constant ] [ int_constant ] ; $
+return int_constant , ; $
+ident ( ident , ident , ) ; $
+def ident ( string ident ) { ident ( ident , ident , ) ; } $
+string ident [ int_constant ] ; $
+def ident ( int ident ) { return int_constant , ( - float_constant - int_constant ) - int_constant * - float_constant ; } $
+{ read ident ; } $
+read ident [ ] ; $
+def ident ( float ident , int ident ) { read ident ; } $
+print + null * - float_constant / string_constant / float_constant + float_constant + + null == - null + null / - ident [ ] ; $
+string ident [ int_constant ] [ int_constant ] ; $
+def ident ( ) { int ident ; read ident ; } $
+def ident ( float ident [ ] ) { ; int ident [ int_constant ] [ int_constant ] ; print null ; } $
+def ident ( float ident ) { ; ident ( ident , ) ; } $
+print int_constant ; $
+def ident ( ) { break ; } def ident ( float ident ) { break ; } def ident ( int ident , int ident ) { break ; } $
+def ident ( ) { ident ( ident ) ; } $
+{ read ident [ ] ; } $
+ident ( ident , ident , ident , ident , ) ; $
+{ float ident ; string ident ; } $
+def ident ( string ident [ ( - float_constant ) + + string_constant / + int_constant * - float_constant ] [ ] , ) { return ; } $
+ident = + int_constant - int_constant ; $
+def ident ( float ident , ) { read ident [ ] [ ] ; } def ident ( ) { break ; } def ident ( float ident , ) { ident ( ident ) ; } def ident ( ) { ident = ident ( ident , ident ) ; { ident ( ) ; } ident = ident [ ] % + string_constant ; } $
+{ ; break ; } $
+def ident ( float ident ) { { break ; } break ; read ident [ ] ; } $
+print + ident [ int_constant ] [ + float_constant ] [ ] < - null * ident [ - int_constant / - null ] + + string_constant ; $
+ident [ ] = + float_constant * - float_constant % - null + ident + - float_constant ; $
+def ident ( float ident [ + string_constant ] ) { ; } $
+{ break ; ident ( ident ) ; } $
+return - string_constant , ; $
+def ident ( ) { string ident ; read ident [ string_constant - + null + + null ] ; } $
+read ident [ - string_constant * string_constant * - ( + ( - float_constant ) % string_constant ) * + null / int_constant ] [ ] ; $
+{ ident [ - string_constant ] = ident ( ident ) ; } $
+print float_constant * ident <= float_constant ; $
+def ident ( ) { { float ident ; } ; } $
+def ident ( ) { read ident [ ] [ ] [ string_constant ] [ ] ; } $
+ident [ ] [ - int_constant / string_constant - float_constant ] = ident ( ident ) ; $
+return - string_constant / - float_constant - - float_constant % + ident [ ] [ ] ; $
+def ident ( ) { float ident ; } $
+print + int_constant / int_constant > + float_constant / int_constant + + [ = ident [ string_constant - string_constant * float_constant ] [ ] < + null ] ; $
+for ( ident [ ] = ident ( ) ; + string_constant ; ident = ident ( ident ) ) return ; $
+{ ident ( ident , ident ) ; } $
+def ident ( ) { ident ( ident , ident ) ; string ident ; } def ident ( ) { print - string_constant + - ident ; string ident ; } $
+ident [ ] = - ident ; $
+def ident ( ) { int ident ; } $
+def ident ( ) { ; ident [ - float_constant ] [ ] = ident ( ) ; } $
+def ident ( string ident ) { return ; } $
+print - int_constant / - float_constant ; $
+def ident ( float ident , ) { ident ( ) ; break ; read ident ; } $
+def ident ( string ident ) { ident = ident ( ) ; } $
+{ { break ; } } $
+{ int ident ; } $
+def ident ( ) { { ident ( ident , ident ) ; } } $
+def ident ( int ident [ ] ) { return ; } $
+read ident [ ] [ - string_constant ] ; $
+def ident ( ) { ident ( ident , ident , ident ) ; } $
+def ident ( int ident ) { read ident ; } def ident ( ) { float ident ; } $
+read ident [ + float_constant ] ; $
+read ident [ ] [ string_constant / - float_constant * - null ] ; $
+return string_constant ; $
+print float_constant * ( + ( null ) ) ; $
+int ident [ int_constant ] ; $
+ident = new string [ int_constant ] [ null - + ( - null ) ] ; $
+print + string_constant / ident % float_constant * + null % + float_constant * - float_constant ; $
+def ident ( int ident ) { ident [ ] = new string [ string_constant % - float_constant + [ = int_constant ] ] ; } $
+float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+def ident ( ) { ident ( ) ; return ; break ; ; } $
+def ident ( float ident [ ] , ) { { ident ( ident ) ; } } $
+def ident ( float ident , ) { return ; ident ( ident ) ; } $
+def ident ( string ident [ string_constant ] , float ident [ - string_constant % - float_constant * + null * float_constant / int_constant ] [ ] ) { ident ( ident , ident , ) ; } $
+def ident ( ) { read ident ; float ident ; ident ( ident ) ; } $
+def ident ( int ident [ ] ) { { break ; } } $
+def ident ( ) { ; return - ident [ int_constant % + ( string_constant % ident ) / - int_constant - + ( float_constant ) % - int_constant ] [ + string_constant % + float_constant ] ; } $
+if ( + float_constant * - ( null / null / float_constant / - string_constant - null + - null / int_constant ) - string_constant ) ; $
+print + null ; $
+if ( + string_constant / + int_constant ) return ; $
+def ident ( float ident ) { return - null , ; break ; ; } $
+def ident ( string ident ) { break ; } $
+def ident ( int ident [ string_constant / int_constant ] [ ] , string ident [ ] ) { { int ident [ int_constant ] [ int_constant ] ; } } $
+print ident [ ] [ ] [ ] [ ] [ ] / float_constant % - string_constant * + ident [ - string_constant ] > - null ; $
+print float_constant ; $
+ident [ ] [ ] = ident ( ) ; $
+return + int_constant % + ident ; $
+def ident ( ) { float ident ; } def ident ( ) { float ident ; } $
+def ident ( string ident ) { ; } $
+def ident ( float ident ) { float ident ; int ident [ int_constant ] ; return ; } $
+ident [ ] = ident ( ) ; $
+def ident ( string ident [ ] [ ] [ ] [ ] [ ] ) { ident [ ] = ident ( ident , ident , ident , ident ) ; } $
+{ ident ( ident , ) ; } $
+read ident [ + string_constant * - int_constant ] [ ] [ ( null / float_constant ) ] ; $
+def ident ( string ident ) { ; { { ident ( ) ; } } } $
+print float_constant / null / string_constant % string_constant ; $
+def ident ( float ident [ ] ) { break ; return - string_constant - null ; } $
+return + [ = - string_constant / - string_constant + + float_constant / ident ] * float_constant + + ident , ; $
+read ident [ ] [ + ident ] [ string_constant + ( null - string_constant ) ] ; $
+def ident ( string ident , ) { { { ; } } } $
+def ident ( float ident , ) { ; } $
+return - null + - string_constant / int_constant % + ident * - string_constant / - [ = null > + ( null ) ] , ; $
+{ ident ( ) ; } $
+def ident ( float ident [ ] [ ] ) { if ( int_constant - [ = ident [ ] [ ] ] ) ; else break ; } $
+ident [ ] = + null * int_constant ; $
+print - int_constant % + string_constant ; $
+read ident [ ] [ ] [ ] [ ] ; $
+def ident ( ) { if ( + float_constant == + [ = null + - float_constant % int_constant % + string_constant + - ( + float_constant ) ] ) int ident ; else break ; } $
+def ident ( float ident [ ( int_constant - null + [ = - float_constant / null % + float_constant % - float_constant ] + - null % string_constant ) ] [ ] ) { read ident ; } $
+def ident ( float ident , string ident ) { break ; } $
+ident [ null / float_constant / float_constant ] = ident ( ) ; $
+return + float_constant , ; $
+def ident ( ) { { read ident [ + int_constant ] ; } float ident ; } $
+def ident ( ) { ; read ident ; } $
+def ident ( int ident ) { read ident ; print int_constant * string_constant < - int_constant % null % + null ; } $
+print + string_constant + int_constant % - null <= + int_constant + - float_constant + float_constant ; $
+if ( float_constant - + float_constant * + string_constant == + [ = float_constant % + string_constant , = string_constant * ident [ ] [ ] + int_constant * ( - ident [ null + null ] + int_constant - null + string_constant ) >= string_constant ] ) int ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+ident ( ident , ident , ident , ) ; $
+def ident ( float ident [ - float_constant + int_constant ] ) { int ident [ int_constant ] [ int_constant ] ; ident ( ident ) ; } $
+def ident ( ) { float ident ; } def ident ( ) { break ; } $
+def ident ( string ident [ ] [ ] [ ] ) { ident ( ) ; } $
+ident ( ident , ident , ident , ident ) ; $
+def ident ( string ident [ null % ident ] , int ident [ ] [ ident [ ] [ ] [ ] + float_constant * null + null + - float_constant ] [ ] [ ] ) { ident = ident ( ident ) ; } $
+def ident ( ) { break ; } def ident ( string ident ) { break ; } $
+def ident ( string ident [ ] ) { ident ( ident ) ; } $
+read ident [ + int_constant * float_constant ] [ ] ; $
+{ return ; } $
+def ident ( ) { if ( - ident [ ] [ ] [ ] [ + ( float_constant ) + float_constant ] - null == - int_constant ) if ( float_constant - string_constant ) read ident ; } $
+{ { float ident ; } } $
+if ( + float_constant ) { ident [ ] = ident ( ) ; } else ; $
+string ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
+ident [ ] [ ] = ident ( ident , ) ; $
+def ident ( float ident , ) { ident ( ident ) ; } $
+def ident ( string ident [ ] [ null % + string_constant ] ) { ; break ; } def ident ( ) { ident ( ident , ident ) ; } def ident ( ) { { if ( float_constant ) break ; { ; } } } $
+ident [ ] [ ] [ ] [ [ = - ident [ ] [ ] [ ] [ ] [ ] / + float_constant % - int_constant , = + int_constant / ident ] / + null ] = new string [ - string_constant + + ( - string_constant ) * - null * + float_constant % string_constant / + null ] ; $
+def ident ( int ident [ ] ) { ident [ ] [ ] [ ] = ident ( ident ) ; } $
+read ident [ ] [ null % + string_constant % float_constant + - string_constant - int_constant * ident * - [ = float_constant / int_constant * + null ] % - string_constant ] ; $
+ident [ ] = new float [ ( + float_constant + - float_constant * null + int_constant * float_constant % null / null * - int_constant + float_constant % - null % int_constant ) ] ; $
+return - ( + null + ( ident % - float_constant * string_constant ) ) / ( - float_constant ) * null * + int_constant / - null ; $
+print int_constant <= + float_constant ; $
+def ident ( ) { ident ( ident , ident , ident , ) ; } def ident ( ) { int ident [ int_constant ] ; } $
+{ read ident [ ] [ + ident ] ; } $
+ident = ident ( ident , ident , ident , ) ; $
+def ident ( ) { ; ; } def ident ( int ident [ ] [ float_constant - + int_constant ] [ ] [ ] [ ] [ ] ) { break ; float ident [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+{ break ; break ; } $
+def ident ( ) { return ; } $
+print - string_constant + - ident / ident [ ] [ + string_constant ] [ + null % ( string_constant * - ident / + int_constant / - int_constant - + int_constant + + string_constant % int_constant ) % float_constant + ( null ) - string_constant % + ( + float_constant ) ] [ ] [ ] [ - float_constant ] [ ] [ ] >= string_constant ; $
+{ { ident ( ident , ident , ident ) ; } } $
+def ident ( int ident , string ident [ ] [ ] ) { ; ; } $
+{ break ; ident ( ) ; } $
+{ ident ( ident , ident , ) ; } $
+{ print int_constant * ident [ ] % + float_constant > float_constant ; } $
+ident [ int_constant / null / null - - float_constant * + ( string_constant ) % - ident ] = ident ( ) ; $
+def ident ( float ident [ ] [ ] , ) { ; } $
+def ident ( ) { ; ; } $
+ident = ident ( ident , ident ) ; $
+def ident ( ) { int ident [ int_constant ] ; } $
+def ident ( int ident , string ident [ ] ) { break ; } $
+print ident / float_constant == - string_constant ; $
+ident = ident ( ident , ident , ident ) ; $
+ident = + ident >= int_constant / + float_constant ; $
+int ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+{ read ident [ ] [ ] [ ] [ ] [ string_constant ] ; ; } $
+def ident ( string ident , ) { return string_constant ; ident ( ident , ) ; print int_constant * string_constant - + null - float_constant - string_constant + + ident ; } $
+def ident ( float ident [ ] [ float_constant % ident [ ] [ ] ] [ int_constant ] ) { return ; } def ident ( int ident [ ] [ int_constant * null ] [ ] [ ] , float ident [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] [ ] , ) { { read ident [ ] ; ident [ ] [ ] = - ( float_constant / string_constant % - ident [ ] [ ] ) ; } return ; } $
+def ident ( ) { if ( + int_constant % + [ = int_constant / float_constant * ident + ident [ ] ] ) return ; else break ; } $
+float ident [ int_constant ] [ int_constant ] ; $
+print ident + null ; $
+int ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
+def ident ( string ident , int ident , string ident ) { read ident [ ] [ ] [ ] ; if ( + ident ) print - float_constant / string_constant - - float_constant <= int_constant ; else break ; ident ( ) ; } $
+if ( + null ) float ident ; $
+ident = ident ( ident , ) ; $
+def ident ( ) { ; } def ident ( float ident [ float_constant ] [ string_constant % + string_constant * float_constant % + ident * + ident [ + ident % ( + null ) ] ] ) { return ; read ident ; } $
+def ident ( ) { ; } def ident ( string ident , ) { { float ident ; break ; } } $
+def ident ( float ident ) { read ident ; return ; } $
+def ident ( int ident , string ident [ + float_constant % int_constant - float_constant % string_constant % + int_constant / float_constant * float_constant + + float_constant / + ( ident ) ] , float ident [ ] , ) { { ident ( ident ) ; } } $
+def ident ( ) { read ident ; } $
+def ident ( float ident [ string_constant ] ) { return ; } $
+def ident ( float ident ) { ; ident ( ) ; print null * float_constant ; } $
+def ident ( int ident [ ] [ ] ) { read ident [ ] [ ] ; return string_constant / + null , + int_constant + float_constant , - float_constant / - float_constant * - ident [ ] [ ] / ( + int_constant + + ident [ ] / string_constant ) ; } $
+ident [ ] [ ] = ident ( ident ) ; $
+return - int_constant / null ; $
+print null - - ident - - null / + null < - string_constant ; $
+if ( ident ) int ident ; $
+def ident ( float ident ) { break ; print float_constant ; } $
+def ident ( string ident [ + null - - float_constant * float_constant ] , ) { return ; } $
+def ident ( int ident [ ] [ ] [ - ident ] [ ] ) { { ident ( ident , ident , ident , ) ; } } $
+def ident ( float ident [ + int_constant ] [ ] [ + float_constant ] ) { { break ; break ; } } def ident ( ) { return + int_constant - - ident % null / null % + ( ( + null ) / null + + ( ident * + string_constant + int_constant ) / string_constant / + ( + float_constant ) / float_constant % string_constant % - string_constant ) ; } $
+def ident ( string ident [ ] [ ] [ + null ] [ int_constant ] [ ] [ ] , ) { ; ; } $
+def ident ( int ident , ) { float ident [ int_constant ] ; } $
+print - null * float_constant ; $
+print + null + - float_constant ; $
+def ident ( string ident , ) { int ident ; } $
+{ if ( float_constant / ( - ident * + float_constant ) * + ( - null - string_constant ) % - null / + null / int_constant ) string ident [ int_constant ] ; } $
+return ( + null + string_constant ) ; $
+def ident ( float ident , ) { ident [ ] = ident ( ident ) ; } $
+return ( + ident [ ] ) / null * - int_constant ; $
+def ident ( string ident [ - string_constant ] , float ident ) { ; } $
+ident [ ] [ ] = ident ( ident , ident , ident ) ; $
+def ident ( string ident ) { return ; ident ( ident , ident ) ; } $
+if ( + float_constant ) ident ( ident , ident , ident , ident ) ; $
+def ident ( int ident [ ] [ null * null ] , ) { ident [ ] = + ident [ ] / float_constant * float_constant % string_constant * null + ( ident ) != null * [ = - string_constant % + float_constant / string_constant ] ; } $
+def ident ( ) { print int_constant / ident * null / null / + null + null ; } $
+def ident ( string ident [ ] [ ] [ ] ) { break ; } $
+if ( ident [ ] / float_constant == + string_constant / string_constant - - int_constant ) break ; else break ; $
+def ident ( float ident [ ] ) { read ident ; } $
+read ident [ ] [ ] [ ] ; $
+{ return [ = int_constant / ( + ident ) ] , + null ; } $
+{ ident ( ident ) ; } $
+ident ( ident , ident , ident ) ; $
+return int_constant ; $
+def ident ( float ident , float ident [ ] [ int_constant ] [ ] , string ident , int ident ) { break ; } $
+{ { ident ( ident , ident , ident , ident , ident ) ; return ; ident [ ] [ + string_constant ] [ ] [ ] = new float [ int_constant ] ; ; } } $
+if ( float_constant % - null ) { int ident ; read ident [ ] ; } else break ; $
+float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+read ident [ null * - null ] [ ] ; $
+print int_constant * string_constant == string_constant - + ident / + float_constant / - string_constant * string_constant - ident - int_constant / + int_constant / float_constant + - null ; $
+read ident [ + null ] ; $
+def ident ( ) { { ident ( ident ) ; } } $
+if ( ( string_constant / + null ) / + [ = string_constant * - null % string_constant * string_constant , = float_constant / ( - null ) + string_constant + float_constant ] ) ident ( ) ; $
+def ident ( ) { float ident [ int_constant ] [ int_constant ] ; } $
+def ident ( ) { read ident [ ] ; } $
+print string_constant > float_constant - + float_constant / null ; $
+def ident ( string ident ) { return null ; } $
+if ( float_constant ) ident [ ] [ ] = ident ( ident ) ; else read ident [ ] [ ] [ ] [ ] [ ] [ ] ; $
+return ( ( - string_constant - + int_constant % int_constant ) / null * float_constant ) ; $
+print - ident [ ] [ ] / - string_constant ; $
+def ident ( ) { ident ( ) ; break ; } $
+{ break ; read ident ; } $
+def ident ( ) { int ident [ int_constant ] [ int_constant ] ; break ; } $
+def ident ( int ident ) { ident ( ident ) ; } $
+if ( float_constant ) return ; else ident ( ident , ident , ident ) ; $
+read ident [ + [ = ident [ ] + + ident [ ] [ string_constant / - int_constant * float_constant ] [ ] % - string_constant ] % + ident [ ] ] [ - int_constant / + [ = null + int_constant == + [ = - string_constant ] ] ] [ ] [ ] [ ] ; $
+def ident ( string ident [ - ident [ ] [ ident [ string_constant ] + - int_constant * - int_constant ] - float_constant ] [ ] ) { return ; } $
+def ident ( float ident [ ] [ ident [ ] - null ] [ ] ) { ident ( ident , ident ) ; } def ident ( ) { print string_constant ; } $
+ident [ ] [ ] = ident ( ident , ident , ) ; $
+def ident ( string ident [ int_constant * - ident [ ] ] [ ] [ null / + float_constant ] ) { ; } $
+def ident ( string ident , int ident ) { int ident ; read ident ; } $
+def ident ( float ident [ ] , string ident [ ] ) { { return null * + string_constant , ; } } def ident ( ) { read ident [ - string_constant * - ident ] [ ] [ ] ; } $
+def ident ( string ident [ ] ) { if ( + ( - int_constant ) / int_constant ) ident = ident ( ident , ) ; else break ; } $
+def ident ( ) { ident [ ( - string_constant ) * - float_constant ] = ident ( ident ) ; read ident ; read ident [ ] ; ; } def ident ( string ident ) { read ident [ ] [ ] [ int_constant % + null * float_constant / - string_constant ] ; ; } $
+def ident ( string ident , ) { { if ( + int_constant % - string_constant ) if ( ( - float_constant / float_constant ) ) ; } { { { { break ; ; } } } } } $
+def ident ( ) { print ident [ [ = float_constant > int_constant * + float_constant ] / float_constant ] % float_constant ; } $
+return null ; $
+print + string_constant * + null / - string_constant / string_constant % + string_constant - - float_constant != + null - - null / - int_constant * - null + null * float_constant % + ident % + [ = [ = - null ] - float_constant ] % int_constant - ident [ ] * + string_constant ; $
+{ read ident ; return + null ; ; ident ( ) ; read ident [ int_constant / string_constant ] ; { break ; } } $
+ident = new float [ + null ] ; $
+print string_constant ; $
+{ if ( string_constant ) ; read ident ; } $
+def ident ( string ident [ ] ) { ; } $
+{ { ; } } $
+{ if ( float_constant / string_constant * + null ) read ident ; break ; read ident [ ] ; } $
+{ { ident = ident [ ] [ ] [ - ident [ ] [ ] [ ] + null * + ident + + ident [ ] - float_constant + int_constant % + string_constant / string_constant * ident [ ] [ null ] [ ] ] >= null ; } } $
+read ident [ ] [ - int_constant % float_constant ] ; $
+{ break ; break ; int ident ; } $
+print + int_constant - + null / null + - float_constant / + null * float_constant ; $
+def ident ( int ident ) { if ( null / + int_constant < + float_constant ) ; else break ; } $
+def ident ( int ident [ ] , float ident [ ] [ ] ) { read ident [ ] [ + string_constant + - float_constant + - null ] ; int ident ; ident [ ] [ null / null ] [ + string_constant * - null * ident [ ] ] [ ] = ident ( ident , ident ) ; } $
+def ident ( ) { break ; ident ( ident , ) ; } def ident ( int ident ) { ident ( ident ) ; } $
+def ident ( ) { ; print null ; } $
+def ident ( int ident [ ] [ ] ) { print - null * + string_constant ; return ; } $
+def ident ( ) { ; print + int_constant / null ; } $
+ident = + ident [ ] >= float_constant / ( ( + float_constant + + null - null % + float_constant % int_constant * + int_constant % null % + string_constant ) * string_constant ) ; $
+print - ( + int_constant ) ; $
+def ident ( float ident [ ] [ ] , int ident ) { float ident [ int_constant ] ; } def ident ( int ident [ null - null ] ) { if ( float_constant * + float_constant ) ident ( ident , ident ) ; else break ; } $
+def ident ( int ident , ) { ; } $
+def ident ( int ident ) { read ident [ - string_constant / string_constant % - ident [ ] * float_constant ] ; } $
+if ( int_constant % - int_constant % [ = null * string_constant * float_constant + + null ] ) break ; $
+def ident ( float ident ) { float ident ; } $
+def ident ( ) { string ident ; } $
+ident [ ] [ ] = new int [ - string_constant ] ; $
+def ident ( ) { ident ( ident ) ; ident ( ident ) ; } $
+def ident ( int ident ) { ; } $
+if ( + null < + ( string_constant ) ) break ; else { return + int_constant ; ident ( ident , ) ; } $
+def ident ( ) { { break ; { ; } } } $
+print + [ = ( ( - string_constant - - float_constant % + int_constant ) * + ( + int_constant / ( + float_constant ) ) * + int_constant ) != - int_constant ] - - string_constant ; $
+def ident ( int ident [ ] ) { ; } $
+{ return - ident , ; } $
+ident = new string [ + float_constant ] ; $
+def ident ( ) { read ident [ + ident [ float_constant ] ] ; } $
+def ident ( ) { ident = ident ( ) ; } $
+def ident ( string ident ) { ident = ident ( ident ) ; } $
+def ident ( ) { float ident [ int_constant ] ; ident ( ident , ) ; ; break ; break ; } $
+{ ident [ ] = ident ( ) ; } $
+if ( null < + null + ( int_constant / ident [ ] + float_constant + - null - float_constant ) % - null ) read ident ; else break ; $
+print ident [ ] / string_constant * float_constant / - string_constant / null ; $
+{ return - null ; } $
+read ident [ - ( - string_constant ) + int_constant ] [ ] ; $
+return - string_constant - null , ; $
+read ident [ - null ] [ float_constant % - float_constant - null ] ; $
+def ident ( float ident , float ident ) { read ident [ + null ] ; } $
+ident = new string [ float_constant ] ; $
+print + string_constant ; $
+def ident ( string ident [ ] ) { break ; } $
+{ return + ( int_constant + string_constant ) / - string_constant ; } $
+ident [ ] [ ] [ ] = ident ( ident , ident , ident , ) ; $
+def ident ( ) { print + string_constant ; return float_constant , string_constant ; } $
+def ident ( int ident ) { return ; } $
+def ident ( ) { read ident [ ] [ + null % string_constant + ident [ ] [ ] [ + float_constant % [ = null ] * string_constant ] [ ] - + int_constant % ident ] [ string_constant * float_constant * + string_constant ] [ ] ; } $
+def ident ( float ident [ ] , ) { ident ( ident , ident , ident ) ; } $
+return + string_constant + - int_constant ; $
+def ident ( int ident [ ] ) { float ident [ int_constant ] [ int_constant ] ; print + int_constant - string_constant >= - string_constant / ident * int_constant ; } def ident ( string ident ) { ; } $
+string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+def ident ( int ident [ - int_constant ] [ ] , ) { print + ( - int_constant ) + int_constant >= int_constant ; } def ident ( ) { ; } $
+def ident ( ) { ; read ident [ - float_constant ] [ ] [ ident [ ] - - null / - null ] [ ] [ ] [ ident [ ] [ ] ] [ int_constant / + null - ( ident [ ] % int_constant / int_constant ) ] [ ] [ ] [ ] [ + float_constant ] [ ] ; } $
+print int_constant * string_constant ; $
+int ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+def ident ( int ident , string ident [ ] [ ] [ ] [ string_constant - int_constant % string_constant % - null * string_constant / + string_constant % + ident [ ] * float_constant % float_constant ] [ int_constant + string_constant * - null ] [ ] [ - string_constant - null % float_constant * + int_constant * - float_constant * null * - ( float_constant ) ] [ ] [ ] ) { ident ( ) ; } $
+{ float ident ; } $
+def ident ( ) { break ; } def ident ( int ident , ) { ; } $
+def ident ( ) { ident [ ] = ident ( ident ) ; } $
+def ident ( string ident [ + int_constant / + null ] [ ] [ + string_constant * + int_constant ] ) { break ; } def ident ( float ident [ ] [ ] ) { ; } $
+def ident ( float ident [ ] ) { print ident [ ] [ ] [ ] % null / + ident [ ] + - int_constant == float_constant ; string ident [ int_constant ] ; } $
+print int_constant % - [ = int_constant ] % ( + [ = ( + string_constant ) ] ) + + float_constant % + [ = int_constant % + ( null ) + - float_constant ] ; $
+print + float_constant ; $
+read ident [ - null ] ; $
+def ident ( int ident [ + ident % - null ] [ ] , string ident , ) { string ident [ int_constant ] ; } $
+read ident [ + null - + null - int_constant ] [ ] [ ] [ ] ; $
+def ident ( int ident [ ] , ) { break ; ; read ident [ ] ; float ident [ int_constant ] ; print - null ; } $
+{ return int_constant , ; break ; } $
+def ident ( ) { return + null / + int_constant + - float_constant , ; { ident ( ident ) ; } } $
+return ident * ident % + null ; $
+def ident ( float ident , ) { print - null + null % - string_constant / float_constant ; ident ( ident , ident , ident ) ; } $
+if ( + ident [ ] ) read ident [ [ = - float_constant - string_constant % ( - ( ident [ ( null ) ] [ null ] [ ] ) ) ] % - int_constant ] ; $
+read ident [ - ident [ ] [ ] [ ] - int_constant ] [ int_constant % float_constant * + string_constant / - null ] [ ] [ ] ; $
+def ident ( int ident [ ] ) { print + null ; break ; break ; } $
+return - int_constant - int_constant , - int_constant * string_constant * float_constant ; $
+print - ( ident * + null ) + - string_constant + - float_constant / [ = + int_constant + - float_constant ] - + [ = - ident [ ] [ ] % float_constant != int_constant ] * string_constant / + int_constant / float_constant / float_constant % - string_constant ; $
+def ident ( int ident [ ] ) { break ; ident ( ) ; } $
+{ ident [ ] [ ] = string_constant ; } $
+def ident ( ) { ; } def ident ( int ident [ ] [ + float_constant * + string_constant ] ) { ; string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; int ident ; break ; } def ident ( ) { ident ( ident , ident ) ; string ident ; } $
+def ident ( ) { string ident [ int_constant ] ; } $
+def ident ( int ident , string ident ) { return ; } $
+int ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+def ident ( float ident ) { break ; } $
+return + int_constant / float_constant ; $
+ident [ ] = new int [ string_constant % + int_constant + - string_constant - - ident * float_constant ] ; $
+def ident ( ) { if ( float_constant ) int ident ; } $
+def ident ( float ident [ ] , ) { if ( string_constant % + string_constant ) read ident ; } $
+def ident ( float ident , float ident , ) { break ; } $
+ident [ ] [ ] [ float_constant - int_constant % + float_constant ] [ - ( int_constant - - float_constant / float_constant ) / - float_constant ] = + float_constant + - string_constant ; $
+return + float_constant % - int_constant * + string_constant ; $
+{ ; int ident ; } $
+if ( - float_constant <= float_constant ) read ident ; $
+{ ident ( ident , ident , ident ) ; } $
+{ ident ( ident , ident , ident , ident ) ; ident ( ident , ident , ) ; } $
+return + float_constant % - int_constant ; $
+print null < null - - ( - ( null / + null - + null - string_constant / ident [ - ident ] [ ] [ ] ) / null ) ; $
+print - ident * + ident [ ident ] [ null % null * ( - null + - int_constant * - int_constant + - float_constant % null ) ] [ - string_constant % string_constant ] ; $
+return - string_constant % string_constant - float_constant + - ident [ ] [ ] , ; $
+def ident ( ) { return ; ; } $
+def ident ( string ident [ ] , ) { ident ( ) ; } $
+def ident ( float ident [ ] [ null - string_constant * + int_constant ] [ ] ) { read ident [ ] [ ] ; } $
+if ( - int_constant / + string_constant ) break ; $
+read ident [ - int_constant ] ; $
+return string_constant % + string_constant * + null ; $
+ident [ ] [ ] [ - null ] [ + int_constant ] = ident ( ident , ident ) ; $
+if ( string_constant ) ; $
+def ident ( float ident ) { ident ( ident ) ; } $
+return null / string_constant , ; $
+def ident ( float ident , ) { return ; if ( + null >= + int_constant * + int_constant - null ) read ident [ - null + float_constant / - string_constant % float_constant ] ; } $
+def ident ( ) { float ident [ int_constant ] ; } $
+def ident ( ) { break ; ident ( ) ; } $
+def ident ( float ident , ) { string ident [ int_constant ] [ int_constant ] ; print + int_constant * + string_constant % - float_constant + int_constant - ident ; } $
+def ident ( ) { { read ident ; string ident ; read ident [ ] [ ] ; } print int_constant + null * + ident + null ; ident ( ) ; read ident [ ] [ float_constant + ( + null ) % + int_constant ] [ float_constant / [ = + ident - + [ = int_constant ] ] ] [ ] ; } $
+def ident ( ) { ; print string_constant / + float_constant % + null + - float_constant > + ( int_constant ) + float_constant ; } $
+return + null / ( - string_constant - - null ) , ; $
+def ident ( ) { break ; } def ident ( string ident ) { return ; } def ident ( string ident ) { string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+def ident ( int ident [ ] ) { int ident ; read ident ; break ; } $
+{ read ident [ null * int_constant ] [ ] ; read ident [ - null * - float_constant ] ; } $
+def ident ( float ident [ ] ) { break ; } $
+def ident ( float ident [ ] [ ] , string ident ) { ; int ident ; float ident [ int_constant ] ; ; } $
+def ident ( ) { ident ( ident , ident ) ; break ; } $
+ident [ ] [ - string_constant / int_constant % + float_constant / ident [ + null ] % float_constant * float_constant / int_constant ] [ ] = new string [ ( int_constant + null ) * - float_constant + + null ] ; $
+def ident ( float ident [ ] , float ident , ) { break ; } $
+def ident ( float ident [ ] [ ] ) { int ident [ int_constant ] ; } $
+print - ( + ( + string_constant % int_constant - string_constant - - int_constant ) * string_constant ) / + ( string_constant ) ; $
+{ print ident [ ] [ ] [ ] [ ] [ ] + + string_constant / + int_constant % string_constant ; } $
+def ident ( ) { break ; ; } $
+def ident ( float ident , ) { read ident ; read ident ; } $
+def ident ( ) { int ident [ int_constant ] [ int_constant ] ; } $
+if ( int_constant - string_constant ) float ident [ int_constant ] [ int_constant ] ; $
+print + ident [ ] / int_constant + int_constant % + string_constant / ident [ ] [ ] [ ] % - null * string_constant % string_constant ; $
+def ident ( int ident , ) { break ; print null + float_constant * + null % ident [ ] [ ] % - ( - int_constant ) ; } $
+{ print + string_constant ; string ident [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+ident [ float_constant ] = ident ( ) ; $
+def ident ( ) { float ident [ int_constant ] ; } def ident ( string ident [ ] , string ident , int ident , ) { ident ( ident ) ; ident ( ) ; } def ident ( float ident , ) { read ident ; } $
+{ ident ( ) ; ident ( ident , ) ; } $
+print ( null ) - - string_constant % + float_constant ; $
+ident = float_constant ; $
+def ident ( int ident ) { ; print int_constant ; ident ( ident , ) ; } def ident ( ) { ident [ - int_constant ] [ ] = ident ( ident , ) ; return ; break ; } $
+def ident ( ) { return ; float ident ; } $
+read ident [ ] [ float_constant ] [ ] [ ] [ ] [ ] ; $
+def ident ( ) { return ; } def ident ( string ident [ ] [ ] [ ] [ ] [ - string_constant ] [ ] [ ] [ ] [ ] , float ident [ ] [ ] [ ] [ ] [ ] [ ] [ ] ) { ; } $
+def ident ( string ident [ float_constant ] ) { ; } $
+print - string_constant ; $
+{ float ident [ int_constant ] [ int_constant ] [ int_constant ] ; break ; } $
+if ( ( ( null ) / ( ident ) / ( int_constant ) - int_constant + + [ = ident / - ident % - float_constant ] ) ) ident [ ] [ ] [ - string_constant ] [ ] = ident ( ) ; $
+print + string_constant * - string_constant ; $
+def ident ( string ident [ ] , ) { { { read ident [ ] ; } } read ident [ float_constant * float_constant * ident [ - int_constant + + int_constant ] * int_constant * null / null ] [ ] ; } def ident ( ) { print string_constant ; read ident [ ] [ ] [ ] ; } $
+def ident ( int ident , ) { ident ( ) ; } def ident ( float ident [ + int_constant / + null % - string_constant ] [ ] ) { break ; ; } $
+def ident ( float ident , string ident ) { return + int_constant , ; ident ( ident , ident ) ; } $
+def ident ( ) { ident ( ident , ) ; } $
+{ if ( + [ = ident [ ] [ ] + ident [ + float_constant + - string_constant * null / float_constant - string_constant ] [ ] [ int_constant % + int_constant ] [ string_constant - - float_constant ] [ ] [ ] , = - float_constant / - null ] * null ) float ident [ int_constant ] [ int_constant ] ; ident ( ) ; float ident [ int_constant ] [ int_constant ] [ int_constant ] ; print string_constant * null ; } $
+ident = new float [ int_constant + - float_constant % - [ = - null < - int_constant * - int_constant / int_constant ] - + null - - string_constant ] ; $
+def ident ( ) { break ; } def ident ( ) { ident ( ident , ) ; } $
+return null + + ( + float_constant ) ; $
+def ident ( float ident [ ] [ ] ) { ; } $
+def ident ( ) { break ; ; ; } $
+def ident ( ) { break ; ident ( ident ) ; } $
+def ident ( string ident [ ] [ ] [ ] ) { ; } $
+def ident ( float ident [ ] ) { ident ( ) ; ; } $
+def ident ( string ident , string ident [ ] [ ] ) { ; } $
+{ return + int_constant % - int_constant - + ident [ ] [ ] / null + - int_constant ; } $
+def ident ( float ident , int ident [ ] , float ident ) { ident = ident ( ) ; break ; string ident [ int_constant ] [ int_constant ] ; } $
+return int_constant * - string_constant * string_constant * float_constant , + int_constant ; $
+{ float ident [ int_constant ] [ int_constant ] ; } $
+def ident ( int ident ) { int ident [ int_constant ] ; } $
+print - [ = string_constant / ident ] ; $
+ident = + float_constant ; $
+return + ident * + int_constant * - int_constant - ident [ int_constant ] * ident [ + float_constant / + [ = + ident , = ident == - int_constant ] ] , ; $
+return ( float_constant ) ; $
+def ident ( int ident ) { { ident ( ident ) ; } return + string_constant / int_constant ; } $
+print + int_constant % - null <= int_constant / null % + string_constant / int_constant + - null + null % int_constant ; $
+def ident ( ) { break ; break ; } def ident ( ) { ident ( ident ) ; } $
+if ( + int_constant * - null / null + + string_constant ) int ident [ int_constant ] [ int_constant ] [ int_constant ] ; $
+ident [ - ident + - ( null ) * int_constant / + ident ] [ ] [ ] [ ] = ident ( ) ; $
+print - int_constant / float_constant % + int_constant % + null - ident [ ] % ident [ ] ; $
+def ident ( string ident , float ident [ + string_constant * - null ] ) { ident ( ) ; } def ident ( ) { ; } $
+def ident ( string ident [ ] ) { ; float ident [ int_constant ] ; ; } $
+def ident ( float ident [ - null ] [ ] , ) { ; ; } $
+ident [ ] [ ] [ ] [ ] = ident ( ) ; $
+def ident ( float ident [ ] [ + int_constant % + float_constant ] [ + float_constant % null - float_constant / int_constant ] ) { break ; read ident ; } $
+if ( null ) string ident ; $
+def ident ( string ident ) { ; ident ( ) ; } $
+def ident ( float ident [ + string_constant / int_constant / string_constant % + float_constant ] ) { ident ( ) ; } def ident ( int ident ) { if ( float_constant > string_constant + - string_constant * null / int_constant ) read ident ; else read ident [ ] [ ] ; } def ident ( float ident ) { break ; read ident ; ident ( ident , ident , ident ) ; } $
+def ident ( int ident [ ] , float ident ) { read ident [ ] [ null ] ; read ident ; } $
+ident [ ] [ ] = - ident [ ] [ ] % - null ; $
+print + float_constant + - null * string_constant + + float_constant / null - - ident - string_constant * int_constant % float_constant > - ident [ ident % null ] [ ] [ ] % - string_constant * null - null + float_constant % - null - null % string_constant ; $
+def ident ( float ident , float ident [ - string_constant ] [ ] [ ] [ ] ) { if ( - [ = - float_constant ] % int_constant / - string_constant + - float_constant - int_constant - - int_constant ) ; else return - float_constant % float_constant / int_constant ; } $
+return string_constant * + float_constant , ; $
+def ident ( ) { if ( ( int_constant ) - float_constant / float_constant ) ident ( ident ) ; else break ; } $
+print + int_constant + null * - int_constant ; $
+{ print + int_constant ; } $
+def ident ( ) { ident ( ident , ident ) ; } def ident ( ) { read ident ; } $
+def ident ( string ident [ ] , ) { return float_constant ; } $
+ident [ + int_constant % string_constant + string_constant - + int_constant / int_constant ] [ null ] [ ] = new float [ + int_constant * null / - null / + int_constant + ident ] [ - string_constant ] ; $
+print - ident < ident ; $
+def ident ( string ident , ) { return ; int ident ; int ident ; ident ( ident , ) ; } def ident ( float ident [ ] , string ident , string ident [ + ident + - string_constant + float_constant ] [ ] [ ] ) { ; ident ( ) ; } $
+def ident ( string ident [ ] [ ] , ) { read ident [ + ( + int_constant ) + + int_constant ] [ ] [ ] [ ] ; break ; } $
+def ident ( int ident ) { read ident ; } $
+print - ident > int_constant ; $
+def ident ( ) { ; return ; } $
+if ( + string_constant * float_constant ) read ident ; $
+string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+ident [ - float_constant ] [ ] [ ] = ident ( ident ) ; $
+def ident ( ) { ; float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } def ident ( int ident , float ident , float ident , int ident [ + ident [ int_constant * ident [ int_constant * - float_constant % + ident % null * + string_constant ] ] * - float_constant * null % ident [ ] [ ] % float_constant / int_constant ] , int ident , ) { int ident ; } $
+{ { ident ( ident , ) ; } } $
+def ident ( float ident [ ] [ ] , ) { break ; } $
+ident [ ] = - int_constant * int_constant + + ident [ - null - ident % null - string_constant ] [ int_constant / - ( + float_constant ) ] [ ident * float_constant + - string_constant ] / float_constant ; $
+ident = + string_constant % ( string_constant ) ; $
+def ident ( float ident [ ] , int ident [ ] , float ident ) { int ident ; } def ident ( string ident ) { ; return ; } $
+def ident ( ) { int ident [ int_constant ] ; break ; } $
+def ident ( float ident [ ] [ float_constant + + null % + null ] [ string_constant ] ) { return ; float ident ; } $
+def ident ( int ident [ ] [ + float_constant ] , ) { { break ; { string ident [ int_constant ] [ int_constant ] [ int_constant ] ; } } ; } $
+def ident ( string ident [ + float_constant - + ( string_constant + int_constant - ident [ ] [ ] [ ] ) * null - - string_constant ] , ) { float ident [ int_constant ] ; } $
+{ read ident [ ] [ ] ; ident ( ) ; } $
+def ident ( ) { ; return - int_constant ; ; } def ident ( ) { ident ( ) ; } $
+print - string_constant * - null ; $
+{ break ; int ident [ int_constant ] ; } $
+def ident ( ) { break ; ident ( ident , ident ) ; } $
+def ident ( ) { break ; string ident ; } $
+def ident ( int ident [ ] [ ] [ int_constant % - ident / null ] [ - int_constant % float_constant ] [ ] [ ] , ) { ; read ident [ ] ; } $
+def ident ( int ident [ ] [ ] [ ] [ ] ) { return float_constant % + ident [ ] [ ] [ ] [ ] , ; print float_constant ; } $
+ident [ ] = ident ( ident , ) ; $
+def ident ( float ident [ ] [ string_constant / string_constant ] [ + ident ] [ - null / - null % string_constant / float_constant ] [ + null ] ) { ident ( ) ; } $
+read ident [ float_constant * - ident / null ] ; $
+def ident ( float ident , ) { string ident ; } def ident ( float ident [ ] [ ] [ ] ) { { int ident ; read ident ; } } $
+ident ( ident , ident , ident , ident , ident , ident ) ; $
+read ident [ + [ = null + ident [ float_constant ] [ ] [ ] [ ] != + ident - - string_constant * - float_constant + null ] ] ; $
+read ident [ + float_constant ] [ ] ; $
+def ident ( float ident , ) { ident ( ident , ) ; } $
+def ident ( ) { return ident ; } $
+ident = new string [ + string_constant / - ident [ ] ] ; $
+{ return int_constant ; { read ident [ ] ; } } $
+def ident ( float ident ) { ; } $
+def ident ( ) { int ident [ int_constant ] ; return ; return ; ; } $
+def ident ( float ident , string ident [ ] , ) { ident ( ) ; break ; } $
+print null + - int_constant ; $
+def ident ( ) { read ident ; string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+def ident ( ) { print float_constant / ident ; } $
+def ident ( ) { print - float_constant + int_constant / ident % + int_constant % + float_constant % - string_constant % string_constant % - int_constant * - null / - int_constant * string_constant ; ident ( ident ) ; } def ident ( int ident , ) { read ident [ + [ = - int_constant / null ] / int_constant / - int_constant - float_constant ] ; } $
+def ident ( float ident [ ] ) { ident ( ident , ) ; print int_constant > ident [ + null / + int_constant * - string_constant + [ = ( - int_constant % + null % - null ) * - ( - float_constant / - float_constant - string_constant ) / + string_constant ] % float_constant - float_constant ] [ ] / + float_constant * string_constant % null + int_constant * float_constant ; } $
+def ident ( int ident [ ] , float ident [ ] [ ] , float ident ) { int ident ; } $
+def ident ( ) { ident ( ident ) ; if ( + string_constant + string_constant % int_constant ) string ident ; else { ident ( ident , ) ; } break ; } def ident ( string ident [ ] [ ] [ ] ) { print + null / null % float_constant ; } $
+ident = string_constant % - null % string_constant - null / float_constant % - null ; $
+ident [ float_constant ] [ ] [ [ = null - null , = - int_constant >= - float_constant + - float_constant - string_constant ] ] [ ] [ float_constant ] = + int_constant ; $
+read ident [ ] [ - int_constant + - string_constant + float_constant * + null + string_constant ] [ ] [ ] ; $
+read ident [ - string_constant ] ; $
+ident [ ] [ null ] [ string_constant ] [ ] [ ] = ident ( ) ; $
+def ident ( ) { if ( + string_constant / - [ = ( null % ident + null / - string_constant - string_constant ) ] * + float_constant ) return ; else break ; } $
+{ int ident [ int_constant ] [ int_constant ] [ int_constant ] ; ident ( ident ) ; } $
+return + null ; $
+{ ; break ; break ; } $
+if ( ( string_constant / int_constant ) ) read ident [ ] [ ] ; $
+int ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+def ident ( ) { ; break ; } def ident ( ) { print int_constant >= ident - - string_constant ; } $
+def ident ( ) { ident [ ] [ ] = new int [ float_constant ] ; } $
+return - float_constant , + int_constant - - null + ident [ ] - - ident / int_constant % null + + null / - float_constant / + ( ( + string_constant ) % - null / int_constant / + string_constant ) % + null ; $
+print ( - null + float_constant ) * string_constant ; $
+def ident ( ) { print string_constant / + int_constant >= ( float_constant % float_constant ) % [ = string_constant / + ident + + int_constant % + float_constant >= null , = int_constant - float_constant * null - + string_constant , = + null ] / null ; ; } $
+{ ; ident ( ) ; } $
+{ for ( ident [ ] [ ] [ ] = new string [ - null * + float_constant % + null ] ; null % + int_constant ; ident = ident ( ) ) int ident [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+ident = new float [ - float_constant ] ; $
+if ( string_constant ) read ident [ - null - string_constant ] [ ] [ ] ; $
+ident = - ident [ ] [ ] / + float_constant >= + ident [ ] [ ] [ ] % - null ; $
+print + string_constant + + ident ; $
+print int_constant + + null / null + + string_constant % ident [ null - - ( ident - string_constant - - ( int_constant + + string_constant * int_constant * + int_constant - + string_constant * int_constant + float_constant ) * float_constant + null / ident ) % + ident * null ] ; $
+if ( - ident ) return ; $
+def ident ( int ident [ ] [ ] [ ] ) { break ; { read ident ; int ident [ int_constant ] [ int_constant ] ; return ; } break ; } $
+def ident ( float ident [ string_constant ] [ float_constant - + int_constant ] [ + float_constant ] [ ] ) { ; } $
+return + ( float_constant ) * - ( null ) - + float_constant % int_constant * - null ; $
+def ident ( ) { ; } def ident ( string ident , ) { if ( - float_constant - ( null - - float_constant + - string_constant + int_constant - - float_constant % + int_constant / + int_constant ) * + ident ) return ; } $
+def ident ( ) { if ( string_constant ) break ; } $
+def ident ( ) { ident [ - null ] [ ] [ + null ] [ ] [ ] = new string [ string_constant ] ; } $
+print float_constant != - [ = + null - - null ] * string_constant + - int_constant ; $
+def ident ( ) { ident [ ] [ ] = ident ( ident , ) ; } $
+ident [ ] [ ] [ int_constant ] [ string_constant ] = new float [ int_constant % - ( null % - int_constant ) * - null % - string_constant ] ; $
+def ident ( int ident ) { ident ( ident , ident ) ; } $
+def ident ( ) { if ( - ident / ident ) string ident [ int_constant ] [ int_constant ] ; } def ident ( int ident [ ] , ) { break ; ; string ident [ int_constant ] [ int_constant ] ; } $
+def ident ( int ident [ ] ) { break ; } $
+ident [ ] = + float_constant ; $
+{ int ident [ int_constant ] ; float ident ; } $
+read ident [ ident [ ] ] [ ] [ - int_constant ] [ - string_constant ] [ ] ; $
+{ { break ; } break ; } $
+def ident ( int ident ) { float ident ; } $
+ident [ - int_constant / [ = int_constant ] ] [ - ident ] = ident ( ) ; $
+def ident ( ) { read ident [ int_constant / float_constant * [ = - [ = + int_constant + - ( string_constant ) ] + string_constant + float_constant , = + string_constant / int_constant >= int_constant , = - null + - float_constant + string_constant * float_constant ] ] [ ] ; } $
+def ident ( ) { break ; ident = ident ( ) ; } $
+if ( - null ) break ; $
+ident = string_constant * - string_constant ; $
+if ( - float_constant ) string ident ; else ; $
+def ident ( ) { print float_constant < ( int_constant ) * ident ; break ; ident ( ) ; } $
+def ident ( string ident [ ] ) { int ident ; } $
+def ident ( float ident [ ] [ ] , ) { return ; ; ; } $
+read ident [ - null ] [ ] ; $
+ident [ - string_constant / - string_constant % ( + ident [ ] [ ] [ int_constant ] ) ] = int_constant ; $
+print - int_constant * ident [ + null / - null % + int_constant * float_constant * - null ] [ ] [ ] [ ] < + float_constant + + null ; $
+def ident ( string ident [ ] , string ident [ ] [ ] ) { string ident ; } $
+print null + ( - int_constant ) / float_constant % null * float_constant ; $
+def ident ( float ident , float ident [ ] [ ] [ ] ) { return + int_constant , ; } $
+{ ident = new string [ + float_constant ] ; } $
+def ident ( string ident , int ident ) { string ident ; } $
+def ident ( ) { int ident ; ident = ident ( ) ; } $
+return float_constant ; $
+def ident ( float ident [ ] , ) { ident ( ident ) ; ; } $
+{ { ident ( ) ; break ; } } $
+def ident ( int ident , float ident , string ident ) { break ; } $
+{ float ident [ int_constant ] [ int_constant ] ; print string_constant ; } $
+read ident [ float_constant ] ; $
+return - string_constant / null , + int_constant - - ( + string_constant / + float_constant ) - - int_constant / null ; $
+return - null ; $
+def ident ( ) { if ( int_constant ) { ; } } $
+def ident ( float ident , float ident , int ident [ ] [ ] ) { read ident ; } $
+def ident ( int ident ) { string ident [ int_constant ] [ int_constant ] ; } $
+def ident ( float ident ) { ; ident [ ] [ null * string_constant ] = new float [ float_constant + string_constant ] ; } $
+ident [ ] = - float_constant >= null % float_constant ; $
+ident = new string [ float_constant * int_constant ] ; $
+def ident ( float ident ) { ident ( ) ; ; } $
+def ident ( float ident [ ] ) { read ident [ ] ; print float_constant + float_constant % ident + + float_constant / + null - string_constant ; } def ident ( ) { print - null ; } $
+def ident ( string ident , ) { read ident ; } def ident ( int ident ) { ident ( ident ) ; } $
+def ident ( int ident ) { read ident ; return ; } $
+def ident ( string ident ) { print + null + + ident ; { ; return ; } } $
+{ return + float_constant + string_constant ; } $
+def ident ( int ident [ ] , ) { print ( float_constant % float_constant ) / null == - null * - null % ident ; } def ident ( int ident ) { return ; ident ( ident ) ; } $
+if ( - string_constant ) break ; else ident ( ident ) ; $
+ident = new string [ null + + int_constant ] ; $
+def ident ( int ident ) { ; ident ( ident , ident ) ; ident ( ident ) ; } $
+return + ident [ ] [ ( - int_constant ) ] , ; $
+def ident ( float ident ) { read ident [ ] [ float_constant / - float_constant % - int_constant * + int_constant * + null / - ident - + ident ] ; } def ident ( ) { ident ( ident , ) ; } $
+def ident ( ) { ; string ident ; } $
+{ ident [ ] = ident ( ident ) ; } $
+print int_constant / + string_constant / + string_constant * - string_constant ; $
+def ident ( int ident [ + int_constant ] [ ] [ ] [ ] ) { { ident = ident ( ident , ident ) ; } } $
+print - ident + ident ; $
+ident [ null ] [ - int_constant ] [ ] = int_constant ; $
+def ident ( ) { { break ; } ; } $
+{ break ; break ; ; } $
+def ident ( string ident , float ident , float ident [ ] ) { int ident [ int_constant ] ; } $
+return [ = [ = null <= + string_constant / float_constant / int_constant + + ident [ ] [ ] [ ] [ null - string_constant * + string_constant / - int_constant / - null + string_constant - float_constant - - float_constant / null ] + + string_constant ] ] - int_constant + - ident [ + string_constant - string_constant ] , ; $
+def ident ( ) { { return ; } } $
+def ident ( ) { break ; float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+print string_constant % - null * float_constant <= ( ident + null - - ident ) * float_constant - - null ; $
+{ if ( - null + ident ) ident ( ) ; } $
+def ident ( ) { if ( string_constant - + ident [ ] [ ] [ ] * string_constant > + float_constant % int_constant ) ident ( ) ; } $
+if ( null ) read ident ; else ; $
+if ( int_constant % - int_constant / - ident [ ] - + float_constant - string_constant ) ident ( ident ) ; $
+def ident ( string ident [ [ = + float_constant ] % ident [ ] [ ] ] , ) { ; } def ident ( float ident , int ident [ ] , ) { print [ = null ] / + float_constant ; } $
+def ident ( ) { return string_constant - float_constant , ; break ; } $
+if ( + string_constant * + int_constant ) break ; $
+ident [ + ident ] [ ] [ - string_constant * + string_constant ] = ident ( ) ; $
+{ { ; } string ident [ int_constant ] ; ident ( ) ; } $
+ident [ ] = ident ( ident , ident , ) ; $
+def ident ( string ident [ float_constant ] [ - float_constant ] ) { ; } $
+if ( - null / + float_constant + + null / + string_constant / + ( string_constant + - float_constant % + float_constant % + int_constant % null / + float_constant % - null % + int_constant ) + int_constant + + string_constant + - ident [ ] + - null * null <= - string_constant * ident + + string_constant ) ; $
+def ident ( ) { ; } def ident ( ) { return null / - [ = + float_constant - float_constant ] , int_constant % string_constant * + int_constant - + int_constant % float_constant ; { break ; int ident [ int_constant ] ; } } $
+def ident ( float ident [ ] [ ] ) { break ; } $
+def ident ( int ident [ + string_constant ] [ ] [ ] , string ident [ ] ) { ; } def ident ( int ident ) { ; } $
+read ident [ + null - int_constant - float_constant ] ; $
+if ( string_constant + null <= string_constant / - int_constant ) ; $
+def ident ( ) { ; int ident ; { break ; } } $
+return + int_constant % - float_constant / - int_constant ; $
+ident [ int_constant % - null * int_constant * null % - ( + [ = float_constant ] ) ] [ - ident / string_constant ] [ ] [ + null ] [ float_constant * null - null * - float_constant + float_constant % - ident [ ] * - ident ] = - ( - string_constant ) / + int_constant ; $
+def ident ( int ident [ ] [ ] [ float_constant ] [ float_constant / - int_constant ] ) { string ident ; } $
+def ident ( float ident [ int_constant * - null ] [ ] ) { break ; } $
+def ident ( string ident ) { { int ident ; } } $
+def ident ( float ident , ) { read ident ; } $
+def ident ( ) { if ( + null ) ident ( ident ) ; else ; } $
+if ( float_constant * float_constant + - null - + int_constant + - float_constant / - null - + ( null ) - null % + float_constant % string_constant > null + string_constant ) ; $
+def ident ( string ident [ ] ) { string ident [ int_constant ] ; float ident ; } $
+{ ident = ident ( ident ) ; } $
+def ident ( ) { ident ( ident , ident , ident , ident , ident , ident , ident ) ; } $
+read ident [ - string_constant % ident ] [ ] ; $
+return - null , float_constant ; $
+def ident ( ) { ident ( ident , ident , ident , ident , ident , ) ; if ( string_constant ) break ; else break ; } $
+def ident ( ) { { ident ( ) ; float ident [ int_constant ] ; } print ident [ ] [ ] [ ident ] % - float_constant / - int_constant <= int_constant % - null ; } $
+print + ident [ ] [ ] [ - string_constant ] + ( - string_constant / - int_constant + ident ) - + null ; $
+ident = ( int_constant ) ; $
+def ident ( ) { read ident ; } def ident ( float ident ) { ident ( ident , ) ; } $
+def ident ( float ident , ) { break ; } $
+return - ident * null ; $
+return float_constant / float_constant , ; $
+read ident [ int_constant ] ; $
+print + ( + null - float_constant ) ; $
+def ident ( ) { int ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; read ident ; } $
+def ident ( int ident ) { { string ident [ int_constant ] ; } } $
+def ident ( string ident [ ] , ) { int ident [ int_constant ] [ int_constant ] ; } def ident ( int ident [ ] [ ] , string ident ) { ; } $
+def ident ( ) { print float_constant ; } def ident ( string ident [ ] , int ident ) { { ; } } $
+def ident ( float ident [ int_constant ] , string ident , int ident [ ] [ ] [ ] [ ] [ ] ) { { string ident ; } } $
+def ident ( ) { string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+def ident ( int ident [ ] [ ] ) { ; float ident [ int_constant ] [ int_constant ] [ int_constant ] ; print ident ; } def ident ( ) { read ident ; ident = + null ; } $
+print ( string_constant ) - string_constant / + null != string_constant / - float_constant + int_constant ; $
+def ident ( ) { if ( + string_constant / - string_constant / null >= - ident ) ; else print ident [ ] % ident * [ = + [ = string_constant % int_constant ] - + ident [ ] / ident [ ] ] ; ident ( ident , ident ) ; } $
+def ident ( int ident [ ] , float ident ) { string ident ; } $
+def ident ( float ident [ ] , ) { return - string_constant % float_constant , ; } $
+def ident ( float ident [ ] ) { ident = int_constant ; } $
+{ ident ( ident , ident ) ; read ident [ + float_constant ] ; } $
+def ident ( ) { string ident [ int_constant ] [ int_constant ] ; } $
+ident [ ] = string_constant / ident [ ] + float_constant * + string_constant ; $
+ident [ string_constant + + null + int_constant * - float_constant / - null ] [ + string_constant ] = ident ( ident , ) ; $
+return - float_constant ; $
+{ string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+def ident ( ) { break ; if ( null ) ; else return ; } $
+{ { return ; } } $
+def ident ( int ident , string ident [ ] , ) { ; ident ( ident , ident , ident ) ; } $
+print - string_constant - string_constant * + int_constant ; $
+print + ( + string_constant ) * - ident * + int_constant / - null - - int_constant / + null ; $
+def ident ( ) { ident = - string_constant % + null - + null % - int_constant - string_constant % + string_constant == string_constant - + ( + int_constant / - ident ) ; } def ident ( ) { ; } $
+def ident ( ) { ident ( ident ) ; ; return ( string_constant * - float_constant + string_constant + + int_constant / + int_constant ) * - string_constant * - int_constant % - string_constant % - null ; ; } $
+def ident ( ) { read ident ; ; return ; } $
+read ident [ int_constant / + string_constant * + string_constant ] [ - float_constant ] [ ] ; $
+return + float_constant * - float_constant ; $
+def ident ( ) { if ( + float_constant * - float_constant * null ) return ; else return ; } $
+{ return - ident ; } $
+print - float_constant * + null ; $
+def ident ( ) { ; print ident [ ] [ ] [ int_constant ] [ ] + int_constant - string_constant ; } $
+return [ = + float_constant * float_constant + null ] - string_constant , ; $
+def ident ( int ident [ - string_constant ] [ - string_constant ] [ ] [ + float_constant * - ( ( null % - float_constant ) * string_constant ) * + null * string_constant - - ident [ ] [ ] ] ) { ident ( ident ) ; } $
+if ( + ident % null - + int_constant ) ident [ + null - int_constant ] [ ] = ident ( ident , ident , ident , ident ) ; $
+def ident ( string ident , ) { return ; } def ident ( int ident [ ] ) { float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+def ident ( float ident , string ident [ ] ) { ident [ ] = int_constant != + null % + [ = int_constant + null , = string_constant ] + int_constant / - ( int_constant ) - ident / string_constant ; } $
+return float_constant / ident [ ] [ - int_constant ] / float_constant ; $
+def ident ( int ident [ ( + float_constant ) - + float_constant + int_constant ] [ + int_constant ] ) { ; } $
+return null + float_constant ; $
+def ident ( string ident ) { print null ; } $
+def ident ( int ident [ ] [ ] , int ident ) { int ident ; } $
+ident [ ] [ ] [ ] = new string [ float_constant / ident [ ] / + int_constant ] ; $
+def ident ( ) { ; break ; } $
+def ident ( float ident ) { { { ident ( ) ; } } } def ident ( string ident [ + int_constant / string_constant % - ( [ = string_constant - - float_constant <= int_constant * int_constant ] % int_constant / - ident [ ] ) % string_constant ] , ) { string ident [ int_constant ] [ int_constant ] ; } $
+{ return ; ; } $
+def ident ( ) { { float ident [ int_constant ] [ int_constant ] ; } } $
+if ( null ) int ident ; $
+if ( - ident [ ] ) ident ( ) ; $
+def ident ( ) { return + ident [ ] / ident * int_constant ; } $
+def ident ( ) { float ident ; string ident [ int_constant ] [ int_constant ] ; } $
+def ident ( string ident ) { ident = float_constant / null % - string_constant % - ident * int_constant > null ; } $
+def ident ( ) { ident ( ident , ident , ) ; } $
+def ident ( float ident [ ] [ ] , float ident [ ] [ float_constant ] , ) { float ident ; } def ident ( ) { if ( float_constant - + float_constant > + float_constant % null / - int_constant % + float_constant ) read ident ; } $
+def ident ( float ident ) { read ident [ null ] [ ] [ ] [ ] ; } $
+def ident ( float ident , ) { return ; print - string_constant ; read ident ; } $
+print + float_constant - null ; $
+def ident ( ) { return ( - float_constant ) / - [ = + int_constant % - ident [ ] + + ident + ( float_constant ) - + float_constant * ( - null - int_constant ) == null / int_constant , = - string_constant * string_constant - + string_constant % int_constant / - null ] ; } $
+read ident [ + int_constant / int_constant / + ident [ ] ] ; $
+print - float_constant - float_constant == - null ; $
+{ read ident ; return ; } $
+ident [ int_constant ] = ident ( ) ; $
+ident [ ] = new float [ float_constant ] ; $
+def ident ( string ident , ) { ; } def ident ( float ident , string ident [ ] [ ] [ ] [ ] ) { return ; } $
+def ident ( string ident , ) { return - float_constant - int_constant ; } $
+def ident ( int ident [ - float_constant ] [ ] ) { { float ident [ int_constant ] [ int_constant ] ; } } def ident ( ) { float ident [ int_constant ] ; } def ident ( ) { string ident [ int_constant ] [ int_constant ] ; break ; } $
+def ident ( string ident , string ident ) { read ident ; } $
+def ident ( ) { ; ident ( ident , ident ) ; } $
+ident [ ] = new int [ + ident [ - float_constant ] / + string_constant % - ident [ ] [ ] [ ] ] ; $
+def ident ( float ident [ + int_constant / int_constant % int_constant ] [ ] ) { int ident ; } $
+def ident ( int ident [ ] [ int_constant * float_constant ] ) { { ident [ ] [ ] [ ] [ ] [ ] [ ident [ string_constant + + ( + string_constant - int_constant ) ] + string_constant ] [ ] = null ; ; } } $
+def ident ( float ident [ ] ) { return ; { read ident ; } } $
+def ident ( string ident , int ident , ) { return ; } $
+ident = new int [ - null ] ; $
+ident [ ] [ ] [ ] = ident ( ) ; $
+return + string_constant , float_constant + + string_constant % int_constant % - int_constant + null , null / - string_constant - int_constant / - int_constant ; $
+return - int_constant , ; $
+def ident ( float ident , int ident ) { ident ( ) ; } def ident ( ) { int ident ; print ident [ ] == + string_constant ; } def ident ( float ident [ - string_constant ] , ) { ident ( ) ; } $
+def ident ( string ident , string ident , ) { float ident ; } $
+print + null != - ident [ ] - - string_constant ; $
+for ( ident = ident ( ident ) ; + ( null ) * null ; ident [ ] [ null - int_constant ] = ident ( ident ) ) ident = ident ( ident ) ; $
+ident ( ident , ident , ident , ident , ident ) ; $
+{ ident = + [ = int_constant / null - + int_constant ] >= null ; float ident ; } $
+def ident ( ) { string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; return ; } $
+def ident ( ) { break ; break ; } $
+return + float_constant ; $
+{ float ident ; ident ( ) ; float ident [ int_constant ] ; } $
+def ident ( float ident [ ] [ ] [ int_constant ] [ - ( + int_constant / int_constant - null ) + - string_constant ] [ ] , int ident [ ] , ) { return - ident * int_constant , ; } $
+def ident ( ) { float ident ; ident ( ident , ident ) ; } $
+def ident ( ) { break ; print float_constant > int_constant ; } $
+def ident ( int ident , ) { ; return ; } $
+def ident ( float ident ) { read ident [ ] ; } $
+{ { break ; } break ; { return ; break ; } } $
+return float_constant - - string_constant ; $
+def ident ( float ident ) { break ; return ; } $
+if ( + string_constant - + [ = float_constant / null * - int_constant , = float_constant - + string_constant / int_constant ] ) string ident [ int_constant ] ; $
+def ident ( ) { break ; float ident ; } def ident ( ) { read ident [ ] [ ] [ ] ; } $
+return - null / + ( int_constant ) - + int_constant / ( - ident [ ] [ + int_constant ] [ ] [ ] [ ] - string_constant ) % null * + null ; $
+print ( ident [ ] [ ( - string_constant ) ] * string_constant ) ; $
+{ ident [ ident * int_constant % + string_constant ] = ident ( ident ) ; } $
+ident [ + null + ident [ ident [ ] + int_constant * string_constant / + float_constant - - float_constant ] [ ] * float_constant / + null * + float_constant ] = ident ( ident ) ; $
+ident [ - null ] = new int [ - float_constant / float_constant ] ; $
+print + null + - null ; $
+def ident ( ) { read ident [ ] ; float ident [ int_constant ] ; print - string_constant - string_constant / int_constant / int_constant % int_constant ; read ident [ + ( string_constant / string_constant ) + [ = int_constant ] / string_constant ] ; } $
+def ident ( int ident ) { { ; } } $
+{ read ident [ ] [ - float_constant ] ; } $
+{ print - ident ; } $
+{ { ; } read ident [ ] ; } $
+def ident ( string ident ) { ident ( ident , ) ; break ; int ident ; } $
+ident [ ] [ ] [ - float_constant / string_constant - - int_constant ] = ident ( ident , ) ; $
+def ident ( string ident , int ident ) { ; } def ident ( ) { read ident [ ] ; } $
+ident [ - int_constant + ident + null / int_constant - null * - int_constant ] [ float_constant ] [ int_constant / + float_constant % int_constant * string_constant % + int_constant ] = new string [ + string_constant ] [ string_constant + + null + + int_constant ] ; $
+def ident ( ) { break ; } def ident ( ) { return ; } $
+def ident ( ) { string ident ; break ; } $
+ident = + [ = null ] + float_constant ; $
+print null / float_constant - null ; $
+return ( float_constant * - ident [ ] ) % int_constant - ident [ ] [ ] [ ] [ ] , + null ; $
+def ident ( int ident , string ident [ null ] [ ] ) { break ; ident ( ident ) ; } $
+def ident ( ) { ident ( ident ) ; } def ident ( ) { read ident ; } $
+def ident ( string ident [ ] ) { { if ( null ) return - null / null / + int_constant ; else ident ( ident , ident , ) ; } } $
+def ident ( int ident [ - ident [ ] * + int_constant ] , ) { if ( - string_constant ) print float_constant ; else break ; ident = ident ( ident , ident , ident , ) ; } $
+def ident ( string ident ) { read ident ; } $
+def ident ( float ident , int ident [ string_constant ] , int ident , ) { float ident ; } $
+ident [ ] [ ] = new int [ string_constant % + ident [ ] [ ] + - float_constant + - float_constant % + ( [ = + null - + ident ] ) - int_constant ] ; $
+def ident ( int ident [ + int_constant - + int_constant ] [ ] , string ident ) { { string ident ; } } $
+def ident ( string ident [ ] [ ] [ int_constant / int_constant - - null / + string_constant * + int_constant / null ] [ ] [ ] [ ] [ ] ) { ident ( ) ; } $
+def ident ( float ident , int ident ) { { print - float_constant ; } ident ( ident ) ; } $
+def ident ( ) { float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+for ( ident = ident ( ) ; - null ; ident [ ] = ident ( ) ) break ; $
+ident [ int_constant ] = ident ( ident ) ; $
+def ident ( ) { string ident [ int_constant ] ; break ; } $
+{ ; ident ( ident , ident ) ; } $
+def ident ( ) { ident ( ident , ident ) ; } $
+{ return ident ; } $
+ident [ ] = ident ( ident , ident , ident ) ; $
+def ident ( string ident [ ident [ ] + int_constant ] , int ident ) { read ident ; } $
+def ident ( string ident [ ] [ + null ] [ ] ) { read ident ; ; } $
+def ident ( string ident , int ident ) { print int_constant - int_constant ; int ident [ int_constant ] [ int_constant ] ; } $
+if ( string_constant + + float_constant ) ident ( ) ; $
+if ( + string_constant != string_constant + int_constant ) ; $
+{ ; int ident ; ; ident ( ident ) ; } $
+def ident ( int ident [ null ] ) { ; } $
+def ident ( int ident [ - null ] ) { break ; } $
+print + int_constant % + float_constant * string_constant + - float_constant % - int_constant ; $
+return + ident [ ] ; $
+def ident ( float ident [ - null ] ) { { print string_constant / + ( ident ) ; } ident ( ident , ident , ) ; } $
+def ident ( ) { read ident [ ] [ + string_constant ] ; } $
+ident [ + int_constant % - string_constant + + string_constant ] = - float_constant ; $
+def ident ( ) { read ident [ int_constant % string_constant ] ; ; } $
+{ ident ( ident ) ; return ; } $
+def ident ( string ident ) { float ident ; ; string ident ; } $
+def ident ( string ident [ ] , string ident ) { ; } $
+{ { ident ( ident ) ; } break ; } $
+def ident ( ) { if ( null ) ; else ; } $
+return int_constant / null - - float_constant , ; $
+def ident ( int ident [ ] , ) { ; } $
+def ident ( ) { ident ( ident ) ; print - int_constant * + float_constant ; } $
+def ident ( int ident ) { { read ident [ ] ; } } $
+def ident ( string ident [ ] [ ] [ ] , int ident [ ] ) { ident ( ident ) ; } $
+read ident [ ] [ ] [ ] [ ] [ ] ; $
+def ident ( ) { print int_constant > - null % int_constant ; } $
+return string_constant - ident [ ] , ; $
+def ident ( ) { { { { read ident [ ] [ ] [ ] [ ] [ + float_constant * null ] [ [ = - int_constant + int_constant % - string_constant ] % string_constant / null % - string_constant ] ; } } print float_constant - + string_constant + - [ = + float_constant + string_constant / int_constant / null % + null ] * + float_constant ; break ; } } $
+return + float_constant - - int_constant ; $
+def ident ( string ident [ + int_constant ] [ ] [ ] ) { break ; } def ident ( ) { read ident ; } $
+ident [ string_constant ] = ident ( ident , ) ; $
+def ident ( int ident [ ] ) { break ; } def ident ( string ident , string ident [ ] [ - int_constant ] ) { break ; } $
+read ident [ ] [ ] [ ] [ ] [ int_constant / + float_constant % + null / - ( string_constant / null ) - - [ = string_constant ] ] ; $
+if ( - ( ( null ) * string_constant ) ) ident [ ident / ( + int_constant ) * + int_constant + + string_constant ] = + ident [ ] [ int_constant ] [ ] % int_constant % int_constant % - null % + float_constant + + float_constant / string_constant * + int_constant + - string_constant * + int_constant == int_constant ; else ident ( ) ; $
+if ( - ( - string_constant + - float_constant % null ) ) ; $
+def ident ( int ident ) { float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; float ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } def ident ( ) { read ident ; } $
+return - ( + float_constant - - ident + string_constant % - string_constant - - [ = int_constant + - ident [ ] [ ] ] + - string_constant / int_constant % - ident [ ] % ident * int_constant ) , ; $
+def ident ( string ident [ ] , ) { ; ; } $
+print null * ( - ident [ ] [ ] / - ident [ + null ] [ ] [ ] [ ] * + ( null + null * float_constant ) / null ) + string_constant * - float_constant + - null ; $
+def ident ( ) { ; ; } def ident ( ) { ident ( ident ) ; } $
+return + string_constant ; $
+def ident ( float ident ) { ident [ ] [ ] [ ] = ident ( ) ; } $
+def ident ( ) { read ident [ ] ; ; } $
+def ident ( ) { { string ident [ int_constant ] ; } string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+print - int_constant ; $
+ident = null + - ident ; $
+read ident [ - string_constant / null / - null ] ; $
+def ident ( float ident [ ] [ + float_constant ] ) { break ; return ; } $
+def ident ( float ident [ ] , float ident ) { break ; } $
+print int_constant > - ( + string_constant ) ; $
+def ident ( int ident [ ] , ) { break ; } $
+def ident ( ) { ; break ; read ident [ ] ; } $
+{ { ident ( ident , ident ) ; } ident ( ) ; string ident [ int_constant ] ; } $
+def ident ( float ident [ ] ) { break ; return ; } $
+def ident ( ) { { { ident ( ident , ) ; } ; } } $
+print + ident [ ] [ - string_constant - ident % - null ] [ ] [ ] - float_constant * int_constant ; $
+def ident ( ) { return + ident - + float_constant / - null + - string_constant / int_constant * string_constant , int_constant % ( ident [ float_constant / float_constant * ( ident [ ] / string_constant ) + + null ] [ string_constant ] [ float_constant ] ) ; break ; } $
+def ident ( ) { break ; { ident ( ident ) ; } } $
+ident [ + null ] [ ] [ + float_constant % int_constant / ident * float_constant - float_constant + string_constant ] = int_constant / ( - string_constant ) / string_constant % + null ; $
+ident [ float_constant + float_constant ] = ident ( ) ; $
+print + null * + string_constant >= null % string_constant ; $
+print null + null * [ = + ( - float_constant ) - float_constant / ident [ ] ] ; $
+if ( - ( - ( + string_constant + [ = null ] / ( string_constant ) ) % + string_constant ) * - string_constant ) ; $
+if ( null ) read ident [ string_constant * int_constant ] [ int_constant - - float_constant % string_constant * - string_constant / float_constant ] [ ] ; else float ident ; $
+def ident ( string ident [ ] [ ] [ ] [ ] ) { ident ( ident ) ; } $
+print - float_constant ; $
+def ident ( ) { read ident [ + float_constant % - int_constant / string_constant % + float_constant ] [ float_constant ] ; } $
+print + ident [ null ] [ ] [ ] [ ] - - float_constant - int_constant ; $
+def ident ( ) { for ( ident = ident ( ) ; null ; ident [ ] [ int_constant + null ] [ ] [ ] = [ = float_constant != int_constant ] * int_constant >= float_constant / - string_constant + - null ) ident ( ident , ident , ) ; } $
+def ident ( ) { string ident [ int_constant ] [ int_constant ] [ int_constant ] ; } def ident ( float ident , string ident [ + int_constant ] ) { break ; } $
+ident [ ] [ ] [ ] [ int_constant ] = ident ( ident , ) ; $
+def ident ( string ident [ + float_constant ] ) { ; } $
+def ident ( ) { ; } def ident ( string ident [ null / + int_constant ] [ ] , int ident [ ] [ ] ) { ; } $
+{ break ; ident ( ) ; ident ( ident ) ; } $
+print null - - int_constant ; $
+def ident ( string ident ) { return ; } def ident ( ) { int ident ; } $
+return ( + ident [ ] [ ] [ ] [ ] + float_constant * null ) ; $
+def ident ( int ident [ ] , ) { read ident [ ] ; } $
+print + int_constant ; $
+print float_constant > - float_constant + ident ; $
+def ident ( int ident , ) { break ; for ( ident = - float_constant % + string_constant == + null ; + null / int_constant ; ident = - ident ) return ; } $
+return + [ = null > string_constant ] / ident [ ] [ ] [ ] [ ] [ ] ; $
+def ident ( float ident , ) { int ident [ int_constant ] ; } $
+print - null - - float_constant % string_constant % - null != - float_constant - + string_constant / float_constant ; $
+return ident [ ] [ ] [ ] [ ] - float_constant % + null % + null ; $
+def ident ( ) { { break ; } } $
+def ident ( string ident [ int_constant + + string_constant ] [ ] [ ] ) { return ; } $
+print float_constant / float_constant ; $
+if ( + int_constant - - ident ) string ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; $
+def ident ( int ident ) { ; read ident [ ] ; } $
+def ident ( float ident [ + null + - string_constant * - float_constant ] [ ] , int ident , ) { ; float ident ; } $
+{ return int_constant % - float_constant + + int_constant * + null ; } $
+print + string_constant % - string_constant >= null * - float_constant ; $
+print null - string_constant * int_constant < + string_constant * int_constant - null ; $
+def ident ( int ident , ) { break ; } def ident ( ) { return ; } $
+def ident ( float ident , ) { return ; } $
+def ident ( ) { string ident ; read ident ; ident ( ) ; } $
+def ident ( string ident [ ] [ ] ) { read ident [ ] [ ] [ float_constant * + int_constant ] ; ; } $
+def ident ( int ident , float ident , ) { ; } $
+{ ident [ ] [ [ = - string_constant / string_constant ] % - int_constant % - string_constant - null ] [ ] = - ident / + string_constant ; } $
+if ( + float_constant ) ; else ; $
+def ident ( string ident [ int_constant * + ident [ - null / null ] [ ] % + ( ident [ ] [ string_constant * - int_constant + string_constant % string_constant ] ) % int_constant ] , float ident , float ident [ - ( - string_constant / null + - int_constant % string_constant ) / string_constant ] [ ] [ ] , int ident [ ident [ ] ] ) { break ; int ident [ int_constant ] [ int_constant ] [ int_constant ] [ int_constant ] ; } $
+return string_constant - int_constant % + int_constant + string_constant % - float_constant , ; $
+def ident ( int ident [ ident [ + ident [ ] * ( null ) ] % ident * int_constant / - float_constant ] ) { ident = ident ( ) ; ; } $
+def ident ( float ident [ ] , ) { break ; } $
+def ident ( string ident , float ident [ ] ) { if ( null % null ) break ; } $
+def ident ( string ident ) { read ident [ ] [ ] ; ident ( ident ) ; } def ident ( ) { string ident ; } $
+read ident [ + [ = null ] ] [ ] ; $
+def ident ( ) { break ; } def ident ( int ident , float ident ) { ident [ ] = ident ( ident ) ; ident ( ) ; } $
+def ident ( string ident [ int_constant ] ) { ; } $
+{ ident ( ) ; float ident ; } $
+def ident ( int ident , ) { read ident [ ] [ ] [ float_constant - + null ] [ - float_constant * int_constant * float_constant + string_constant ] ; ; { ; } ident ( ident ) ; ident ( ident ) ; } $
+def ident ( int ident ) { string ident ; int ident [ int_constant ] ; } $
+def ident ( ) { ; ident ( ident ) ; } $
+def ident ( ) { ; ident ( ident , ident ) ; ident [ - float_constant * - int_constant / - string_constant ] = + string_constant * + string_constant > int_constant ; } $
+if ( - int_constant / string_constant - - null * - int_constant > + int_constant ) print string_constant ; $
+def ident ( int ident , int ident ) { ; } $
+def ident ( int ident [ ] , ) { ; { ident [ + int_constant % + [ = float_constant , = - int_constant ] % - ident [ ] [ ] ] = ident ( ) ; } read ident ; } $
+ident [ ] [ ident [ ] ] [ string_constant ] = ident ( ident , ident , ) ; $
+def ident ( ) { print ident / ( int_constant ) / int_constant <= + ( int_constant ) - - int_constant - string_constant ; string ident ; { ; } } $
+def ident ( float ident [ float_constant % + null / - ( string_constant / float_constant * ident ) * + [ = string_constant / + ident * + ident [ string_constant ] / - float_constant <= - float_constant - null ] * int_constant + - string_constant ] [ int_constant ] [ ] [ int_constant % int_constant % ident ] [ ] , int ident [ ] [ ] , ) { ; ; } $
+print - null / + ident [ ] > float_constant ; $
+ident = int_constant % - float_constant / ident % int_constant - + null <= int_constant ; $
+def ident ( string ident [ ] , int ident [ ] ) { float ident [ int_constant ] [ int_constant ] ; ; read ident [ ] [ + string_constant / - int_constant / ( float_constant / string_constant * - int_constant ) % ( - float_constant * + string_constant / - string_constant % float_constant * + string_constant * - string_constant ) ] ; read ident [ ] ; } $
+{ { read ident [ ] ; } } $
+def ident ( int ident [ int_constant ] ) { ; } $
+return ( + [ = float_constant % int_constant ] - int_constant ) ; $
+{ ; int ident ; int ident ; } $
+ident [ null ] = ident ( ident ) ; $
+{ { break ; } ; } $
+def ident ( float ident [ ] , string ident [ ] [ ] ) { float ident [ int_constant ] ; } $
+def ident ( ) { { ident ( ) ; } } $
+print + string_constant * null >= float_constant + null / int_constant - int_constant ; $
+{ read ident ; print ident [ ] % string_constant ; } $
+def ident ( float ident ) { { return ; } } def ident ( ) { return ; } $
+def ident ( string ident ) { ident = float_constant ; } $
+def ident ( string ident [ ] , ) { ident = ident ( ident , ) ; string ident [ int_constant ] [ int_constant ] ; } $
+print + float_constant % - string_constant - + null ; $
+def ident ( string ident ) { ident ( ident ) ; } $
+{ print + null != ident ; } $
+def ident ( int ident [ string_constant ] [ null ] ) { ; } $
+def ident ( float ident [ ] [ ] [ ] [ ] , int ident [ + ident ] [ ] [ + float_constant * + int_constant * - string_constant / string_constant / int_constant + int_constant - - int_constant * + int_constant ] , float ident , float ident [ ] [ ] , float ident [ ] ) { return ; } def ident ( ) { ident = ident ( ) ; break ; int ident [ int_constant ] ; } $
+return - string_constant % null - ident [ ] * - null , ; $
+def ident ( ) { break ; } def ident ( ) { ident ( ident , ident ) ; string ident ; } $
+def ident ( ) { if ( - null >= [ = float_constant ] / string_constant + null ) ident ( ) ; { ident [ + int_constant ] [ null ] = ident ( ) ; ident ( ) ; ident [ ] [ ] [ ] [ ] [ ] [ string_constant / string_constant ] = ident ( ident , ) ; } return + ( - null / string_constant ) ; } $
+def ident ( float ident [ ] [ + null * - null ] [ - string_constant - ( - float_constant % string_constant ) ] ) { break ; return ; } $
+read ident [ ] [ ] [ string_constant / int_constant * ( float_constant ) ] ; $
+def ident ( string ident [ - ( string_constant % ( + null ) ) + ( null / - int_constant - null - + int_constant ) / - ident [ ] ] [ ] [ ] [ ] [ ] [ float_constant * + float_constant ] [ ] [ ] ) { print float_constant * - ( null % int_constant / + int_constant ) / null ; ident ( ) ; } $
+ident [ ] [ ] [ string_constant / - null ] [ ] = new string [ + float_constant ] [ float_constant ] [ int_constant % + float_constant ] ; $
+def ident ( int ident , ) { ident ( ) ; } $
+def ident ( int ident ) { ident ( ) ; } $
+def ident ( ) { if ( int_constant * - ident [ ] % + int_constant % string_constant % + null + int_constant ) string ident ; { ; ident [ ] = ident ( ident ) ; } } $
+def ident ( ) { ident = new int [ - ( string_constant ) ] ; } $
+if ( - ident + - ( float_constant ) % + float_constant / - ident [ ] % + string_constant * float_constant != - string_constant ) ; $
+print + [ = - null ] % - float_constant * string_constant * + float_constant - null * + int_constant ; $
+def ident ( float ident ) { ident ( ident , ident ) ; } $
+def ident ( ) { float ident [ int_constant ] ; ident ( ) ; read ident ; } $
+def ident ( ) { read ident ; ident [ - int_constant ] = new string [ + ( + null % string_constant / float_constant ) ] ; } $
+ident = string_constant / - [ = ident - + null ] / int_constant % ident [ ] - null ; $
+def ident ( float ident , float ident , float ident [ int_constant % string_constant * - float_constant * null % string_constant / - null ] [ ] ) { break ; } $
+def ident ( int ident [ null / - null % - null - null ] [ - float_constant + float_constant % int_constant % float_constant ] , ) { ident ( ) ; } $
+{ return float_constant , ; break ; } $
+def ident ( ) { ident [ ] [ ( float_constant / int_constant ) + float_constant * + ident ] = null % - int_constant ; } $
+def ident ( int ident [ + ( - float_constant ) ] ) { { { read ident [ - string_constant ] ; } } } $
+print - int_constant <= string_constant + + int_constant / + ( float_constant ) % + ( int_constant ) / int_constant / - float_constant ; $
+ident = + null % + float_constant - ident [ - float_constant - string_constant ] [ ] [ ] [ ] ; $
+def ident ( ) { return + ident ; } $
+def ident ( string ident ) { ; float ident [ int_constant ] [ int_constant ] [ int_constant ] ; ident ( ident ) ; } $
+print - null % + int_constant - ( - string_constant ) - - int_constant == - string_constant ; $
+def ident ( float ident [ ] [ float_constant ] ) { ; } $
+{ read ident [ + string_constant * string_constant + + null - float_constant * null % - ident [ ] % string_constant ] [ ] ; float ident ; read ident [ ] ; } $

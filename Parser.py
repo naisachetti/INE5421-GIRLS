@@ -16,10 +16,15 @@ class ParsingTable:
         terminais = gramatica.terminais.copy()
         terminais += "$"
         firstpos = gramatica.firspost()
-        # print("fi", firstpos)
+        print("/////FIRST/////")
+        for key in firstpos.keys():
+            print(key+": ", end="")
+            print(firstpos[key])
         followpos = gramatica.followpost()
-        for key, value in followpos.items():
-            print(key, value)
+        print("/////FOLLOW/////")
+        for key in followpos.keys():
+            print(key+": ", end="")
+            print(followpos[key])
         for nt in gramatica.nao_terminais:
             if firstpos[nt].intersection(followpos[nt]) and nt in gramatica.anulaveis():
                 print(gramatica)
@@ -67,12 +72,18 @@ class ParsingTable:
         return self.table[chave]
 
     def to_csv(self, filename: str):
+        # print(self.table.items())
+        # print(self.table['A'], end="\n")
+        # print(self.table.keys())
+        print(self.table["AUX10\'1"])
         cabecalho: list = ["NT"]
+        # cabecalho += [terminal for terminal in self.table[self.gramatica.inicial]]
         cabecalho += [terminal for terminal in self.table[self.gramatica.inicial] if terminal != "&"]
         with open(filename, "w") as csv:
             csv.write(",".join(cabecalho)+"\n")
             for nt, linha in self.table.items():
                 arquivo_linha = [nt]
+                # arquivo_linha += [" " for terminal in linha]
                 arquivo_linha += [" " for terminal in linha if terminal != "&"]
                 for terminal in linha:
                     if terminal == "&":
