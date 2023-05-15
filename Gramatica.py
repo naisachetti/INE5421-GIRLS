@@ -451,6 +451,8 @@ class Gramatica:
     # Substitui em toda gramatica um simbolo velho por um novo
     def update_symbol(self, old: str, new: str):
         if old == new: return
+        if old == "&":
+            raise RuntimeError(f"Nao posso substituir o simbolo & por {new}")
         self.substitute(old, new) #Substitui nas producoes
         # Atualiza um terminal
         if old in self.terminais:
@@ -582,7 +584,7 @@ class Gramatica:
     def nullable_sentence(self, sentence: Production, simbolos_anulaveis: list = None):
         if simbolos_anulaveis is None:
             simbolos_anulaveis = self.anulaveis()
-        return len(list(filter(lambda e: e in simbolos_anulaveis, sentence))) != 0     
+        return len(list(filter(lambda e: not e in simbolos_anulaveis, sentence))) == 0     
 
     # Retorna uma lista com os nao terminais anulaveis da gramatica
     def anulaveis(self):
@@ -970,11 +972,11 @@ class Gramatica:
             arvore = ArvoreAuxiliar(self, nao_terminal, anulaveis)
             if not arvore.nd:
                 return
-            print("simbolos: ", arvore.folhas_simbolos)
+            # print("simbolos: ", arvore.folhas_simbolos)
             for simbolo in set(arvore.folhas_simbolos):
                 # Nao precisamos tratar
                 caminho_comum, caminhos = arvore.ancestral_comum_derivativo(simbolo)
-                print(simbolo, caminho_comum, caminhos)
+                # print(simbolo, caminho_comum, caminhos)
                 # Se aquele simbolo nao causa nao determinismo nao o tratamos
                 if caminho_comum is None: continue
 
@@ -983,8 +985,8 @@ class Gramatica:
                 for caminho in caminhos:
                     for nodo in caminho:
                         if nodo.folha: break
-                        if nodo.simbolo == "&":
-                            print(f"comum: {caminho_comum} caminho: {caminho}")
+                        # if nodo.simbolo == "&":
+                        #     print(f"comum: {caminho_comum} caminho: {caminho}")
                         self.herdar_primeiro(caminho_comum[-1].simbolo, nodo.simbolo)
                 self.eliminar_nd_direto(caminho_comum[-1].simbolo)
                 self.sem_repeticoes()
@@ -1009,7 +1011,6 @@ class Gramatica:
         
         self.to_file("debug/grammar_sem_nd_direto")
 
-        print("eliminar nd direto")
         for nao_terminal in self.nao_terminais:
             self.eliminar_nd_indireto(nao_terminal)
 
@@ -1072,35 +1073,52 @@ class Gramatica:
     def first_prod(self, producao: Production):
 
         if producao == []:
-            return {"&"}
+            raise RuntimeError("Tentativa de calculo do Firspos de uma sentenca vazia")
 
-        if producao[0] in self.terminais or producao[0] == "&":
+        if producao[0] in self.terminais:
             return {producao[0]}
 
         first = set()
-        anulaveis = self.anulaveis()
+
         # Inclui o firstpost de todos simbolos ate o primeiro nao anulavel
         for simbolo in producao:
             self.__firstpos_simbol(simbolo, first)
-            if not simbolo in anulaveis:
+            first-={"&"} # & sera tratado depois, so eh incluso se toda producao for anulavel
+            if not simbolo in self.anulaveis():
                 break
+        
+        # Inclui & no first da producao se ela toda eh anulavel
+        if self.nullable_sentence(producao):
+            first.add("&")
+
         return first
 
     # Calcula o firstpos de um nao terminal
     def __firstpos_simbol(self, simbolo: str, first: set = None):
+        # Nunca se lida com isso calculando o first de &, e sim se o simbolo eh anulavel
+        if simbolo == "&":
+            return first
 
+        # Significa que n eh chamado recursivamente, portanto eh raiz da recursao
         root = False
         if first == None:
             root = True
             first = set()
+            if simbolo in self.anulaveis():
+                first.add("&")
 
-        def check_nd():
-            if simbolo in first:
-                raise RuntimeError("Nao determinismo no calculo de Firstpos")
+        # Memoizacao
+        if simbolo in self.first.keys():
+            meu_first = self.first[simbolo]-{"&"}
+            if len(first & meu_first):
+                raise RuntimeError(f"Nao determinismo no calculo de Firstpos {first} {meu_first}")
+            first |= meu_first
+            return first
 
         # o first de um terminal eh o proprio terminal
-        if simbolo in self.terminais or simbolo == "&":
-            check_nd()
+        if simbolo in self.terminais and not simbolo == "&":
+            if simbolo in first:
+                raise RuntimeError(f"Nao determinismo no calculo de Firstpos por {simbolo}")
             first.add(simbolo)
             return first
 
@@ -1109,44 +1127,34 @@ class Gramatica:
         for producao in self.producoes[simbolo]:
 
             # Itera sobre os simbolos de uma producao
-            for simbolo in producao:
+            for outro_simbolo in producao:
 
-                # # Se o simbolo da producao eh um terminal
-                # if simbolo in self.terminais or simbolo == "&":
-                #     check_nd()
-                #     first.add(simbolo)
-                #     break
-
-                # Simbolo nao terminal
-                self.__firstpos_simbol(simbolo, first)
+                self.__firstpos_simbol(outro_simbolo, first)
 
                 # Simbolo nao anulavel
-                if not simbolo in anulaveis:
-                    break
-            else:
-                # Producao inteira anulavel
-                first.add("&")
+                if not outro_simbolo in anulaveis: break
 
         if root: self.first[simbolo] = first
         return first
     
     # Calcula o firstpos da gramatica
     def firspost(self):
-        self.first = {nt:[] for nt in self.nao_terminais}
+        self.first = {}
         for nt in self.nao_terminais:
-            self.first[nt] = self.__firstpos_simbol(nt)
+            self.__firstpos_simbol(nt)
         return self.first
     
     # Calcula o followpos de um nao terminal
-    def __followpos_nt(self, nt: str, analisys_set = None):
+    def __followpos_nt(self, nt: str, seen = None):
 
         root = False
-        if analisys_set is None:
+        if seen is None:
             root = True
-            analisys_set = set()
+            seen = set()
 
-        analisys_set.add(nt)
-        # Memorizacao do problema
+        seen.add(nt)
+
+        # Memoizacao do problema
         if nt in self.follow.keys():
             return self.follow[nt]
         
@@ -1165,26 +1173,18 @@ class Gramatica:
                 for i, simbolo in enumerate(producao):
                     if nt != simbolo: continue
 
-                    # Firstpos de tudo que vem depois dele
-                    post = self.first_prod(producao[i+1:])
+                    # Tudo que vem depois dele
+                    post = producao[i+1:]
 
-                    # Firstpos do resto da producao nao eh literalmente so &
-                    if {'&'} != post:
-                        if '&' in post:
-                            follow = follow.union(post-{'&'})
-                        else:
-                            follow = follow.union(post)
-                    self.follow[nt] = follow
+                    # Ha de fato mais sentenca apos o simbolo
+                    if len(post):
+                        follow |= self.first_prod(post)-{"&"}
+                        if not self.nullable_sentence(post, anulaveis):
+                            continue
 
-                    # Firstpos do resto da producao anulavel
-                    if self.nullable_sentence(post, anulaveis):
-                        if not nt_analisado in analisys_set:
-                            follow = follow.union(self.__followpos_nt(nt_analisado, analisys_set.copy()))
-                    # Firstpos do resto da producao nao eh literalmente so &
-                    if {"&"} != post:
-                        if "&" in post:
-                            post.remove("&")
-                        follow = follow.union(post)
+                    # nt toca o fim da producao analisada
+                    if not nt_analisado in seen:
+                        follow |= self.__followpos_nt(nt_analisado, seen.copy())
         
         if root: self.follow[nt] = follow
         return follow
@@ -1193,7 +1193,7 @@ class Gramatica:
     def followpost(self):
         self.follow = {}
         for i, nt in enumerate(self.nao_terminais):
-            # print(i, len(self.nao_terminais), nt)
+            print(i, len(self.nao_terminais), nt)
             self.__followpos_nt(nt)
         return self.follow
 

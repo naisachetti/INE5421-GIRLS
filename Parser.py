@@ -26,7 +26,7 @@ class ParsingTable:
             print(key+": ", end="")
             print(followpos[key])
         for nt in gramatica.nao_terminais:
-            if firstpos[nt].intersection(followpos[nt]) and nt in gramatica.anulaveis():
+            if firstpos[nt] & followpos[nt] and nt in gramatica.anulaveis():
                 print(gramatica)
                 raise SyntaxError(f"Gramatica nao eh LL1 nt: {nt} first:{firstpos[nt]}, follow:{followpos[nt]}")
         self.table = {}
@@ -41,7 +41,9 @@ class ParsingTable:
             for producao in producoes:
 
                 # Preenchimento de first
+                # print(producao)
                 first = gramatica.first_prod(producao)
+                # print(first)
 
                 # Preenchimento de quando for follow
                 if producao == "&" or "&" in first:
@@ -50,16 +52,17 @@ class ParsingTable:
                             for e in self.table:
                                 print(e, self.table[e])
                             raise RuntimeError(f"Tentei colocar duas producoes na tabela LL1 {nt} {terminal}")
+                        # print(f"folow: inseri {producao} em {nt} {terminal}")
                         self.table[nt][terminal] = producao
                     # continue
 
-                # if "&" in first:
-                #     raise RuntimeError(f"epslon no first de {nt, first}")
                 for terminal in first:
                     if terminal == "&": continue
                     if not self.table[nt][terminal] is None:
-                        print(self.table)
+                        for e in self.table:
+                                print(e, self.table[e])
                         raise RuntimeError(f"Tentei colocar duas producoes na tabela LL1 {nt} {terminal}")
+                    # print(f"first: inseri {producao} em {nt} {terminal}")
                     self.table[nt][terminal] = producao
 
     def __repr__(self):
@@ -72,10 +75,6 @@ class ParsingTable:
         return self.table[chave]
 
     def to_csv(self, filename: str):
-        # print(self.table.items())
-        # print(self.table['A'], end="\n")
-        # print(self.table.keys())
-        print(self.table["AUX10\'1"])
         cabecalho: list = ["NT"]
         # cabecalho += [terminal for terminal in self.table[self.gramatica.inicial]]
         cabecalho += [terminal for terminal in self.table[self.gramatica.inicial] if terminal != "&"]
@@ -96,6 +95,7 @@ class ParsingTable:
 class AnalisadorSintatico:
     def __init__(self, folder: str, Lexer:TokenDriver, validar = True) -> None:
         self.gramatica = Gramatica().from_file_preprocess(folder+"/grammar").tratada()
+        print("Gramatica Tratada com sucesso!")
         self.token = Lexer.gerador()
         self.tabela = ParsingTable(self.gramatica)
         self.tabela.to_csv(folder+"/tabela_sintatica.csv")
@@ -180,9 +180,10 @@ class AnalisadorSintatico:
                     driver = TokenDriver(sentenca.split())
                     if not self.parse(token=driver.gerador()):
                         raise SyntaxError(f"Parseei errado uma sentenca gerada pela minha propria gramatica: {sentenca}")
+        print(f"Validacao de {total} sentencas completo!")
 
 if __name__ == "__main__":
-    pasta = "q1"
+    pasta = "compiladores"
     driver = TokenDriver("None".split())
-    parser = AnalisadorSintatico(pasta, driver, False)
-    print(parser.parse(True, TokenDriver("c c c c c $".split()).gerador(),))
+    parser = AnalisadorSintatico(pasta, driver, True)
+    # print(parser.parse(True, TokenDriver("c c c c c $".split()).gerador(),))
