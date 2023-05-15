@@ -18,7 +18,8 @@ class ParsingTable:
         firstpos = gramatica.firspost()
         # print("fi", firstpos)
         followpos = gramatica.followpost()
-        # print("fo", followpos)
+        for key, value in followpos.items():
+            print(key, value)
         for nt in gramatica.nao_terminais:
             if firstpos[nt].intersection(followpos[nt]) and nt in gramatica.anulaveis():
                 print(gramatica)
@@ -82,13 +83,13 @@ class ParsingTable:
                 csv.write(",".join(arquivo_linha)+"\n")
 
 class AnalisadorSintatico:
-    def __init__(self, folder: str, Lexer:TokenDriver) -> None:
+    def __init__(self, folder: str, Lexer:TokenDriver, validar = True) -> None:
         self.gramatica = Gramatica().from_file_preprocess(folder+"/grammar").tratada()
         self.token = Lexer.gerador()
         self.tabela = ParsingTable(self.gramatica)
         self.tabela.to_csv(folder+"/tabela_sintatica.csv")
         self.pilha = Pilha()
-        self.validate(Gramatica().from_file_preprocess(folder+"/grammar"))
+        if validar: self.validate(Gramatica().from_file_preprocess(folder+"/grammar"))
 
     # Faz o parsing dos tokens e valida a sintaxe
     def parse(self, show_stack = False, token: TokenDriver = None):
@@ -156,13 +157,11 @@ class AnalisadorSintatico:
     # Gera palavras 100 palavras aleatorias a partir da gramatica e faz o parsgin delas
     def validate(self, gramatica_original):
         total = 100
-        validas = 0
         done = set()
-        with open("validation.txt", "w") as _:
-            pass
+        with open("validation.txt", "w") as _: pass
         with open("validation.txt", "a") as arq_val:
             for _ in range(total * 100):
-                if validas >= total: return
+                if len(done) >= total: return
                 sentenca: str = gramatica_original.generate_word(200)
                 if not sentenca is None and sentenca not in done:
                     done.add(sentenca)
@@ -170,10 +169,9 @@ class AnalisadorSintatico:
                     driver = TokenDriver(sentenca.split())
                     if not self.parse(token=driver.gerador()):
                         raise SyntaxError(f"Parseei errado uma sentenca gerada pela minha propria gramatica: {sentenca}")
-                    validas += 1
 
 if __name__ == "__main__":
-    pasta = "compiladores"
+    pasta = "q1"
     driver = TokenDriver("None".split())
-    parser = AnalisadorSintatico(pasta, driver)
-    parser.parse(True, TokenDriver("def ident ( ) { { ident ( ; ) ; } ident ( ident , ident , ) ; { read ident ; } } $".split()).gerador())
+    parser = AnalisadorSintatico(pasta, driver, False)
+    print(parser.parse(True, TokenDriver("c c c c c $".split()).gerador(),))

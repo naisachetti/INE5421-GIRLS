@@ -23,6 +23,6 @@ NUMEXPRESSION ::= TERM (  ( \+ | - ) TERM ) *
 TERM ::= UNARYEXPR (  ( \* | / | % ) UNARYEXPR ) *
 UNARYEXPR ::=  (  ( \+ | - )  ) ? FACTOR
 FACTOR ::=  ( int_constant | float_constant | string_constant | null | LVALUE |  \( NUMEXPRESSION \) | ARRAY ) 
-LVALUE ::= ident ( [ NUMEXPRESSION ] ) *
+LVALUE ::= ident ( [ NUMEXPRESSION ] | [ ] ) *
 ARRAY ::= [ ARRAYCONTENTS ]
 ARRAYCONTENTS ::== EXPRESSION ( , ARRAYCONTENTS ) ?

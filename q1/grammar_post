@@ -2,4 +2,4 @@ P ::= K V C
 K ::= c K | &
 V ::= v V | F
 F ::= f P ; F | &
-C ::= com ; C | b V C e | &
+C ::= b V C e | com ; C | &

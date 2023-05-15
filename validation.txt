@@ -1,2 +1,1 @@
- $
-def ident ( ) { ident ( ident ) ; ident ( ) ; break ; } $
+c c $

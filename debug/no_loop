@@ -1,0 +1,6 @@
+A'1 ::= P | &
+P ::= K V C | V C | K C | K V | C | V | K
+K ::= c K | c
+V ::= v V | F | v
+F ::= f P ; F | f ; F | f P ; | f ;
+C ::= com ; C | b V C e | com ; | b C e | b V e | b e

@@ -384,6 +384,16 @@ class Gramatica:
         # Retorna a forma sentencial com o simbolo de fim de sentenca no final
         return Production(" ".join(forma_sentencial)+" $")
     
+    # Gera um grupo de palavras unicas
+    def generate_unique_words(self, total: int = 1000):
+        done = set()
+        for _ in range(total * 100):
+            if len(done) >= total: break
+            sentenca = self.generate_word(200)
+            if not sentenca is None and sentenca not in done:
+                done.add(sentenca)
+        return done
+
     ################ Alteracao fundamentais da gramatica ################
 
     # Retorna um novo nao terminal
@@ -557,6 +567,12 @@ class Gramatica:
         ajuntado = {nt: self.producoes[nt] for nt in nts}
         ordenado.update(ajuntado)
         self.producoes = ordenado
+
+        # Coloca as producoes & no comeco da lista de producoes
+        for nt in self.nao_terminais:
+            if "&" in self.producoes[nt]:
+                self.producoes[nt].remove("&")
+                self.producoes[nt].insert(0, Production("&"))
 
         return self
 
@@ -746,6 +762,7 @@ class Gramatica:
         self.sem_repeticoes()
         self.e_livre()
         self.sem_loop()
+        self.to_file("debug/no_loop")
         self.sem_diretas()
         for nt, producoes in self.producoes.items():
             for producao in producoes:
@@ -772,7 +789,7 @@ class Gramatica:
             for i, (nt_1, producao_1) in enumerate(gram):
                 for j, (nt_2, producao_2) in enumerate(gram):
                     if j <= i: continue
-                    if producao_1 == producao_2: # Aqui producao eh todas as producoes nao uma soh
+                    if set(producao_1) == set(producao_2): # Aqui producao eh todas as producoes nao uma soh
                         self.substitute(nt_2, nt_1)
                         houve_alteracao = True
             self.sem_inalcancaveis()
@@ -902,33 +919,30 @@ class Gramatica:
         return False
 
     # Altera a gramatica para retirar nao determinismo direto
-    def eliminar_nd_direto(self, nao_terminal: str):
+    def eliminar_nd_direto(self, nt: str):
         houve_alteracao = True
-        novos_nt = []
-        simbolos_tratados = set()
         # Elimina quantos nao determinismos diretos forem necessarios
         while houve_alteracao:
 
             # Cria uma lista de simbolos inciais
             houve_alteracao = False
-            simbolos_iniciais = [producao[0] for producao in self.producoes[nao_terminal]]
+            simbolos_iniciais_ocorr = [producao[0] for producao in self.producoes[nt]]
+            simbolos_iniciais = set(simbolos_iniciais_ocorr)
 
             for simbolo_nd in simbolos_iniciais:
                 # ha nao determinismo com este simbolo
-                if simbolos_iniciais.count(simbolo_nd) > 1 and not simbolo_nd in simbolos_tratados:
-                    simbolos_tratados.add(simbolo_nd)
+                if simbolos_iniciais_ocorr.count(simbolo_nd) > 1:
                     houve_alteracao = True
 
-                    # Separa os indices das producoes que sao repetidas
-                    producoes_nd = [producao for producao in self.producoes[nao_terminal] if producao[0] == simbolo_nd]
+                    # Separa as producoes nd
+                    producoes_nd = list(filter(lambda e: e[0] == simbolo_nd, self.producoes[nt]))
                     
                     # Elimina as producoes nao deterministicas
                     for producao in producoes_nd:
-                        self.producoes[nao_terminal].remove(producao)
+                        self.producoes[nt].remove(producao)
 
                     # Cria um novo nao terminal que produz dos nao deterministicos
-                    novo_nt = self.novo_nao_terminal(nao_terminal)
-                    novos_nt.append(novo_nt)
+                    novo_nt = self.novo_nao_terminal(nt)
 
                     # Cria as producoes do novo nao terminal
                     self.producoes[novo_nt] = [Production(" ".join(producao[1:])) for producao in producoes_nd]
@@ -940,11 +954,9 @@ class Gramatica:
                             self.producoes[novo_nt].append(Production("&"))
 
                     # Transicao que leva pro novo nao terminal
-                    self.producoes[nao_terminal].append(Production(simbolo_nd+" "+novo_nt))
+                    self.producoes[nt].append(Production(simbolo_nd+" "+novo_nt))
 
                     break
-
-        return novos_nt
 
     # Monta a arvore de derivacores da gramatica
     def eliminar_nd_indireto(self, nao_terminal: str):
@@ -955,12 +967,14 @@ class Gramatica:
         while alterations:
             alterations = False
             anulaveis = self.anulaveis()
-            arvore =  ArvoreAuxiliar(self, nao_terminal, anulaveis)
+            arvore = ArvoreAuxiliar(self, nao_terminal, anulaveis)
             if not arvore.nd:
                 return
+            print("simbolos: ", arvore.folhas_simbolos)
             for simbolo in set(arvore.folhas_simbolos):
                 # Nao precisamos tratar
                 caminho_comum, caminhos = arvore.ancestral_comum_derivativo(simbolo)
+                print(simbolo, caminho_comum, caminhos)
                 # Se aquele simbolo nao causa nao determinismo nao o tratamos
                 if caminho_comum is None: continue
 
@@ -995,6 +1009,7 @@ class Gramatica:
         
         self.to_file("debug/grammar_sem_nd_direto")
 
+        print("eliminar nd direto")
         for nao_terminal in self.nao_terminais:
             self.eliminar_nd_indireto(nao_terminal)
 
@@ -1038,7 +1053,7 @@ class Gramatica:
         #         raise RuntimeError("Nao consegui fatorar a gramatica (limite de derivacoes)")
 
         #     # Elimina ND direto gerado
-        #     novos_nt = self.eliminar_nd_direto(nao_terminal)
+        #     novos_nt = self.eliminar_nd_direto(nao_terminal) #essa funcao nao retorna novos_nt mais
         #     for nt in novos_nt:
         #         nts.append(nt)
 
@@ -1072,33 +1087,35 @@ class Gramatica:
         return first
 
     # Calcula o firstpos de um nao terminal
-    def __firstpos_simbol(self, cabeca: str, first: set = None):
+    def __firstpos_simbol(self, simbolo: str, first: set = None):
 
+        root = False
         if first == None:
+            root = True
             first = set()
 
         def check_nd():
-            if cabeca in first:
+            if simbolo in first:
                 raise RuntimeError("Nao determinismo no calculo de Firstpos")
 
         # o first de um terminal eh o proprio terminal
-        if cabeca in self.terminais or cabeca == "&":
+        if simbolo in self.terminais or simbolo == "&":
             check_nd()
-            first.add(cabeca)
+            first.add(simbolo)
             return first
 
         anulaveis = self.anulaveis()
         # Itera sobre as producoes do nao terminal
-        for producao in self.producoes[cabeca]:
+        for producao in self.producoes[simbolo]:
 
             # Itera sobre os simbolos de uma producao
             for simbolo in producao:
 
-                # Se o simbolo da producao eh um terminal
-                if simbolo in self.terminais or simbolo == "&":
-                    check_nd()
-                    first.add(simbolo)
-                    break
+                # # Se o simbolo da producao eh um terminal
+                # if simbolo in self.terminais or simbolo == "&":
+                #     check_nd()
+                #     first.add(simbolo)
+                #     break
 
                 # Simbolo nao terminal
                 self.__firstpos_simbol(simbolo, first)
@@ -1107,22 +1124,25 @@ class Gramatica:
                 if not simbolo in anulaveis:
                     break
             else:
-                # Producao inteira anulaves
+                # Producao inteira anulavel
                 first.add("&")
 
+        if root: self.first[simbolo] = first
         return first
     
     # Calcula o firstpos da gramatica
     def firspost(self):
-        first = {nt:[] for nt in self.nao_terminais}
+        self.first = {nt:[] for nt in self.nao_terminais}
         for nt in self.nao_terminais:
-            first[nt] = self.__firstpos_simbol(nt)
-        return first
+            self.first[nt] = self.__firstpos_simbol(nt)
+        return self.first
     
     # Calcula o followpos de um nao terminal
     def __followpos_nt(self, nt: str, analisys_set = None):
 
+        root = False
         if analisys_set is None:
+            root = True
             analisys_set = set()
 
         analisys_set.add(nt)
@@ -1157,7 +1177,8 @@ class Gramatica:
                         if "&" in post:
                             post.remove("&")
                         follow = follow.union(post)
-        self.follow[nt] = follow
+        
+        if root: self.follow[nt] = follow
         return follow
 
     # Calcula o firstpos da gramatica
@@ -1171,5 +1192,13 @@ class Gramatica:
 if __name__ == "__main__":
     arquivo = "grammar"
     path = "compiladores/"
-    g = Gramatica().from_file_preprocess(path+arquivo).tratada()
-    g.to_file(path+arquivo+"_tratada")
+    # g = Gramatica().from_file_preprocess(path+arquivo).tratada()
+    # g.to_file(path+arquivo+"_tratada")
+
+    total = 1000
+    raw_words = Gramatica().from_file_preprocess(path+arquivo).generate_unique_words(total)
+    scnd_raw_words = Gramatica().from_file_preprocess(path+arquivo).generate_unique_words(total)
+    tratada_words = Gramatica().from_file_preprocess(path+arquivo).tratada().generate_unique_words(total)
+
+    print(f"Ha {len(tratada_words.difference(raw_words))*100/total}% de diferenca entre as tratadas e as cruas")
+    print(f"Ha {len(scnd_raw_words.difference(raw_words))*100/total}% de diferenca no grupo de controle")
