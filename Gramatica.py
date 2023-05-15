@@ -1068,6 +1068,8 @@ class Gramatica:
         for simbolo in producao:
             self.__firstpos_simbol(simbolo, first)
             if not simbolo in anulaveis:
+                if "&" in first:
+                    first.remove("&")
                 break
         return first
 
@@ -1126,7 +1128,7 @@ class Gramatica:
             analisys_set = set()
 
         analisys_set.add(nt)
-        # Memorizacao do problema
+        # Memoizacao do problema
         if nt in self.follow.keys():
             return self.follow[nt]
         
