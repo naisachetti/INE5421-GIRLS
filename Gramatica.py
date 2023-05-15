@@ -1152,9 +1152,8 @@ class Gramatica:
             root = True
             seen = set()
 
-        seen.add(nt)
-
-        # Memoizacao do problema
+        analisys_set.add(nt)
+        # Memorizacao do problema
         if nt in self.follow.keys():
             return self.follow[nt]
         
