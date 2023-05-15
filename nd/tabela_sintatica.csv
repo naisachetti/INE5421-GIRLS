@@ -1,6 +1,6 @@
-NT,z,b,c,d,$
-Z,z,b S z, , , 
-B, ,b B,&, , 
-D,&, , ,d D, 
-S, ,b B c d,c d S'1, , 
-S'1,&, , ,d D, 
+NT,z,d,b,c,$
+Z,z, ,b S z, , 
+D,&,d D, , , 
+B, , ,b B,&, 
+S, , ,b B c d,c d S'1, 
+S'1,&,d D, , , 

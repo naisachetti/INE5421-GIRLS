@@ -16,15 +16,15 @@ class ParsingTable:
         terminais = gramatica.terminais.copy()
         terminais += "$"
         firstpos = gramatica.firspost()
-        print("/////FIRST/////")
-        for key in firstpos.keys():
-            print(key+": ", end="")
-            print(firstpos[key])
+        # print("/////FIRST/////")
+        # for key in firstpos.keys():
+        #     print(key+": ", end="")
+        #     print(firstpos[key])
         followpos = gramatica.followpost()
-        print("/////FOLLOW/////")
-        for key in followpos.keys():
-            print(key+": ", end="")
-            print(followpos[key])
+        # print("/////FOLLOW/////")
+        # for key in followpos.keys():
+        #     print(key+": ", end="")
+        #     print(followpos[key])
         for nt in gramatica.nao_terminais:
             if firstpos[nt] & followpos[nt] and nt in gramatica.anulaveis():
                 print(gramatica)
@@ -100,7 +100,8 @@ class AnalisadorSintatico:
         self.tabela = ParsingTable(self.gramatica)
         self.tabela.to_csv(folder+"/tabela_sintatica.csv")
         self.pilha = Pilha()
-        if validar: self.validate(Gramatica().from_file_preprocess(folder+"/grammar"))
+        if validar: 
+            self.validate(Gramatica().from_file_preprocess(folder+"/grammar"))
 
     # Faz o parsing dos tokens e valida a sintaxe
     def parse(self, show_stack = False, token: TokenDriver = None):
@@ -172,15 +173,17 @@ class AnalisadorSintatico:
         with open("validation.txt", "w") as _: pass
         with open("validation.txt", "a") as arq_val:
             for _ in range(total * 100):
-                if len(done) >= total: return
-                sentenca: str = gramatica_original.generate_word(200)
+                if len(done) >= total: break
+                sentenca: str = gramatica_original.generate_word(100)
                 if not sentenca is None and sentenca not in done:
                     done.add(sentenca)
                     arq_val.write(sentenca + "\n")
                     driver = TokenDriver(sentenca.split())
                     if not self.parse(token=driver.gerador()):
                         raise SyntaxError(f"Parseei errado uma sentenca gerada pela minha propria gramatica: {sentenca}")
-        print(f"Validacao de {total} sentencas completo!")
+            else:
+                print("Nao consegui formar palavras o suficiente")
+        print(f"Validacao de {len(done)} sentencas completo!")
 
 if __name__ == "__main__":
     pasta = "compiladores"

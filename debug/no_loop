@@ -1,6 +1,6 @@
 A'1 ::= PROGRAM | &
 PROGRAM ::= AUX12
-FUNCLIST ::= FUNCDEF | FUNCDEF FUNCLIST
+FUNCLIST ::= FUNCDEF FUNCLIST | FUNCDEF
 FUNCDEF ::= def ident ( PARAMLIST ) { STATELIST } | def ident ( ) { STATELIST }
 FUNCCALL ::= ident ( PARAMLISTCALL ) | ident ( )
 PRINTSTAT ::= print EXPRESSION
@@ -8,19 +8,19 @@ READSTAT ::= read LVALUE
 RETURNSTAT ::= return RETURNLIST | return
 FORSTAT ::= for ( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT ) STATEMENT
 ARRAY ::= [ ARRAYCONTENTS ]
-AUX0 ::= string | float | int
+AUX0 ::= int | float | string
 STATEMENT ::= AUX1
-AUX1 ::= FORSTAT | ; | IFSTAT | RETURNSTAT ; | { STATELIST } | ATRIBSTAT ; | break ; | FUNCCALL ; | PRINTSTAT ; | READSTAT ; | VARDECL ;
+AUX1 ::= PRINTSTAT ; | FORSTAT | FUNCCALL ; | VARDECL ; | { STATELIST } | ATRIBSTAT ; | RETURNSTAT ; | READSTAT ; | break ; | IFSTAT | ;
 ATRIBSTAT ::= LVALUE = AUX3
-AUX3 ::= EXPRESSION | ALLOCEXPRESSION | FUNCCALL
-AUX6 ::= > | < | == | <= | != | >=
+AUX3 ::= FUNCCALL | ALLOCEXPRESSION | EXPRESSION
+AUX6 ::= == | != | <= | >= | < | >
 AUX7 ::= - | +
-AUX8 ::= * | / | %
+AUX8 ::= * | % | /
 FACTOR ::= AUX10
-AUX10 ::= ARRAY | LVALUE | int_constant | string_constant | null | float_constant | ( NUMEXPRESSION )
+AUX10 ::= ARRAY | LVALUE | string_constant | float_constant | null | ( NUMEXPRESSION ) | int_constant
 AUX12 ::= STATEMENT | FUNCLIST
 PARAMLISTCALL ::= AUX13
-AUX13 ::= ident , PARAMLISTCALL | ident | ident ,
+AUX13 ::= ident | ident , PARAMLISTCALL | ident ,
 RETURNLIST ::= AUX14
 AUX14 ::= NUMEXPRESSION | NUMEXPRESSION , RETURNLIST | NUMEXPRESSION ,
 IFSTAT ::= if ( EXPRESSION ) STATEMENT AUX15 | if ( EXPRESSION ) STATEMENT

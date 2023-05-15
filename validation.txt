@@ -1,23 +1,32 @@
-b b b b b b b b b c d z $
+b c d z $
 z $
+b c d d z $
 b c d d d z $
 b b c d z $
-b c d d z $
-b c d z $
-b c d d d d d d d z $
-b b b b b b c d z $
-b c d d d d z $
-b b b b c d z $
 b b b c d z $
+b b b b c d z $
 b b b b b c d z $
-b b b b b b b b c d z $
-b c d d d d d z $
 b c d d d d d d z $
+b c d d d d d d d z $
+b c d d d d d z $
+b b b b b b b b b c d z $
+b c d d d d z $
+b c d d d d d d d d d d d z $
 b c d d d d d d d d z $
 b b b b b b b c d z $
-b c d d d d d d d d d z $
+b b b b b b b b c d z $
+b b b b b b c d z $
 b b b b b b b b b b c d z $
-b c d d d d d d d d d d d d d d d z $
 b c d d d d d d d d d d z $
+b b b b b b b b b b b b b b c d z $
+b c d d d d d d d d d z $
+b c d d d d d d d d d d d d d z $
+b c d d d d d d d d d d d d z $
+b b b b b b b b b b b b b c d z $
 b b b b b b b b b b b c d z $
-b c d d d d d d d d d d d z $
+b b b b b b b b b b b b c d z $
+b c d d d d d d d d d d d d d d d d d z $
+b c d d d d d d d d d d d d d d d d z $
+b c d d d d d d d d d d d d d d d z $
+b c d d d d d d d d d d d d d d d d d d d z $
+b c d d d d d d d d d d d d d d z $

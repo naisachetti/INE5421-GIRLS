@@ -1152,7 +1152,7 @@ class Gramatica:
             root = True
             seen = set()
 
-        analisys_set.add(nt)
+        seen.add(nt)
         # Memorizacao do problema
         if nt in self.follow.keys():
             return self.follow[nt]
@@ -1192,7 +1192,7 @@ class Gramatica:
     def followpost(self):
         self.follow = {}
         for i, nt in enumerate(self.nao_terminais):
-            print(i, len(self.nao_terminais), nt)
+            # print(i, len(self.nao_terminais), nt)
             self.__followpos_nt(nt)
         return self.follow
 
