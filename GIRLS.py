@@ -7,7 +7,7 @@ from Lexer import AnalisadorLexico
 class GIRLS:
     def __init__(self, folder, nome_programa=""):
         self.lexer = AnalisadorLexico(folder, nome_programa)
-        self.parser = AnalisadorSintatico(folder, self.lexer)
+        self.parser = AnalisadorSintatico(folder, self.lexer, False)
         if self.parser.parse(True):
             print("\nSintaxe e léxico correto do arquivo program")
         else:

@@ -399,6 +399,15 @@ class Gramatica:
                 done.add(sentenca)
         return done
 
+    # Calcula as ocorrencias de um nao terminal na gramatica:
+    def ocorroncias_simbolo(self):
+        ocorr = {simb: 0 for simb in self.nao_terminais+self.terminais}
+        for producao_geral in self.producoes.values():
+            for producao in producao_geral:
+                for simbolo in producao:
+                    ocorr[simbolo] += 1
+        return ocorr
+    
     ################ Alteracao fundamentais da gramatica ################
 
     # Retorna um novo nao terminal
@@ -938,7 +947,7 @@ class Gramatica:
         return False
 
     # Altera a gramatica para retirar nao determinismo direto
-    def eliminar_nd_direto(self, nt: str, imprima: bool = False):
+    def eliminar_nd_direto(self, nt: str):
         houve_alteracao = True
         # Elimina quantos nao determinismos diretos forem necessarios
         while houve_alteracao:
@@ -975,8 +984,6 @@ class Gramatica:
                                     
                     # Cria um novo nao terminal que produz dos nao deterministicos
                     novo_nt = self.novo_nao_terminal(nt)
-                    if imprima:
-                        print(f"no tratamento de ND criei {novo_nt} para resolver {comum}")
 
                     # Cria as producoes do novo nao terminal
                     self.producoes[novo_nt] = [Production(" ".join(producao[igual:])) for producao in producoes_nd]
@@ -990,16 +997,11 @@ class Gramatica:
                     # Transicao que leva pro novo nao terminal
                     self.producoes[nt].append(Production(" ".join(comum)+" "+novo_nt))
 
-                    if imprima:
-                        print(f"novo nd prod: {self.producoes[novo_nt]}")
-
                     break
-        if imprima:
-            print("fiquei:", self.producoes[nt])
 
     # Monta a arvore de derivacores da gramatica
+    # BUG: existe um possivel problema. Essa funcao eh chamada iterando sobre os nao terminais e ela mesma pode remover nao terminais do iteravel
     def eliminar_nd_indireto(self, nao_terminal: str):
-        self.to_file("starting_error")
         alterations = True
         self.eliminar_nd_direto(nao_terminal)
         while alterations:
@@ -1008,7 +1010,6 @@ class Gramatica:
             arvore = ArvoreAuxiliar(self, nao_terminal, anulaveis)
             if not arvore.nd:
                 return
-            print(f"{nao_terminal} EH ND INDIRETO POR {arvore.simbolos_nd()}")
             simbolo  = list(arvore.simbolos_nd())[0]
             alterations = True
             
@@ -1016,20 +1017,15 @@ class Gramatica:
             caminho_comum, caminhos = arvore.ancestral_comum_derivativo(simbolo)
             if caminho_comum is None:
                 raise RuntimeError("Caminho comum ND inexistente")
-            print(simbolo, caminho_comum, caminhos)
             for caminho in caminhos:
                 for nodo in caminho:
                     if nodo.folha: break
                     if nodo.simbolo == "&":
-                        print(f"comum: {caminho_comum} caminho: {caminho}\n")
                         continue
                     self.herdar_primeiro(caminho_comum[-1].simbolo, nodo.simbolo)
-            self.eliminar_nd_direto(caminho_comum[-1].simbolo, True)
-            self.sem_repeticoes(mark_instead_of_kill=False)
-            self.sem_diretas(mark_instead_of_kill=False)
-            self.to_file("error_grammar")
-            print("TRATEI 1")
-            print(list(filter(lambda e: self.mark_for_death[e], self.nao_terminais)))
+            self.eliminar_nd_direto(caminho_comum[-1].simbolo)
+            self.sem_repeticoes()
+            self.sem_diretas()
     
     # Retira o nd direto da gramatica toda
     def sem_nd_direto(self):
@@ -1052,21 +1048,8 @@ class Gramatica:
         self.to_file("debug/grammar_sem_nd_direto")
 
         for nao_terminal in self.nao_terminais:
-            self.mark_for_death[nao_terminal] = False
-        
-        anu = self.anulaveis()
-        for nt in self.nao_terminais:
-            a = ArvoreAuxiliar(self, nt, anu)
-            if a.nd:
-                print(f"{nt} nd por {a.simbolos_nd()}")
-                print()
-
-        for nao_terminal in self.nao_terminais:
-            if self.mark_for_death[nao_terminal]: continue
             self.eliminar_nd_indireto(nao_terminal)
-        
-        self.kill_the_marked()
-
+            
         return self
 
         # self.to_file("lixo.txt")
@@ -1244,8 +1227,13 @@ class Gramatica:
     # Calcula o followpos da gramatica
     def followpost(self):
         self.follow = {}
-        for i, nt in enumerate(self.nao_terminais):
-            # print(i, len(self.nao_terminais), nt)
+        # Ordena os nao terminais pelo numero de ocorrencias na gramatica, isso aceleta bastante o calculo
+        ocorrencias = list(self.ocorroncias_simbolo().items())
+        ocorrencias = list(filter(lambda e: e[0] in self.nao_terminais, ocorrencias))
+        ocorrencias.sort(key=lambda e: e[1])
+        ocorrencias = list(map(lambda e: e[0], ocorrencias))
+        for i, nt in enumerate(ocorrencias):
+            print(f"{100*i/len(self.nao_terminais):.2f}%", nt)
             self.__followpos_nt(nt)
         return self.follow
 

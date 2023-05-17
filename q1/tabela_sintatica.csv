@@ -1,16 +1,16 @@
-NT,;,b,e,com,c,v,f,$
-A, ,b A'1, ,com ; A'2,c A'3,v A'4,f A'5,&
-P, ,b A'1, ,com ; A'2,c A'3,v A'4,f A'5, 
-V, , , , , ,v V'2,f V'1, 
-C, ,b A'1, ,com ; A'2, , , , 
-A'1, ,C e,e,C e, ,V A'6,V A'6, 
-A'2,&,b A'1,&,com ; A'2, , , ,&
-A'3,&,b A'1, ,com ; A'2,c K A'4,V A'2,V A'2,&
-A'4,&,b A'1, ,com ; A'2, ,V A'2,V A'2,&
-A'5,; A'7,P ; A'7, ,P ; A'7,P ; A'7,P ; A'7,P ; A'7, 
-V'1,; V'3,P ; V'3, ,P ; V'3,P ; V'3,P ; V'3,P ; V'3, 
-V'2,&,&,&,&, ,v V'2,f V'1,&
-A'6, ,C e,e,C e, , , , 
-V'3,&,&,&,&, , ,f V'1,&
-A'7,&,b A'1, ,com ; A'2, , ,f V'1 A'2,&
-K,&,&, ,&,c K,&,&,&
+NT,b,com,e,v,;,f,c,$
+A,b A'1,com ; A'2, ,v A'3, ,f A'4,c A'5,&
+P,b A'1,com ; A'2, ,v A'3, ,f A'4,c A'5, 
+V, , , ,v V'2, ,f V'1, , 
+C,b A'1,com ; A'2, , , , , , 
+A'1,C e,C e,e,V A'6, ,V A'6, , 
+A'2,b A'1,com ; A'2,&, ,&, , ,&
+A'3,b A'1,com ; A'2, ,V A'2,&,V A'2, ,&
+A'4,P ; A'7,P ; A'7, ,P ; A'7,; A'7,P ; A'7,P ; A'7, 
+A'5,b A'1,com ; A'2, ,V A'2,&,V A'2,c K A'3,&
+V'1,P ; V'3,P ; V'3, ,P ; V'3,; V'3,P ; V'3,P ; V'3, 
+V'2,&,&,&,v V'2,&,f V'1, ,&
+A'6,C e,C e,e, , , , , 
+V'3,&,&,&, ,&,f V'1, ,&
+A'7,b A'1,com ; A'2, , ,&,f V'1 A'2, ,&
+K,&,&, ,&,&,&,c K,&

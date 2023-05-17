@@ -15,11 +15,13 @@ class ParsingTable:
         self.gramatica = gramatica
         terminais = gramatica.terminais.copy()
         terminais += "$"
+        print("Calculando o firstpos da gramatica...")
         firstpos = gramatica.firspost()
         # print("/////FIRST/////")
         # for key in firstpos.keys():
         #     print(key+": ", end="")
         #     print(firstpos[key])
+        print("Calculando o followpos da gramatica... (Isso pode levar um tempo)")
         followpos = gramatica.followpost()
         # print("/////FOLLOW/////")
         # for key in followpos.keys():
@@ -191,7 +193,6 @@ if __name__ == "__main__":
     try:
         parser = AnalisadorSintatico("q1", driver, True)
         parser = AnalisadorSintatico("nd", driver, True)
-        print("\n\n")
     except Exception as e:
         raise Exception(f"O problema foi nas que funcionam: {e}")
     parser = AnalisadorSintatico("compiladores", driver, True)
