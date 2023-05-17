@@ -21,8 +21,8 @@ def binarySearch(int sorted_array, int key, int initial_index, int final_index) 
 
         int index_key;
         if (sorted_array[mid] == key) {
-           int index_key = binarySearch(sorted_array, key, initial_index, mid-1); 
-            return index_key;
+           index_key = binarySearch(sorted_array, key, initial_index, mid-1); 
+           return index_key;
         }
         
         index_key = binarySearch(sorted_array, mid+1, final_index);
@@ -111,13 +111,15 @@ def exponentialSearch(int sorted_array, int array_size, int key) {
     }
 
     int index_key;
-    index_key = binarySearch(sorted_array, i/2, min(i, array_size-1), key);
+    int minimum;
+    minimum = min(i, array_size-1);
+    index_key = binarySearch(sorted_array, i/2, minimum, key);
     return index_key;
 }
 
 def min(int x, int y) {
     if (x < y) {
-        return x
+        return x;
     } else {
         return y;
     }
