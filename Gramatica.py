@@ -1,5 +1,6 @@
 from random import randrange
 from string import ascii_uppercase
+from time import sleep
 
 class Nodo:
     def __init__(self, grammar, simbolo: str, pai, folhas: list, anulaveis: list, debt: list = None):
@@ -75,7 +76,10 @@ class ArvoreAuxiliar:
             caminho_raiz.remove(nodo)
         
         return caminho_raiz, caminhos
-        
+
+    def simbolos_nd(self):
+        return set(filter(lambda e: self.folhas_simbolos.count(e) > 1, self.folhas_simbolos))
+
 class Production(str):
     def __init__(self, conteudo: str, separation_par = "space", nt_identification = None):
         self.conteudo = conteudo.strip().split()
@@ -289,6 +293,7 @@ class Gramatica:
         self.inicial = None
         self.terminais = []
         self.nao_terminais = []
+        self.mark_for_death = {} # Nao terminais que eu quero eliminar (workaround fudido)
 
         # As producoes sao dicionarios provavelmente ainda n pensei 100% nisso
         self.producoes = {}
@@ -432,6 +437,7 @@ class Gramatica:
             self.nao_terminais.append(proposta)
         else:
             self.nao_terminais.insert(0, proposta)
+        self.mark_for_death[proposta] = False
         return proposta
 
     # Substitui em todas as PRODUCOES um simbolo velho por um novo
@@ -519,7 +525,7 @@ class Gramatica:
                 self.producoes[nt_cabeca].append(producao)
     
     # Retira producoes diretas da gramatica (NT0 -> a b c d NT1)
-    def sem_diretas(self):
+    def sem_diretas(self, mark_instead_of_kill: bool = False):
         for nt in self.nao_terminais:
             # Apenas uma producao
             if len(self.producoes[nt]) != 1: continue
@@ -532,7 +538,7 @@ class Gramatica:
             # Realiza a sobstituicao da producao simples
             self.substitute(nt, self.producoes[nt][0])
 
-        self.sem_inalcancaveis()
+        self.sem_inalcancaveis(mark_instead_of_kill)
         return self
 
     # Minimiza o numero de apostrofos
@@ -680,8 +686,16 @@ class Gramatica:
                         self.alcancavel[simbolo] = True
                         self.alcance(simbolo)
 
+    # Elimina simbolos marcados
+    def kill_the_marked(self):
+        marked = list(filter(lambda e: self.mark_for_death[e], self.nao_terminais))
+        for nt in marked:
+            self.nao_terminais.remove(marked)
+            self.producoes.pop(marked)
+            self.mark_for_death.pop(marked)
+    
     # Elimina simbolos inalcancaveis
-    def sem_inalcancaveis(self):
+    def sem_inalcancaveis(self, mark_instead_of_kill: bool = False):
         # Cria o dicionario de nao terminais alcancaveis
         self.alcancavel = {nt: False for nt in self.nao_terminais}
         self.alcancavel[self.inicial] = True
@@ -691,6 +705,9 @@ class Gramatica:
         # Itera sobre os nao terminais, removendo os nao alcancaveis
         for nt in self.alcancavel:
             if not self.alcancavel[nt]:
+                if mark_instead_of_kill:
+                    self.mark_for_death[nt] = True
+                    continue
                 self.nao_terminais.remove(nt)
                 self.producoes.pop(nt)
         return self
@@ -783,7 +800,7 @@ class Gramatica:
         return self
 
     # Tira os nao terminais exatamente iguais com as msms producoes
-    def sem_repeticoes(self):
+    def sem_repeticoes(self, mark_instead_of_kill: bool = False):
         houve_alteracao = True
         while houve_alteracao:
             houve_alteracao = False
@@ -794,7 +811,7 @@ class Gramatica:
                     if set(producao_1) == set(producao_2): # Aqui producao eh todas as producoes nao uma soh
                         self.substitute(nt_2, nt_1)
                         houve_alteracao = True
-            self.sem_inalcancaveis()
+            self.sem_inalcancaveis(mark_instead_of_kill)
         return self
 
     ###################### Recursao ##############################
@@ -921,7 +938,7 @@ class Gramatica:
         return False
 
     # Altera a gramatica para retirar nao determinismo direto
-    def eliminar_nd_direto(self, nt: str):
+    def eliminar_nd_direto(self, nt: str, imprima: bool = False):
         houve_alteracao = True
         # Elimina quantos nao determinismos diretos forem necessarios
         while houve_alteracao:
@@ -943,11 +960,26 @@ class Gramatica:
                     for producao in producoes_nd:
                         self.producoes[nt].remove(producao)
 
+                    # Itera sobre as producoes pegando os caminhos comuns
+                    done = False
+                    for igual in range(min(list(map(lambda e: len(e), producoes_nd)))):
+                        l = list(map(lambda e: e[:igual+1], producoes_nd))
+                        for i in range(len(l[0])):
+                            if len(set(map(lambda e: e[i], l))) > 1:
+                                done = True
+                                break
+                        if done: break
+                    else:
+                        igual += 1
+                    comum = producoes_nd[0][:igual]
+                                    
                     # Cria um novo nao terminal que produz dos nao deterministicos
                     novo_nt = self.novo_nao_terminal(nt)
+                    if imprima:
+                        print(f"no tratamento de ND criei {novo_nt} para resolver {comum}")
 
                     # Cria as producoes do novo nao terminal
-                    self.producoes[novo_nt] = [Production(" ".join(producao[1:])) for producao in producoes_nd]
+                    self.producoes[novo_nt] = [Production(" ".join(producao[igual:])) for producao in producoes_nd]
 
                     # Edge case onde o simbolo nao terminal era uma producao unica
                     for producao in self.producoes[novo_nt]:
@@ -956,40 +988,48 @@ class Gramatica:
                             self.producoes[novo_nt].append(Production("&"))
 
                     # Transicao que leva pro novo nao terminal
-                    self.producoes[nt].append(Production(simbolo_nd+" "+novo_nt))
+                    self.producoes[nt].append(Production(" ".join(comum)+" "+novo_nt))
+
+                    if imprima:
+                        print(f"novo nd prod: {self.producoes[novo_nt]}")
 
                     break
+        if imprima:
+            print("fiquei:", self.producoes[nt])
 
     # Monta a arvore de derivacores da gramatica
     def eliminar_nd_indireto(self, nao_terminal: str):
-        # print(f"tratando {len(self.producoes)}")
+        self.to_file("starting_error")
         alterations = True
         self.eliminar_nd_direto(nao_terminal)
-        self.to_file("error_grammar")
         while alterations:
             alterations = False
             anulaveis = self.anulaveis()
             arvore = ArvoreAuxiliar(self, nao_terminal, anulaveis)
             if not arvore.nd:
                 return
-            # print("simbolos: ", arvore.folhas_simbolos)
-            for simbolo in set(arvore.folhas_simbolos):
-                # Nao precisamos tratar
-                caminho_comum, caminhos = arvore.ancestral_comum_derivativo(simbolo)
-                # print(simbolo, caminho_comum, caminhos)
-                # Se aquele simbolo nao causa nao determinismo nao o tratamos
-                if caminho_comum is None: continue
-
-                alterations = True
-                # print(simbolo, caminho_comum, caminhos)
-                for caminho in caminhos:
-                    for nodo in caminho:
-                        if nodo.folha: break
-                        # if nodo.simbolo == "&":
-                        #     print(f"comum: {caminho_comum} caminho: {caminho}")
-                        self.herdar_primeiro(caminho_comum[-1].simbolo, nodo.simbolo)
-                self.eliminar_nd_direto(caminho_comum[-1].simbolo)
-                self.sem_repeticoes()
+            print(f"{nao_terminal} EH ND INDIRETO POR {arvore.simbolos_nd()}")
+            simbolo  = list(arvore.simbolos_nd())[0]
+            alterations = True
+            
+            # Nao precisamos tratar
+            caminho_comum, caminhos = arvore.ancestral_comum_derivativo(simbolo)
+            if caminho_comum is None:
+                raise RuntimeError("Caminho comum ND inexistente")
+            print(simbolo, caminho_comum, caminhos)
+            for caminho in caminhos:
+                for nodo in caminho:
+                    if nodo.folha: break
+                    if nodo.simbolo == "&":
+                        print(f"comum: {caminho_comum} caminho: {caminho}\n")
+                        continue
+                    self.herdar_primeiro(caminho_comum[-1].simbolo, nodo.simbolo)
+            self.eliminar_nd_direto(caminho_comum[-1].simbolo, True)
+            self.sem_repeticoes(mark_instead_of_kill=False)
+            self.sem_diretas(mark_instead_of_kill=False)
+            self.to_file("error_grammar")
+            print("TRATEI 1")
+            print(list(filter(lambda e: self.mark_for_death[e], self.nao_terminais)))
     
     # Retira o nd direto da gramatica toda
     def sem_nd_direto(self):
@@ -1012,7 +1052,20 @@ class Gramatica:
         self.to_file("debug/grammar_sem_nd_direto")
 
         for nao_terminal in self.nao_terminais:
+            self.mark_for_death[nao_terminal] = False
+        
+        anu = self.anulaveis()
+        for nt in self.nao_terminais:
+            a = ArvoreAuxiliar(self, nt, anu)
+            if a.nd:
+                print(f"{nt} nd por {a.simbolos_nd()}")
+                print()
+
+        for nao_terminal in self.nao_terminais:
+            if self.mark_for_death[nao_terminal]: continue
             self.eliminar_nd_indireto(nao_terminal)
+        
+        self.kill_the_marked()
 
         return self
 
@@ -1063,7 +1116,7 @@ class Gramatica:
     # Abreviacao de um monte de coisa
     def tratada(self):
         g = self.sem_recursao()
-        g = g.sem_diretas().sem_inalcancaveis().fatorada().sem_diretas().sem_unitarias().pretify()
+        g = g.sem_diretas().sem_inalcancaveis().fatorada().sem_diretas().sem_unitarias()#.pretify()
         g.to_file("debug/grammar_tratada")
         return g
 
@@ -1111,7 +1164,7 @@ class Gramatica:
         if simbolo in self.first.keys():
             meu_first = self.first[simbolo]-{"&"}
             if len(first & meu_first):
-                raise RuntimeError(f"Nao determinismo no calculo de Firstpos {first} {meu_first}")
+                raise RuntimeError(f"Nao determinismo no calculo de Firstpos {first} {simbolo}:{meu_first}")
             first |= meu_first
             return first
 

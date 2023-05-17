@@ -28,7 +28,7 @@ class ParsingTable:
         for nt in gramatica.nao_terminais:
             if firstpos[nt] & followpos[nt] and nt in gramatica.anulaveis():
                 print(gramatica)
-                raise SyntaxError(f"Gramatica nao eh LL1 nt: {nt} first:{firstpos[nt]}, follow:{followpos[nt]}")
+                raise SyntaxError(f"Gramatica nao eh LL1 nt: {nt} interseccao:{firstpos[nt]&followpos[nt]} first:{firstpos[nt]}, follow:{followpos[nt]}")
         self.table = {}
 
         # Criacao da tabela
@@ -186,7 +186,13 @@ class AnalisadorSintatico:
         print(f"Validacao de {len(done)} sentencas completo!")
 
 if __name__ == "__main__":
-    pasta = "compiladores"
+    pasta = "q1"
     driver = TokenDriver("None".split())
-    parser = AnalisadorSintatico(pasta, driver, True)
+    try:
+        parser = AnalisadorSintatico("q1", driver, True)
+        parser = AnalisadorSintatico("nd", driver, True)
+        print("\n\n")
+    except Exception as e:
+        raise Exception(f"O problema foi nas que funcionam: {e}")
+    parser = AnalisadorSintatico("compiladores", driver, True)
     # print(parser.parse(True, TokenDriver("c c c c c $".split()).gerador(),))

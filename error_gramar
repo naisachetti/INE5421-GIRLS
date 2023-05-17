@@ -1,0 +1,5 @@
+P ::= K V C
+K ::= c K | &
+V ::= F | v V
+F ::= f P ; F | &
+C ::= com ; C | b V C e | &
