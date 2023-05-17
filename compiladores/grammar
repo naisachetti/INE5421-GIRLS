@@ -3,7 +3,7 @@ FUNCLIST ::= FUNCDEF FUNCLIST | FUNCDEF
 FUNCDEF ::= def ident \( PARAMLIST \) { STATELIST }
 PARAMLIST ::=  (  ( int | float | string ) LVALUE , PARAMLIST |  ( int | float | string ) LVALUE ) ?
 STATEMENT ::=  ( VARDECL ;  | ATRIBSTAT ;  | PRINTSTAT ;  | READSTAT ; | FUNCCALL ; | RETURNSTAT ;  | IFSTAT | FORSTAT | { STATELIST } | break ;  |  ;  ) 
-VARDECL ::=  ( int | float | string ) ident ( [ int_constant ] ) *
+VARDECL ::=  ( int | float | string ) ident ( [ ( int_constant | ident ) ] ) *
 ATRIBSTAT ::= LVALUE = ( EXPRESSION | ALLOCEXPRESSION | FUNCCALL ) 
 MULTIATRIBSTAT ::=  \( LEFTATRIBSTAT \) = \( RIGHTATRIBSTAT \)
 LEFTMULTIATRIBSTAT ::= LVALUE , LEFTATRIBSTAT | LVALUE
@@ -14,7 +14,9 @@ RETURNLIST ::= ( NUMEXPRESSION , RETURNLIST | NUMEXPRESSION ) ?
 PRINTSTAT ::= print EXPRESSION
 READSTAT ::= read LVALUE
 RETURNSTAT ::= return RETURNLIST
-IFSTAT ::= if \( EXPRESSION \) STATEMENT ( else STATEMENT ) ?
+IFSTAT ::= IFSTATA | IFSTATNA
+IFSTATA ::= if \( EXPRESSION \) IFSTATA else IFSTATA | STATEMENT
+IFSTATNA ::= if \( EXPRESSION \) IFSTAT | if \( EXPRESSION \) IFSTATA else IFSTATNA
 FORSTAT ::= for \( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT \) STATEMENT
 STATELIST ::= STATEMENT ( STATELIST ) ?
 ALLOCEXPRESSION ::= new ( int | float | string )  ( [ NUMEXPRESSION ] ) +
@@ -23,6 +25,6 @@ NUMEXPRESSION ::= TERM (  ( \+ | - ) TERM ) *
 TERM ::= UNARYEXPR (  ( \* | / | % ) UNARYEXPR ) *
 UNARYEXPR ::=  (  ( \+ | - )  ) ? FACTOR
 FACTOR ::=  ( int_constant | float_constant | string_constant | null | LVALUE |  \( NUMEXPRESSION \) | ARRAY ) 
-LVALUE ::= ident ( [ NUMEXPRESSION ] | [ ] ) *
+LVALUE ::= ident ( [ ( NUMEXPRESSION | LVALUE ) ] | [ ] ) *
 ARRAY ::= [ ARRAYCONTENTS ]
 ARRAYCONTENTS ::== EXPRESSION ( , ARRAYCONTENTS ) ?
