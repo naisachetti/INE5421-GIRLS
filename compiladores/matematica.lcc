@@ -38,7 +38,11 @@ def fibonacci(int x) {
         return 1;
     }
     int fib;
-    fib = fibonacci(x-1)+fibonacci(x-2);
+    int fib1;
+    int fib2;
+    fib1 = fibonacci(x-1);
+    fib2 = fibonacci(x-2);
+    fib = fib1+fib2;
 }
 
 ~Encontrar o MDC (GCD - Greatest Common Divisor) de dois números. Adaptado de <https://www.geeksforgeeks.org/eulers-totient-function/>.~
@@ -67,7 +71,7 @@ def eulersTotient(int x) {
 
 ~Calcular a fórmula de Bhaskara.~
 def bhaskara(int a, int b, int c){
-
+    return a;
 }
 
 ~Encontrar o MMC (LCM - Least Common Multiplier) de dois números. Adaptado de <https://www.geeksforgeeks.org/lcm-of-given-array-elements/>.~

@@ -42,9 +42,10 @@ def sort(int array[], int array_size) {
 
     int i;
     for(i=array_size-1; i>0; i=i-1) {
-        new_array = swap(new_array, i, i=i-1);
+        new_array = swap(new_array, i, i-1);
 
-        int heap_size = i;
+        int heap_size;
+        heap_size = i;
         new_array = heapify(new_array, 0, heap_size);
     }
 
@@ -56,7 +57,7 @@ def buildHeap(int array[], int array_size) {
     int new_array[array_size];
     int i;
     for (i=array_size; i>=0; i=i-1) {
-        new_array = int heapify(array, array_size, i, array_size);
+        new_array = heapify(array, array_size, i, array_size);
     }
     return new_array;
 }
@@ -91,7 +92,7 @@ def heapify(int array[], int array_size, int i, int heap_size) {
 
 ~Chamado de main na implementação original.~
 def heapSort(int array[], int array_size) {
-    int sorted_array[];
+    int sorted_array[array_size];
     sorted_array = sort(array, array_size);
     return sorted_array;
 }
@@ -106,10 +107,10 @@ def swap(int array[], int i, int largest) {
 }
 
 ~Inexistente na implementação original.~
-def reverse(int array[], array_size) {
+def reverse(int array[], int array_size) {
     int new_array[array_size];
     int i;
-    for (i=0; i<array_size, i=i+1){
+    for (i=0; i<array_size; i=i+1){
         new_array[i] = array[array_size-i-1];
     }
     return new_array;
