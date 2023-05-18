@@ -108,6 +108,12 @@ class AnalisadorSintatico:
     # Faz o parsing dos tokens e valida a sintaxe
     def parse(self, show_stack = False, token: TokenDriver = None):
 
+        tokens_lidos = ""
+        identation = 0
+        def dump_tokens():
+            with open("debug/tokens_parseados", "w") as arq:
+                arq.write(tokens_lidos)
+
         if token is None:
             token = self.token
         # Inicializacao da pilha
@@ -118,6 +124,7 @@ class AnalisadorSintatico:
         # Leitura do token
         token_analisado = None
         token_analisado = next(token)
+        tokens_lidos = token_analisado
 
         topo = self.pilha.top()
 
@@ -138,15 +145,25 @@ class AnalisadorSintatico:
                     print(f"top: {topo:<18} ", end=" ")
                 self.pilha.pop()
                 try:
+                    # Leitura do tokens
                     token_analisado = next(token)
+                    # Todo resto dentro do try serve pra debug
+                    tokens_lidos += (" " if not tokens_lidos[-1] in {"\t", "\n"} else "") + token_analisado
+                    if token_analisado in {";", "{", "}"}:
+                        if token_analisado == "{": identation += 1
+                        elif token_analisado == "}": identation -= 1
+                        tokens_lidos += "\n" + "\t" * max(0,identation)
                 except StopIteration:
+                    dump_tokens()
                     return False
             # Token no topo da pilha incorreto
             elif topo in self.gramatica.terminais:
-                return False#raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
+                dump_tokens()
+                return False
             # Producao inexistente
             elif self.tabela[topo][token_analisado] is None:
-                return False#raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
+                dump_tokens()
+                return False
             # Producao na pilha
             else:
                 producao = self.tabela[topo][token_analisado]
@@ -164,16 +181,17 @@ class AnalisadorSintatico:
             if show_stack:
                 print(f"s: [{pilha_str : >50}]")
         if token_analisado != "$":
+            dump_tokens()
             return False
-            # raise SyntaxError("Erro de Sintaxe no arquivo fonte (Essa msg eh do trabalho)")
+        dump_tokens()
         return True
 
     # Gera palavras 100 palavras aleatorias a partir da gramatica e faz o parsgin delas
     def validate(self, gramatica_original):
         total = 100
         done = set()
-        with open("validation.txt", "w") as _: pass
-        with open("validation.txt", "a") as arq_val:
+        with open("debug/validation_words", "w") as _: pass
+        with open("debug/validation_words", "a") as arq_val:
             for _ in range(total * 100):
                 if len(done) >= total: break
                 sentenca: str = gramatica_original.generate_word(100)

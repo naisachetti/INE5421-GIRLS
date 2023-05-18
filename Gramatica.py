@@ -350,7 +350,7 @@ class Gramatica:
                 if simbolo in self.nao_terminais:
                     conjunto_simbolos.remove(simbolo)
                 self.terminais = list(conjunto_simbolos)
-        self.to_file("debug/source")
+        self.to_file("debug/0_ConvCC-2023-1")
         return self
 
     # Escreve a gramatica num arquivo
@@ -790,7 +790,7 @@ class Gramatica:
         self.sem_repeticoes()
         self.e_livre()
         self.sem_loop()
-        self.to_file("debug/no_loop")
+        self.to_file("debug/1_sem_loop")
         self.sem_diretas()
         for nt, producoes in self.producoes.items():
             for producao in producoes:
@@ -805,7 +805,7 @@ class Gramatica:
         self.sem_inalcancaveis()
         self.sem_repeticoes()
         self.pretify()
-        self.to_file("debug/e_livre_enxuta")
+        self.to_file("debug/2_&_livre_enxuta")
         return self
 
     # Tira os nao terminais exatamente iguais com as msms producoes
@@ -894,57 +894,10 @@ class Gramatica:
             self.eliminar_recursao_direta(ai)
             # tratamento_improvisado(ai)
 
-        self.to_file("debug/sem_recursao")
+        self.to_file("debug/3_sem_recursao")
         return self
 
     ######################## Fatoracao ########################
-
-    # (Recursiva) Retorna se ha ou nao nd_indireto neste nao terminal
-    def ha_nd_indireto(self, nt, derivaveis = None):
-        # Cria o conjunto de simbolos derivaveis caso necessario
-        if derivaveis == None:
-            derivaveis = set()
-        derivaveis.add(nt)
-
-        # Olha todos os simbolos da producao
-        for producao in self.producoes[nt]:
-            # Se o simbolo da producao ja foi encontrado como derivavel
-            if producao[0] == nt:
-                return True
-                raise RuntimeError("RECURSAO DIRETA QUANDO NAO ERA PRA TER HEIN")
-
-            # Itera sobre os simbolos da producao (podem ser anulaveis)
-            anulaveis = self.anulaveis()
-            for simbolo in producao:
-
-                # Guarda
-                if simbolo == "&":
-                    continue
-
-                # Simbolo repetido, implica recursao indireta
-                if simbolo in derivaveis:
-                    return True
-
-                # Terminal novo, nao eh anulavel, bola pra frente
-                if simbolo in self.terminais:
-                    derivaveis.add(simbolo)
-                    break
-
-                # Nao terminal novo
-                elif simbolo in self.nao_terminais:
-
-                    # Tem que ver se de fato nao tem nao determinismo
-                    if self.ha_nd_indireto(simbolo, derivaveis): #(A funcao o coloca no conjunto de derivaveis)
-                        return True
-
-                    # Se o simbolo nao eh anulavel nao tem que ver os proximos, se eh tem
-                    # (Nota que na chamada de funcao o nt chamado ja se colocou no conjunto)
-                    if not simbolo in anulaveis:
-                        break
-                
-                else: raise RuntimeError(f"Simbolo {simbolo} nao eh terminal ou nao-terminal ????")
-
-        return False
 
     # Altera a gramatica para retirar nao determinismo direto
     def eliminar_nd_direto(self, nt: str):
@@ -1001,13 +954,13 @@ class Gramatica:
 
     # Monta a arvore de derivacores da gramatica
     # BUG: existe um possivel problema. Essa funcao eh chamada iterando sobre os nao terminais e ela mesma pode remover nao terminais do iteravel
-    def eliminar_nd_indireto(self, nao_terminal: str):
+    def eliminar_nd_indireto(self, nt: str):
         alterations = True
-        self.eliminar_nd_direto(nao_terminal)
+        self.eliminar_nd_direto(nt)
         while alterations:
             alterations = False
             anulaveis = self.anulaveis()
-            arvore = ArvoreAuxiliar(self, nao_terminal, anulaveis)
+            arvore = ArvoreAuxiliar(self, nt, anulaveis)
             if not arvore.nd:
                 return
             simbolo  = list(arvore.simbolos_nd())[0]
@@ -1045,62 +998,18 @@ class Gramatica:
         self.sem_nd_direto()
         self.pretify()
         
-        self.to_file("debug/grammar_sem_nd_direto")
+        self.to_file("debug/4_grammar_sem_nd_direto")
 
         for nao_terminal in self.nao_terminais:
             self.eliminar_nd_indireto(nao_terminal)
             
         return self
 
-        # self.to_file("lixo.txt")
-        # print(self)
-
-        # TODO: POSSIVEL PROBLEMA PRA GRAMATICAS COMPLEXAS
-        # nts = list(self.producoes.keys())
-
-        # for nao_terminal in nts:
-        #     # print("-----------")
-        #     # print("to limpando:",nao_terminal)
-        #     # print(self)
-
-        #     for _ in range(100):
-        #         self.sem_repeticoes()
-        #         # Guarda p/ crescimento muito grande
-        #         self.to_file("error_grammar")
-        #         if len(self.producoes[nao_terminal]) > 100 or len(self.producoes) > 300:
-        #             raise RuntimeError("Nao consegui fatorar a gramatica (muita producao)")
-
-        #         # TODO: VER SE VALE USAR ISSO OU NAO
-        #         # Nao ha nd indireto a ser resolvido
-        #         if not self.ha_nd_indireto(nao_terminal):
-        #             break
-
-        #         # Itera sobre as producoes herdando todos os iniciais sempre que possivel
-        #         for producao in self.producoes[nao_terminal]:
-        #             # Comeca de fato com um nao terminal
-        #             if producao[0] in self.nao_terminais:
-        #                 # print(f"estou herdando {producao[0]}")
-        #                 self.herdar_primeiro(nao_terminal, producao[0])
-        #                 break
-        #         # Se ele nao conseguiu herdar nada
-        #         else:
-        #             break
-        #     # Impede mais que 100 derivacoes sucessivas
-        #     else:
-        #         raise RuntimeError("Nao consegui fatorar a gramatica (limite de derivacoes)")
-
-        #     # Elimina ND direto gerado
-        #     novos_nt = self.eliminar_nd_direto(nao_terminal) #essa funcao nao retorna novos_nt mais
-        #     for nt in novos_nt:
-        #         nts.append(nt)
-
-        # return self
-
     # Abreviacao de um monte de coisa
     def tratada(self):
         g = self.sem_recursao()
         g = g.sem_diretas().sem_inalcancaveis().fatorada().sem_diretas().sem_unitarias()#.pretify()
-        g.to_file("debug/grammar_tratada")
+        g.to_file("debug/5_grammar_final")
         return g
 
     ################### First e Follow #####################
@@ -1240,8 +1149,6 @@ class Gramatica:
 if __name__ == "__main__":
     arquivo = "grammar"
     path = "compiladores/"
-    # g = Gramatica().from_file_preprocess(path+arquivo).tratada()
-    # g.to_file(path+arquivo+"_tratada")
 
     total = 1000
     raw_words = Gramatica().from_file_preprocess(path+arquivo).generate_unique_words(total)

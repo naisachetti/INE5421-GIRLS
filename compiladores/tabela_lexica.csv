@@ -221,13 +221,11 @@ int_constant,1
 ident,aux
 ;,;
 return,return
-(,(
 ident,i
 +,+
 int_constant,1
 ",",","
 ident,new_array
-),)
 ;,;
 },}
 comment,~Heap Sort. Adaptado de <https://www.geeksforgeeks.org/heap-sort/>.~

@@ -1,5 +1,0 @@
-meta: c c c c c
-A
-c A'3
-c c K A'2
-c c c c c

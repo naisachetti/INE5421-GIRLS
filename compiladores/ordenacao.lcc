@@ -30,7 +30,7 @@ def partitionQuickSort(int array[], int array_size, int low, int high) {
     aux = new_array[high];
     new_array[high] = new_array[i+1];
     new_array[i+1] = aux;
-    return (i+1, new_array);
+    return i+1, new_array;
 }
 
 ~Heap Sort. Adaptado de <https://www.geeksforgeeks.org/heap-sort/>.~

@@ -1,5 +1,0 @@
-Z ::= z | b S z
-B ::= & | b B
-D ::= & | d D
-S ::= b B c d | c d S'1
-S'1 ::= D | &
