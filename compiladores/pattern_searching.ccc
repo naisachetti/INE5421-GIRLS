@@ -1,0 +1,132 @@
+~Procura por padrões não especificados dentro de uma string~
+def mainPatternSearching(string sequence) {
+    int seq_length;
+    seq_length = strlen(sequence);
+    int pattern_length;
+    pattern_length = floor(seq_length/2.0);
+    int i_min;
+    i_min = 0;
+    int i_max;
+    i_max = pattern_length-1;
+    int i;
+
+    ~Equivalente a while(True)~
+    for (i=0; i==i; i=i) {
+        ~São procuradas sequências com tamanho mínimo de 2 caracteres~
+        if (pattern_length <= 1) {
+            break;
+        }
+        if (i_max+1+pattern_length < seq_length-1) {
+            string pattern[pattern_length];
+            pattern = slice(sequence, i_min, i_max+1);
+            naivePatternSearching(sequence, pattern, i_max+1);
+            i_min = i_min+1;
+            i_max = i_max+1;
+        } else {
+            pattern_length = pattern_length-1;
+            i_min = 0;
+            i_max = pattern_length-1;
+        }
+    }
+}
+
+~Pega uma porção de uma string entre i_min e i_max (i_max não incluso)~
+def slice(string word, int i_min, int i_max) {
+    int slice_length;
+    slice_length = i_max-i_min;
+    string portion[slice_length];
+    int i;
+    int i_portion;
+    i_portion = -1;
+    for (i=i_min; i<i_max; i=i+1) {
+        i_portion = i_portion+1;
+        portion[i_portion] = word[i];
+    }
+    return portion;
+}
+
+~Algoritmo ingênuo. Adaptado de <https://www.geeksforgeeks.org/naive-algorithm-for-pattern-searching/>.~
+def naivePatternSearching(string sequence, string pattern, int i_start) {
+    int seq_length;
+    seq_length = strlen(sequence);
+    int pattern_length;
+    pattern_length = strlen(pattern);
+    int i_min; 
+    i_min = i_start;
+    int found;
+    found = 0;
+    int i;
+    ~Equivalente a while(True)~
+    for (i=0; i==i; i=i) {
+        if (i_min+1+pattern_length >= seq_length) {
+            break;
+        }
+        if (sequence[i_min] == pattern[0]) {
+            int j;
+            for (j=1; j<pattern_length; i=i+1) {
+                if (sequence[i_min+j] != pattern[j]) {
+                    i_min = i_min+1;
+                    break;
+                }
+                if (j == pattern_length-1) {
+                    string out;
+                    out = "Padrão encontrado: "+pattern;
+                    print(out);
+                    found = 1;
+                    break;
+                }
+            }
+        }
+        if (found != 0) {
+            break;
+        }
+    }
+}
+
+~Algoritmo de Rabin-Karp. Adaptado de <https://www.geeksforgeeks.org/rabin-karp-algorithm-for-pattern-searching/>.~
+def rabinKarpPatternSearch(string pattern, string sequence, int prime_number) {
+    int m;
+    int n;
+    int i;
+    int j;
+    int p;
+    int t;
+    int h;
+    m = strlen(pattern);
+    n = strlen(sequence);
+    p = 0;
+    t = 0;
+    h = 0;
+
+    for (i=0; i < m-1; i=i+1)
+        h = (h*d)%q;
+
+    for (i=0; i < m; i=i+1) {
+        p = (d*p + pattern[i]) % q;
+        t = (d*t + sequence[i]) % q;
+    }
+
+    for (i=0; i <= n-m; i=i+1) {
+        if (p == t) {
+            for (j=0; j < m; j=j+1) {
+                if (sequence[i+j] != pattern[j]) {
+                    break;
+                }
+            }
+
+            if (j == m) {
+                string out;
+                out = "Padrão encontrado no índice"+i;
+                print(out);
+            }
+        }
+
+        if (i < n-m) {
+            t = (d * (t - sequence[i] * h) + sequence[i + m]) % q;
+
+            if (t < 0) {
+                t = (t+q);
+            }
+        }
+    }
+}

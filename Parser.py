@@ -79,19 +79,19 @@ class ParsingTable:
     def to_csv(self, filename: str):
         cabecalho: list = ["NT"]
         # cabecalho += [terminal for terminal in self.table[self.gramatica.inicial]]
-        cabecalho += [terminal for terminal in self.table[self.gramatica.inicial] if terminal != "&"]
+        cabecalho += ['"'+terminal+'"' for terminal in self.table[self.gramatica.inicial] if terminal != "&"]
         with open(filename, "w") as csv:
             csv.write(",".join(cabecalho)+"\n")
             for nt, linha in self.table.items():
                 arquivo_linha = [nt]
                 # arquivo_linha += [" " for terminal in linha]
-                arquivo_linha += [" " for terminal in linha if terminal != "&"]
+                arquivo_linha += ["Ø" for terminal in linha if terminal != "&"]
                 for terminal in linha:
                     if terminal == "&":
                         continue
                     producao_str = self.table[nt][terminal]
                     if producao_str != None:
-                        arquivo_linha[cabecalho.index(terminal)] = producao_str.replace('"', '"""').replace(',', '","')
+                        arquivo_linha[cabecalho.index('"'+terminal+'"')] = producao_str.replace('"', '"""').replace(',', '","')
                 csv.write(",".join(arquivo_linha)+"\n")
 
 class AnalisadorSintatico:
