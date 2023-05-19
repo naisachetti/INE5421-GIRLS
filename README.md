@@ -1,3 +1,4 @@
+
 ## Como usar o WOMEN (Words Organized by Meaningful Elements and Notation)
 
 Acompanhe este documento com os arquivos de exemplo da pasta "pasca".
@@ -6,11 +7,11 @@ Acompanhe este documento com os arquivos de exemplo da pasta "pasca".
 2) Nesta pasta, crie três arquivos:
     - tokens: Expressões regulares para os tokens da linguagem (Veja a seção "Arquivo de tokens").<br>
     - grammar: Gramática da linguagem (Veja a seção "Arquivo de gramática").<br>
-    - program: Código fonte do programa a ser analisado.<br>
-3) Rode o Analisador Lexido do WOMEN com o seguinte comando:
+    - program (opcional): Código fonte do programa a ser analisado quando o atributo PROGRAM não for especificado na chamada do Makefile.<br>
+3) Rode os analisadores léxico e sintático do WOMEN com o seguinte comando:
 
 ```
-$ make lexer DIR=<nome_da_pasta_do_projeto> PROGRAM=<nome do arquivo do programa>
+$ make analysis DIR=<nome_da_pasta_do_projeto> [PROGRAM=<nome do arquivo do programa>]
 ```
 
 ## Arquivo de tokens
@@ -62,6 +63,7 @@ letras_minusculas: [A-Z]
 letras_maiusculas: [a-z]
 letras_minu_maiu: [D-Gt-z]
 numeros: [0-9]
+simbolos: [s]
 
 # E podem ser definidas diretamente nos tokes também
 >token: letras_minusculas* | [d-t] ? | [7-9]
@@ -81,22 +83,41 @@ Definições de sequências são feitas da seguinte forma:
 ```
 
 
-## Arquivo de gramática (Ignorar para entrega do analisador lexico)
+## Arquivo de gramática
 
 O arquivo onde está definida a gramática deve estar no seguinte formato, no qual:
 
 - Símbolos não terminais devem estar à esquerda de "::=" suas produções à direita.
 - As produções de um mesmo não terminal precisam estar todas juntas, separadas por |.
-- Os símbolos não terminais devem estar deparados por espaço.
+- Os símbolos devem ser separados por espaço.
+- Os símbolos *, +, ?, (, ) e & são definidos como literais adicionando um \ imediatamente antes deles.
 
 Veja o exemplo:
 
 ```
-P ::= begin D C end
-D ::= inteiro id I
-I ::= , id I | &
-C ::= C ; T = E | T = E | com
-E ::= E + T | T
-T ::= id | id [ E ]
+TYPEDEF ::= ( int | float | string ) ident
+FUNCCALL ::= ident \( ( PARAMLIST | \& ) \)
+PARAMLIST ::= ident , PARAMLIST | ident
+```
+
+A gramática também pode ser descrita na forma BNF (Backus-Naur Form), como no exemplo abaixo:
 
 ```
+TYPEDEF ::= ( int | float | string ) ident
+FUNCCALL ::= ident \( ( PARAMLIST ) ? \)
+PARAMLIST ::= ident ( , PARAMLIST ) ?
+```
+
+## Tratamento de gramáticas e debug
+
+Antes da geração da tabela de análise sintática, o programa transforma uma gramática dada na forma BNF em uma gramática em formato convencional (sem os símbolos +, * e ?, típicos da notação) e com as seguintes características:
+- Sem loops
+- &-livre
+- Sem produções unitárias
+- Sem produções diretas 
+- Sem repetições
+- Sem recursão à esquerda
+- Fatorada
+
+Durante esse processo, o programa gera uma série de arquivos com as gramáticas intermediárias que podem ser úteis no processo de debug de gramáticas. Tais arquivos são armazenados na pasta "debug". Ainda, ao fazer o parsing de um código fonte, gera um arquivo chamado "tokens_parseados", na mesma pasta, com os tokens que conseguiram passar pelo parsing na mesma estrutura do código original. Isso facilita a busca por erros sintáticos no programa em questão.
+

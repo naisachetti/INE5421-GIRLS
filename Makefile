@@ -1,5 +1,5 @@
-lexer: 
-	python3 Lexer.py $(DIR) $(PROGRAM)
+analysis: 
+	python3 GIRLS.py $(DIR) $(PROGRAM)
 
 clean:
 	rm -rf __pycache__
