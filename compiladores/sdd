@@ -1,0 +1,21 @@
+{visit1} visitaFilho(1)
+{visit2} visitaFilho(2)
+{visit3} visitaFilho(3)
+{visit4} visitaFilho(4)
+{visit5} visitaFilho(5)
+{EXPRESSION.1} atribui(2,"left_node",newNode(ident.lexval,None,None))
+{EXPRESSION.2} atribui(0,"node",getAtributo(2,"node"))
+
+EXPRESSION ::= float_constant ATRIBSTAT_AUX1'1
+EXPRESSION ::= int_constant ATRIBSTAT_AUX1'1
+EXPRESSION ::= ( NUMEXPRESSION ) ATRIBSTAT_AUX1'1
+EXPRESSION ::= string_constant ATRIBSTAT_AUX1'1
+EXPRESSION ::= null ATRIBSTAT_AUX1'1
+EXPRESSION ::= SIGNAL FACTOR ATRIBSTAT_AUX1'1
+EXPRESSION ::= ident EXPRESSION'1
+{}
+
+EXPRESSION ::= ident {1} EXPRESSION'1 {2}								{1} EXPRESSION'1.left_node = newNode(ident.lexval,-,-)
+																		{2} EXPRESSION.node = EXPRESSION'1.node
+
+{visit1}{EXPRESSION.1}{visit2}{EXPRESSION.2}

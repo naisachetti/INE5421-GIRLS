@@ -225,42 +225,44 @@ class Preprocessor:
         delete_stack = []
 
         # Processa coisas entre () que nao tem simbolos ? + * depois, normalmente eh so um OU
-        for linha in grammar:
-            nt, producao = linha
-            for index, simbolo in enumerate(producao):
-                if simbolo == ")" and ((index != len(producao)-1 and producao[index+1] not in {"?", "*", "+"}) or index == len(producao)-1):
-                    scope_start = self.get_simbol_context(producao, index + 1)
-                    corte = producao[scope_start+1:index]
-                    grammar.append([nt, producao[:scope_start]+[f"AUX{aux}"]+producao[index+1:]])
-                    grammar.append([f"AUX{aux}"] + [corte])
-                    delete_stack.append(linha)
-                    aux += 1
-                    break
-        for linha in delete_stack:
-            grammar.remove(linha)
+        # DESLIGADO
+        # for linha in grammar:
+        #     nt, producao = linha
+        #     for index, simbolo in enumerate(producao):
+        #         if simbolo == ")" and ((index != len(producao)-1 and producao[index+1] not in {"?", "*", "+"}) or index == len(producao)-1):
+        #             scope_start = self.get_simbol_context(producao, index + 1)
+        #             corte = producao[scope_start+1:index]
+        #             grammar.append([nt, producao[:scope_start]+[f"AUX{aux}"]+producao[index+1:]])
+        #             grammar.append([f"AUX{aux}"] + [corte])
+        #             delete_stack.append(linha)
+        #             aux += 1
+        #             break
+        # for linha in delete_stack:
+        #     grammar.remove(linha)
 
         # Linhas a serem deletadas depois de iterar tudo pq n se deleta elementos de um iterador enquanto se itera sobre ele
         delete_stack = []
 
         # Processa os simbolos "? + *"
-        for linha in grammar:
-            nt, producao = linha
-            for index, simbolo in enumerate(producao):
-                if simbolo in {"?", "*", "+"}:
-                    scope_start = self.get_simbol_context(producao, index)
-                    corte = producao[scope_start+1:index-1]
-                    grammar.append([nt, producao[:scope_start]+[f"AUX{aux}"]+producao[index+1:]])
-                    if simbolo == "?":
-                        grammar.append([f"AUX{aux}"] + [corte + ["|", "&"]])
-                    elif simbolo == "*":
-                        grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|", "&"]])
-                    elif simbolo == "+":
-                        grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|"] + corte])
-                    delete_stack.append(linha)
-                    aux += 1
-                    break
-        for linha in delete_stack:
-            grammar.remove(linha) 
+        # BNF para convencional DESLIGADO
+        # for linha in grammar:
+        #     nt, producao = linha
+        #     for index, simbolo in enumerate(producao):
+        #         if simbolo in {"?", "*", "+"}:
+        #             scope_start = self.get_simbol_context(producao, index)
+        #             corte = producao[scope_start+1:index-1]
+        #             grammar.append([nt, producao[:scope_start]+[f"AUX{aux}"]+producao[index+1:]])
+        #             if simbolo == "?":
+        #                 grammar.append([f"AUX{aux}"] + [corte + ["|", "&"]])
+        #             elif simbolo == "*":
+        #                 grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|", "&"]])
+        #             elif simbolo == "+":
+        #                 grammar.append([f"AUX{aux}"] + [self.spread_symbol_right(corte, f"AUX{aux}") + ["|"] + corte])
+        #             delete_stack.append(linha)
+        #             aux += 1
+        #             break
+        # for linha in delete_stack:
+        #     grammar.remove(linha) 
     
         # AQUI A GRAMATICA JA TA PRE PROCESSADA
 
@@ -535,17 +537,18 @@ class Gramatica:
     
     # Retira producoes diretas da gramatica (NT0 -> a b c d NT1)
     def sem_diretas(self, mark_instead_of_kill: bool = False):
-        for nt in self.nao_terminais:
-            # Apenas uma producao
-            if len(self.producoes[nt]) != 1: continue
-            # Fecha com NT
-            # if not self.producoes[nt][0][-1] in self.nao_terminais: continue
-            # Soh terminal no caminho
-            # if len(set(self.producoes[nt][0][:-1]).difference(set(self.terminais))): continue
-            # Impede de fazer isso com uma producao semi recursiva
-            if nt in self.producoes[nt][0]: continue
-            # Realiza a sobstituicao da producao simples
-            self.substitute(nt, self.producoes[nt][0])
+        # DESLIGADO
+        # for nt in self.nao_terminais:
+        #     # Apenas uma producao
+        #     if len(self.producoes[nt]) != 1: continue
+        #     # Fecha com NT
+        #     # if not self.producoes[nt][0][-1] in self.nao_terminais: continue
+        #     # Soh terminal no caminho
+        #     # if len(set(self.producoes[nt][0][:-1]).difference(set(self.terminais))): continue
+        #     # Impede de fazer isso com uma producao semi recursiva
+        #     if nt in self.producoes[nt][0]: continue
+        #     # Realiza a sobstituicao da producao simples
+        #     self.substitute(nt, self.producoes[nt][0])
 
         self.sem_inalcancaveis(mark_instead_of_kill)
         return self
@@ -577,13 +580,14 @@ class Gramatica:
                 self.update_symbol(nt, "COMPARE")
         
         # Ordena as producoes por ordem alfabetica dos NTs
-        nts = self.nao_terminais.copy()
-        nts.sort()
-        ordenado = {self.inicial: self.producoes[self.inicial]}
-        nts.remove(self.inicial)
-        ajuntado = {nt: self.producoes[nt] for nt in nts}
-        ordenado.update(ajuntado)
-        self.producoes = ordenado
+        # DESLIGADO
+        # nts = self.nao_terminais.copy()
+        # nts.sort()
+        # ordenado = {self.inicial: self.producoes[self.inicial]}
+        # nts.remove(self.inicial)
+        # ajuntado = {nt: self.producoes[nt] for nt in nts}
+        # ordenado.update(ajuntado)
+        # self.producoes = ordenado
 
         # Coloca as producoes & no comeco da lista de producoes
         for nt in self.nao_terminais:
