@@ -1,40 +1,234 @@
-A ::= &
+EXPRESSION ::= float_constant \0 ATRIBSTAT_AUX1'1 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 PARENT.node = self.filhos[2].node
 
-A ::= { STATELIST }
+EXPRESSION ::= int_constant \0 ATRIBSTAT_AUX1'1 \1					
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 self.node = self.filhos[2].node
 
-A ::= VARDECL ;
+EXPRESSION ::= ( NUMEXPRESSION ) \0 ATRIBSTAT_AUX1'1 \1
+\0 self.filhos[4].left_node = self.filhos[1].node
+\1 self.node = self.filhos[4].node
 
-A ::= RETURNSTAT ;
+EXPRESSION ::= string_constant \0 ATRIBSTAT_AUX1'1 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None None )
+\1 self.node = self.filhos[2].node
 
-A ::= break ;
+EXPRESSION ::= null \0 ATRIBSTAT_AUX1'1 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0] , None , None )
+\1 self.node = self.filhos[2].node
 
-A ::= READSTAT ;
+EXPRESSION ::= SIGNAL FACTOR \0 ATRIBSTAT_AUX1'1 \1
+\0 self.filhos[3].left_node = ExpressionNode( self.filhos[0].op , self.filhos[1].node , None )
+\1 self.node = self.filhos[3].node
 
-A ::= MULTIATRIBSTAT ;
+EXPRESSION ::= ident \0 EXPRESSION'1 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 self.node = self.filhos[2].node
 
-A ::= PRINTSTAT ;
+EXPRESSION'1 ::= & \0
+\0 self.node = self.left_node
 
-A ::= ;
+EXPRESSION'1 ::= \0 TERM_AUX1 \1 ATRIBSTAT_AUX1'3 \2
+\0 self.filhos[1].left_node = self.left_node
+\1 self.filhos[3].left_node = self.filhos[1].node
+\2 self.node = ATRIBSTAT_AUX'3.node
 
-A ::= for ( ATRIBSTAT ; EXPRESSION ; ATRIBSTAT ) STATEMENT
+EXPRESSION'1 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'4
+\0 self.filhos[1].left_node = self.left_node
+\1 self.node = self.filhos[1].node
 
-A ::= def ident ( A'1
+ATRIBSTAT_AUX1'1 ::= & \0
+\0 self.node = self.left_node
 
-A ::= if ( EXPRESSION ) { STATELIST } A'2
+ATRIBSTAT_AUX1'1 ::= \0 TERM_AUX1 \1 ATRIBSTAT_AUX1'3 \2
+\0 self.filhos[1].left_node = self.left_node
+\1 self.filhos[3].left_node = self.filhos[1].node
+\2 self.node = self.filhos[3].node
 
-A ::= ident A'5
+ATRIBSTAT_AUX1'1 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'4
+\0 self.filhos[1].left_node = self.left_node
+\1 self.node = self.filhos[1].node
 
-EXPRESSION ::= float_constant ATRIBSTAT_AUX1'1
+ATRIBSTAT_AUX1'3 ::= & \0
+\0 self.node = self.left_node
 
-EXPRESSION ::= int_constant ATRIBSTAT_AUX1'1
+ATRIBSTAT_AUX1'3 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'4
+\0 self.filhos[1].left_node = self.filhos[3].left_node
+\1 self.node = self.filhos[1].node
 
-EXPRESSION ::= ( NUMEXPRESSION ) ATRIBSTAT_AUX1'1
+NUMEXPRESSION ::= float_constant \0 NUMEXPRESSION'1 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 self.node = self.filhos[2].node
 
-EXPRESSION ::= string_constant ATRIBSTAT_AUX1'1
+NUMEXPRESSION ::= ident \0 NUMEXPRESSION'2	\1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 self.node = self.filhos[2].node
 
-EXPRESSION ::= null ATRIBSTAT_AUX1'1
+NUMEXPRESSION ::= int_constant \0 NUMEXPRESSION'1 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 self.node = self.filhos[2].node
 
-EXPRESSION ::= SIGNAL FACTOR ATRIBSTAT_AUX1'1
+NUMEXPRESSION ::= ( NUMEXPRESSION[1] ) \0 NUMEXPRESSION'1 \1
+\0 NUMEXPRESSION'1'.left_node = self.filhos[1].node
+\1 self.node = self.filhos[4].node
 
-EXPRESSION ::= ident EXPRESSION'1
-{visit1}{EXPRESSION.1}{visit2}{EXPRESSION.2}
+NUMEXPRESSION ::= string_constant \0 NUMEXPRESSION'1 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 self.node = self.filhos[2].node
+
+NUMEXPRESSION ::= null \0 NUMEXPRESSION'1 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0] , None , None )
+\1 self.node = self.filhos[2].node
+
+NUMEXPRESSION ::= SIGNAL FACTOR \0 NUMEXPRESSION'1 \1
+\0 self.filhos[3].left_node = ExpressionNode( self.filhos[0].op , self.filhos[1].node , None )
+\1 self.node = self.filhos[3].node
+
+NUMEXPRESSION'1 ::= & \0
+\0 self.node = self.left_node
+
+NUMEXPRESSION'1 ::= \0 TERM_AUX1 \1 NUMEXPRESSION_AUX1'1 \2
+\0 self.filhos[1].left_node = self.left_node
+\1 self.filhos[3].left_node = self.filhos[1].node
+\2 self.node = self.filhos[3].node
+
+self ::= SIGNAL TERM \0 NUMEXPRESSION_AUX1'1 \1 \2
+\0 self.filhos[3].left_node = self.filhos[1].node
+\1 self.right_node = self.filhos[3].node
+\2 self.node = ExpressionNode( self.filhos[0].op , self.left_node , self.right_node )
+
+NUMEXPRESSION'2 ::= & \0
+\0 self.node = self.left_node
+
+NUMEXPRESSION'2 ::= \0 TERM_AUX1 \1 NUMEXPRESSION_AUX1'1 \2
+\0 self.filhos[1].left_node = self.left_node
+\1 self.filhos[3].left_node = self.filhos[1].node
+\2 self.node = self.filhos[3].node
+
+NUMEXPRESSION'2 ::= SIGNAL TERM \0 NUMEXPRESSION_AUX1'1 \1 \2
+\0 self.filhos[3].left_node = self.filhos[1].node
+\1 self.right_node = self.filhos[3].node
+\2 self.node = ExpressionNode( self.filhos[0].op , self.left_node , self.right_node )
+
+NUMEXPRESSION_AUX1 ::= SIGNAL TERM \0 NUMEXPRESSION_AUX1'1 \1 \2
+\0 self.filhos[3].left_node = self.filhos[1].node
+\1 self.right_node = self.filhos[3].node
+\2 self.node = ExpressionNode( self.filhos[0].op , self.left_node , self.right_node )
+
+NUMEXPRESSION_AUX1'1 ::= & \0
+\0 self.node = self.left_node
+
+NUMEXPRESSION_AUX1'1 ::= SIGNAL TERM \0 NUMEXPRESSION_AUX1'1[1] \1 \2
+\0 self.filhos[3].left_node = self.filhos[1].node
+\1 self.right_node = self.filhos[3].node
+\2 self.node = ExpressionNode( self.filhos[0].op , self.left_node , self.right_node )
+
+TERM ::= float_constant TERM'1
+\0 self.filhos[1].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 self.node = self.filhos[1].node
+
+TERM ::= ident \0 TERM'2 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 self.node = self.filhos[2].node
+
+TERM ::= int_constant \0 TERM'1 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 self.node = self.filhos[2].node
+
+TERM ::= ( NUMEXPRESSION ) \0 TERM'1 \1
+\0 self.filhos[4].left_node = self.filhos[1].node
+\1 self.node = self.filhos[4].node
+
+TERM ::= string_constant \0 TERM'1 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 self.node = self.filhos[2].node
+
+TERM ::= null \0 TERM'1 \1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0] , None , None )
+\1 self.node = self.filhos[2].node
+
+TERM ::= SIGNAL FACTOR \0 TERM'1 \1
+\0 self.filhos[3].left_node = ExpressionNode( self.filhos[0].op , self.filhos[1].node , None )
+\1 self.node = self.filhos[3].node
+
+TERM'1 ::= & \0
+\0 self.node = self.left_node
+
+TERM'1 ::= OPERATION UNARYEXPR \0 TERM'1[1] \1 \2
+\0 self.filhos[3].left_node = self.filhos[1].node
+\1 self.right_node = self.filhos[3].node
+\2 self.node = ExpressionNode(OPERATION.op , self.left_node , self.right_node )
+
+TERM'2 ::= & \0
+\0 self.node = self.left_node
+
+TERM'2 ::= OPERATION UNARYEXPR \0 TERM'1 \1 \2
+\0 self.filhos[3].left_node = self.filhos[1].node
+\1 self.right_node = self.filhos[3].node
+\2 self.node = ExpressionNode( self.filhos[0].op , self.left_node , self.right_node )
+
+TERM_AUX1 ::= OPERATION UNARYEXPR \0 TERM'1 \1 \2 
+\0 self.filhos[3].left_node = self.filhos[1].node
+\1 self.right_node = self.filhos[3].node
+\2 self.node = ExpressionNode( self.filhos[0].op , self.left_node , self.right_node )
+
+UNARYEXPR ::= float_constant \0
+\0 self.node = ExpressionNode( self.filhos[0].lex_val , None , None )
+
+UNARYEXPR ::= int_constant \0
+\0 self.node = ExpressionNode( self.filhos[0].lex_val , None , None )
+
+UNARYEXPR ::= string_constant \0
+\0 self.node = ExpressionNode( self.filhos[0].lex_val , None , None )
+
+UNARYEXPR ::= null \0
+\0 self.node = ExpressionNode( self.filhos[0] , None , None )
+
+UNARYEXPR ::= ( NUMEXPRESSION \0 )
+\0 self.node = self.filhos[1].node
+
+UNARYEXPR ::= SIGNAL FACTOR	\0
+\0 self.node = ExpressionNode( self.filhos[0].op , self.filhos[1].node , None )
+
+UNARYEXPR ::= ident \0 UNARYEXPR'1	\1
+\0 self.filhos[2].left_node = ExpressionNode( self.filhos[0].lex_val , None , None )
+\1 self.node = self.filhos[2].node
+
+UNARYEXPR'1 ::= & \0
+\0 self.node = self.left_node
+
+FACTOR ::= float_constant \0
+\0 self.node = ExpressionNode( self.filhos[0].lex_val , None , None )
+
+FACTOR ::= int_constant	\0
+\0 self.node = ExpressionNode( self.filhos[0].lex_val , None , None )
+
+FACTOR ::= string_constant \0
+\0 self.node = ExpressionNode( self.filhos[0].lex_val , None , None )
+
+FACTOR ::= null	\0
+\0 self.node = ExpressionNode( self.filhos[0] , None , None )
+
+FACTOR ::= ( NUMEXPRESSION \0 )
+\0 self.node = self.filhos[1].node
+
+FACTOR ::= ident \0 UNARYEXPR'1 \1
+\0 self.filhos[2].left_node = ExpressionNode(ident.lex_val , None , None )
+\1 self.node = self.filhos[2].node
+
+SIGNAL ::= + \0
+\0 self.op = self.filhos[0]
+
+SIGNAL ::= - \0
+\0 self.op = self.filhos[0]
+
+OPERATION ::= * \0
+\0 self.op = self.filhos[0]
+
+OPERATION ::= % \0
+\0 self.op = self.filhos[0]
+
+OPERATION ::= / \0
+\0 self.op = self.filhos[0]
+

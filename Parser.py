@@ -145,11 +145,11 @@ class AnalisadorSintatico:
             if topo == token_analisado:
                 if show_stack:
                     print(f"top: {topo:<18} ", end=" ")
+                lista_derivacoes.append((token_analisado, token_valor))
                 self.pilha.pop()
                 try:
                     # Leitura do tokens
                     token_analisado, token_valor = next(token)
-                    lista_derivacoes.append((token_analisado, token_valor))
                     # Todo resto dentro do try serve pra debug
                     tokens_lidos += (" " if not tokens_lidos[-1] in {"\t", "\n"} else "") + token_analisado
                     if token_analisado in {";", "{", "}"}:

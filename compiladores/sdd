@@ -3,8 +3,8 @@
 {visit3} visitaFilho(3)
 {visit4} visitaFilho(4)
 {visit5} visitaFilho(5)
-{EXPRESSION.1} atribui(2,"left_node",newNode(ident.lexval,None,None))
-{EXPRESSION.2} atribui(0,"node",getAtributo(2,"node"))
+{OP.1} atribui(2,"left_node",newNode(ident.lexval,None,None))
+{OP.2} atribui(0,"node",getAtributo(2,"node"))
 
 EXPRESSION ::= float_constant ATRIBSTAT_AUX1'1
 EXPRESSION ::= int_constant ATRIBSTAT_AUX1'1

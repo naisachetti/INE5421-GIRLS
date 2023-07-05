@@ -25,19 +25,47 @@ class FiltroSemantico:
             for producao in acoes_sintaticas:
                 acoes_sintaticas_anotadas.write(self.annotate_production(producao.strip())+"\n")
 
+class FiltroSDT:
+    def __init__(self, folder: str, filename: str):
+        with open(f"{folder}/{filename}") as sdt_original:
+            super_string = sdt_original.read()
+        producoes_anotadas = super_string.split("\n\n")
+        for i, anotacoes in enumerate(producoes_anotadas):
+            producao, *anotacoes = anotacoes.split("\n")
+            producao_simbolos = producao.split()[2:]
+            # Itera sobre os simbolos de uma anotacao
+            for k, anotacao in enumerate(anotacoes):
+                anotacao_simbolos = anotacao.split()
+                # Itera sobre um simbolo de uma anotacao procurando match
+                for j, simbolo in enumerate(anotacao_simbolos):
+                    # Guarda de casos triviais
+                    if simbolo[0] in {"\\", ",", "}"} or simbolo in {"None", "ExpressionNode("}: continue
+                    # Simbolo simplesmente esta numa producao
+                    if simbolo in producao_simbolos:
+                        anotacao_simbolos[j] = f"self.filhos[{producao_simbolos.index(simbolo)}]"
+                    elif simbolo.split(".")[0] in producao_simbolos:
+                        anotacao_simbolos[j] = f"self.filhos[{producao_simbolos.index(simbolo.split('.')[0])}].{' '.join(simbolo.split('.')[1:])}"
+                anotacoes[k] = " ".join(anotacao_simbolos)
+            producoes_anotadas[i] = [producao, *anotacoes]
+        
+        with open(f"{folder}/sdt", "w") as arquivo:
+            for producao, *anotacoes in producoes_anotadas:
+                arquivo.write(producao+"\n")
+                for anotacao in anotacoes:
+                    arquivo.write(anotacao+"\n")
+                arquivo.write("\n")
+
 class ExpressionNode:
-    def __init__(self, tipo: str, valor: str) -> None:
+    def __init__(self, tipo: str, valor: str):
         self.tipo = tipo
         self.valor = valor
-        self.left = None
-        self.right = None
+        self.left_node = None
+        self.right_node = None
 
 class SintaticNode:
     def __init__(self, label, parent, lista_derivacoes: list, terminais: list, eh_nt = True, eh_acao_semantica = False) -> None:
         # Atributos do nodo pertinentes para arvore de expressao
-        self.node = None
-        self.left_node = None
-        self.right_node = None
+        self.node: ExpressionNode = None
         self.op = None
         self.lex_val = None
 
@@ -53,35 +81,70 @@ class SintaticNode:
             derivacao = lista_derivacoes.pop(0)
             terminal, valor = derivacao.split(" ::= ")
             if terminal != self.label:
-                raise SyntaxError(f"Lista de derivacoes incoerentes {terminal} e {self.label}")
-            # Terminais sem valor como for, + e >=
+                raise SyntaxError(f"Lista de derivacoes incoerentes {terminal} e {self.label} na linha -{len(lista_derivacoes)}")
+            # Terminais com valor lexico
             if terminal != valor:
                 self.lex_val = valor
-            # Terminais com valor
         
         # Nodo representa um nao terminal
         elif self.eh_nt:
             derivacao = lista_derivacoes.pop(0)
             nao_terminal, producao = derivacao.split(" ::= ")
-
-            if not self.parent is None:
-                print(f"Node: {nao_terminal} -- Pai: {self.parent.label} -- Filhos: {producao}")
-            else:
-                print(f"Node: {nao_terminal} -- Root -- Filhos: {producao}")
             
             if nao_terminal != self.label:
-                raise SyntaxError(f"Lista de derivacoes incoerentes {nao_terminal} e {self.label}")
+                raise SyntaxError(f"Lista de derivacoes incoerentes {nao_terminal} e {self.label} na linha -{len(lista_derivacoes)}")
             
             for filho in producao.strip().split():
                 # acoe semantica
                 if filho[0] == "\\":
-                    pass
+                    # Durante a criacao da arvore sintatica acoes semanticas nao sao resolvidas
+                    self.filhos.append(filho[1:].replace("@"," "))
                 # terminal
                 elif filho in terminais:
-                    self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais, eh_nt=False))
+                    if filho != "&":
+                        self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais, eh_nt=False))
                 # nao terminal
                 else:
                     self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais))
+
+    def acoes_semanticas(self):
+        print(f"{self.label} ::= {' '.join(map(lambda e: e if type(e) == str else e.label, self.filhos))}")
+        for filho in self.filhos:
+            # exclusivamente acao semantica
+            if type(filho) == str:
+                print(f"acao semantica executando: {filho}. Producao: {self.label} ::= {self.filhos}")
+                exec(filho)
+            # filho obrigatoriamente um Nodo 
+            elif filho.eh_nt:
+                filho.acoes_semanticas()
+            else:
+                pass
+    
+    def print_tree(self):
+        print(f"{self.label} ::= {' '.join(map(lambda e: e if type(e) == str else e.label, self.filhos))}")
+        for filho in self.filhos:
+            # exclusivamente acao semantica
+            if type(filho) == str:
+                continue
+            # filho obrigatoriamente um Nodo 
+            elif filho.eh_nt:
+                filho.print_tree()
+
+    @property
+    def left_node(self):
+        return self.node.left_node
+    
+    @property
+    def right_node(self):
+        return self.node.right_node
+    
+    @left_node.setter
+    def left_node(self, value):
+        self.node.left_node = value
+
+    @right_node.setter
+    def right_node(self, value):
+        self.node.right_node = value
 
 class ArvoreDerivacoes:
     def __init__(self, acoes_anotadas: str, terminais: list):
@@ -94,7 +157,16 @@ class ArvoreDerivacoes:
         
         self.root = SintaticNode(self.derivacoes[0].split()[0], None, self.derivacoes, terminais)
 
-FiltroSemantico("compiladores","sdt_eu_acho").annotate_file("compiladores","acoes_sintaticas.txt")
-with open("debug/terminais.txt", "r") as arq:
-    terminais = arq.readline().split()
-ArvoreDerivacoes("compiladores/acoes_anotadas.txt", terminais)
+    def resolver_acoes_semanticas(self):
+        self.root.acoes_semanticas()
+    
+    def print_tree(self):
+        self.root.print_tree()
+
+if __name__ == "__main__":
+    FiltroSDT("compiladores", "sdt_base")
+    FiltroSemantico("compiladores","sdt").annotate_file("compiladores","acoes_sintaticas.txt")
+    with open("debug/terminais.txt", "r") as arq:
+        terminais = arq.readline().split()
+    der = ArvoreDerivacoes("compiladores/acoes_anotadas.txt", terminais)
+    der.resolver_acoes_semanticas()

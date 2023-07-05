@@ -1,29 +1,29 @@
 EXPRESSION ::= float_constant \1 ATRIBSTAT_AUX1'1 \2
-\1 ATRIBSTAT_AUX1'1.left_node = newNode(int_constant.lexval,-,-)
-\2 EXPRESSION.node = ATRIBSTAT_AUX1'1.node
+\1 ATRIBSTAT_AUX1'1.left_node = ExpressionNode(int_constant.lex_val,-,-)
+\2 PARENT.node = ATRIBSTAT_AUX1'1.node
 
 EXPRESSION ::= int_constant \1 ATRIBSTAT_AUX1'1 \2					
-\1 ATRIBSTAT_AUX1'1.left_node = newNode(int_constant.lexval,-,-)
+\1 ATRIBSTAT_AUX1'1.left_node = ExpressionNode(int_constant.lex_val,-,-)
 \2 EXPRESSION.node = ATRIBSTAT_AUX1'1.node
 
 EXPRESSION ::= ( NUMEXPRESSION ) \1 ATRIBSTAT_AUX1'1 \2
-\1	ATRIBSTAT_AUX1'1.left_node = NUMEXPRESSION.node
+\1 ATRIBSTAT_AUX1'1.left_node = NUMEXPRESSION.node
 \2 EXPRESSION.node = ATRIBSTAT_AUX1'1.node
 
 EXPRESSION ::= string_constant \1 ATRIBSTAT_AUX1'1 \2
-\1 ATRIBSTAT_AUX1'1.left_node = newNode(string_constant.lexval,-,-)
+\1 ATRIBSTAT_AUX1'1.left_node = ExpressionNode(string_constant.lex_val,-,-)
 \2 EXPRESSION.node = ATRIBSTAT_AUX1'1.node
 
 EXPRESSION ::= null \1 ATRIBSTAT_AUX1'1 \2
-\1 ATRIBSTAT_AUX1'1.left_node = newNode(null,-,-)
+\1 ATRIBSTAT_AUX1'1.left_node = ExpressionNode(null,-,-)
 \2 EXPRESSION.node = ATRIBSTAT_AUX1'1.node
 
 EXPRESSION ::= SIGNAL FACTOR \1 ATRIBSTAT_AUX1'1 \2
-\1 ATRIBSTAT_AUX1'1.left_node = newNode(SIGNAL.op,FACTOR.node,-)
+\1 ATRIBSTAT_AUX1'1.left_node = ExpressionNode(SIGNAL.op,FACTOR.node,-)
 \2 EXPRESSION.node = ATRIBSTAT_AUX1'1.node
 
 EXPRESSION ::= ident \1 EXPRESSION'1 \2
-\1 EXPRESSION'1.left_node = newNode(ident.lexval,-,-)
+\1 EXPRESSION'1.left_node = ExpressionNode(ident.lex_val,-,-)
 \2 EXPRESSION.node = EXPRESSION'1.node
 
 EXPRESSION'1 ::= & \1
@@ -58,15 +58,15 @@ ATRIBSTAT_AUX1'3 ::= \1 NUMEXPRESSION_AUX1 \2 ATRIBSTAT_AUX1'4
 \2 ATRIBSTAT_AUX1'3.node = NUMEXPRESSION_AUX1.node	
 
 NUMEXPRESSION ::= float_constant \1 NUMEXPRESSION'1 \2
-\1 NUMEXPRESSION'1.left_node = newNode(float_constant.lexval,-,-)
+\1 NUMEXPRESSION'1.left_node = ExpressionNode(float_constant.lex_val,-,-)
 \2 NUMEXPRESSION.node = NUMEXPRESSION'1.node
 
 NUMEXPRESSION ::= ident \1 NUMEXPRESSION'2	\2
-\1	NUMEXPRESSION'2.left_node = newNode(ident.lexval,-,-)
+\1	NUMEXPRESSION'2.left_node = ExpressionNode(ident.lex_val,-,-)
 \2 NUMEXPRESSION.node = NUMEXPRESSION'2.node	
 
 NUMEXPRESSION ::= int_constant \1 NUMEXPRESSION'1 \2
-\1 NUMEXPRESSION'1.left_node = newNode(int_constant.lexval,-,-)
+\1 NUMEXPRESSION'1.left_node = ExpressionNode(int_constant.lex_val,-,-)
 \2 NUMEXPRESSION.node = NUMEXPRESSION'1.node
 
 NUMEXPRESSION ::= ( NUMEXPRESSION[1] ) \1 NUMEXPRESSION'1 \2
@@ -74,15 +74,15 @@ NUMEXPRESSION ::= ( NUMEXPRESSION[1] ) \1 NUMEXPRESSION'1 \2
 \2 NUMEXPRESSION.node = NUMEXPRESSION'1.node		
 
 NUMEXPRESSION ::= string_constant \1 NUMEXPRESSION'1 \2
-\1 NUMEXPRESSION'1.left_node = newNode(string_constant.lexval,-,-)
+\1 NUMEXPRESSION'1.left_node = ExpressionNode(string_constant.lex_val,-,-)
 \2 NUMEXPRESSION.node = NUMEXPRESSION'1.node
 
 NUMEXPRESSION ::= null \1 NUMEXPRESSION'1 \2
-\1 NUMEXPRESSION'1.left_node = newNode(null,-,-)
+\1 NUMEXPRESSION'1.left_node = ExpressionNode(null,-,-)
 \2 NUMEXPRESSION.node = NUMEXPRESSION'1.node
 
 NUMEXPRESSION ::= SIGNAL FACTOR \1 NUMEXPRESSION'1 \2
-\1 NUMEXPRESSION'1.left_node = newNode(SIGNAL.op,FACTOR.node,-)
+\1 NUMEXPRESSION'1.left_node = ExpressionNode(SIGNAL.op, FACTOR.node,-)
 \2 NUMEXPRESSION.node = NUMEXPRESSION'1.node
 
 NUMEXPRESSION'1 ::= & \1
@@ -96,7 +96,7 @@ NUMEXPRESSION'1 ::= \1 TERM_AUX1 \2 NUMEXPRESSION_AUX1'1 \3
 NUMEXPRESSION'1 ::= SIGNAL TERM \1 NUMEXPRESSION_AUX1'1 \2 \3
 \1 NUMEXPRESSION_AUX1'1.left_node = TERM.node
 \2 NUMEXPRESSION'1.right_node = NUMEXPRESSION_AUX1'1.node
-\3 NUMEXPRESSION'1.node = newNode(SIGNAL.op,NUMEXPRESSION'1.left_node,NUMEXPRESSION'1.right_node)
+\3 NUMEXPRESSION'1.node = ExpressionNode(SIGNAL.op,NUMEXPRESSION'1.left_node,NUMEXPRESSION'1.right_node)
 
 NUMEXPRESSION'2 ::= & \1
 \1 NUMEXPRESSION'2.node = NUMEXPRESSION'2.left_node
@@ -109,12 +109,12 @@ NUMEXPRESSION'2 ::= \1 TERM_AUX1 \2 NUMEXPRESSION_AUX1'1 \3
 NUMEXPRESSION'2 ::= SIGNAL TERM \1 NUMEXPRESSION_AUX1'1 \2 \3
 \1 NUMEXPRESSION_AUX1'1.left_node = TERM.node
 \2 NUMEXPRESSION'2.right_node = NUMEXPRESSION_AUX1'1.node
-\3 NUMEXPRESSION'2.node = newNode(SIGNAL.op,NUMEXPRESSION'2.left_node,NUMEXPRESSION'2.right_node)
+\3 NUMEXPRESSION'2.node = ExpressionNode(SIGNAL.op,NUMEXPRESSION'2.left_node,NUMEXPRESSION'2.right_node)
 
 NUMEXPRESSION_AUX1 ::= SIGNAL TERM \1 NUMEXPRESSION_AUX1'1 \2 \3
 \1 NUMEXPRESSION_AUX1'1.left_node = TERM.node
 \2 NUMEXPRESSION_AUX1.right_node = NUMEXPRESSION_AUX1'1.node
-\3 NUMEXPRESSION_AUX1.node = newNode(SIGNAL.op,NUMEXPRESSION_AUX1.left_node,NUMEXPRESSION_AUX1.right_node)
+\3 NUMEXPRESSION_AUX1.node = ExpressionNode(SIGNAL.op,NUMEXPRESSION_AUX1.left_node,NUMEXPRESSION_AUX1.right_node)
 
 NUMEXPRESSION_AUX1'1 ::= & \1
 \1 NUMEXPRESSION_AUX1'1.node = NUMEXPRESSION_AUX1'1.left_node
@@ -122,18 +122,18 @@ NUMEXPRESSION_AUX1'1 ::= & \1
 NUMEXPRESSION_AUX1'1 ::= SIGNAL TERM \1 NUMEXPRESSION_AUX1'1[1] \2 \3
 \1 NUMEXPRESSION_AUX1'1[1].left_node = TERM.node
 \2 NUMEXPRESSION_AUX1'1.right_node = NUMEXPRESSION_AUX1'1[1].node
-\3 NUMEXPRESSION_AUX1'1.node = newNode(SIGNAL.op,NUMEXPRESSION_AUX1'1.left_node,NUMEXPRESSION_AUX1'1.right_node)
+\3 NUMEXPRESSION_AUX1'1.node = ExpressionNode(SIGNAL.op,NUMEXPRESSION_AUX1'1.left_node,NUMEXPRESSION_AUX1'1.right_node)
 
 TERM ::= float_constant TERM'1
-\1 TERM'1.left_node = newNode(float_constant.lexval,-,-)
+\1 TERM'1.left_node = ExpressionNode(float_constant.lex_val,-,-)
 \2 TERM.node = TERM'1.node
 
 TERM ::= ident \1 TERM'2 \2
-\1 TERM'2.left_node = newNode(ident.lexval,-,-)
+\1 TERM'2.left_node = ExpressionNode(ident.lex_val,-,-)
 \2 TERM.node = TERM'2.node
 
 TERM ::= int_constant \1 TERM'1 \2
-\1 TERM'1.left_node = newNode(int_constant.lexval,-,-)
+\1 TERM'1.left_node = ExpressionNode(int_constant.lex_val,-,-)
 \2 TERM.node = TERM'1.node
 
 TERM ::= ( NUMEXPRESSION ) \1 TERM'1 \2
@@ -141,15 +141,15 @@ TERM ::= ( NUMEXPRESSION ) \1 TERM'1 \2
 \2 TERM.node = TERM'1.node
 
 TERM ::= string_constant \1 TERM'1 \2
-\1 TERM'1.left_node = newNode(string_constant.lexval,-,-)
+\1 TERM'1.left_node = ExpressionNode(string_constant.lex_val,-,-)
 \2 TERM.node = TERM'1.node
 
 TERM ::= null \1 TERM'1 \2
-\1 TERM'1.left_node = newNode(null,-,-)
+\1 TERM'1.left_node = ExpressionNode(null,-,-)
 \2 TERM.node = TERM'1.node
 
 TERM ::= SIGNAL FACTOR \1 TERM'1 \2
-\1 TERM'1.left_node = newNode(SIGNAL.op,FACTOR.node,-)
+\1 TERM'1.left_node = ExpressionNode(SIGNAL.op,FACTOR.node,-)
 \2 TERM.node = TERM'1.node
 
 TERM'1 ::= & \1
@@ -158,7 +158,7 @@ TERM'1 ::= & \1
 TERM'1 ::= OPERATION UNARYEXPR \1 TERM'1[1] \2\3
 \1 TERM'1[1].left_node = UNARYEXPR.node
 \2 TERM'1.right_node = TERM'1[1].node
-\3 TERM'1.node = newNode(OPERATION.op,TERM'1.left_node,TERM'1.right_node)
+\3 TERM'1.node = ExpressionNode(OPERATION.op,TERM'1.left_node,TERM'1.right_node)
 
 TERM'2 ::= & \1
 \1 TERM'2.node = TERM'2.left_node
@@ -166,55 +166,55 @@ TERM'2 ::= & \1
 TERM'2 ::= OPERATION UNARYEXPR \1 TERM'1 \2 \3
 \1 TERM'1.left_node = UNARYEXPR.node
 \2 TERM'2.right_node = TERM'1.node
-\3 TERM'2.node = newNode(OPERATION.op,TERM'2.left_node,TERM'2.right_node)
+\3 TERM'2.node = ExpressionNode(OPERATION.op,TERM'2.left_node,TERM'2.right_node)
 
 TERM_AUX1 ::= OPERATION UNARYEXPR \1 TERM'1 \2 \3 
 \1 TERM'1.left_node = UNARYEXPR.node
 \2 TERM_AUX1.right_node = TERM'1.node
-\3	TERM_AUX1.node = newNode(OPERATION.op,TERM_AUX1.left_node,TERM_AUX1.right_node)
+\3	TERM_AUX1.node = ExpressionNode(OPERATION.op,TERM_AUX1.left_node,TERM_AUX1.right_node)
 
 UNARYEXPR ::= float_constant \1
-\1 UNARYEXPR.node = newNode(float_constant.lexval,-,-)
+\1 UNARYEXPR.node = ExpressionNode(float_constant.lex_val,-,-)
 
 UNARYEXPR ::= int_constant \1
-\1 UNARYEXPR.node = newNode(int_constant.lexval,-,-)
+\1 UNARYEXPR.node = ExpressionNode(int_constant.lex_val,-,-)
 
 UNARYEXPR ::= string_constant \1
-\1 UNARYEXPR.node = newNode(string_constant.lexval,-,-)
+\1 UNARYEXPR.node = ExpressionNode(string_constant.lex_val,-,-)
 
 UNARYEXPR ::= null \1
-\1 UNARYEXPR.node = newNode(null,-,-)
+\1 UNARYEXPR.node = ExpressionNode(null,-,-)
 
 UNARYEXPR ::= ( NUMEXPRESSION \1 )
 \1 UNARYEXPR.node = NUMEXPRESSION.node
 
 UNARYEXPR ::= SIGNAL FACTOR	\1
-\1 UNARYEXPR.node = newNode(SIGNAL.op,FACTOR.node,-)
+\1 UNARYEXPR.node = ExpressionNode(SIGNAL.op,FACTOR.node,-)
 
 UNARYEXPR ::= ident \1 UNARYEXPR'1	\2
-\1 UNARYEXPR'1.left_node = newNode(ident.lexval,-,-)
+\1 UNARYEXPR'1.left_node = ExpressionNode(ident.lex_val,-,-)
 \2 UNARYEXPR.node = UNARYEXPR'1.node
 
 UNARYEXPR'1 ::= & \1
 \1 UNARYEXPR'1.node = UNARYEXPR'1.left_node
 
 FACTOR ::= float_constant \1
-\1 FACTOR.node = newNode(float_constant.lexval,-,-)
+\1 FACTOR.node = ExpressionNode(float_constant.lex_val,-,-)
 
 FACTOR ::= int_constant	\1
-\1 FACTOR.node = newNode(int_constant.lexval,-,-)
+\1 FACTOR.node = ExpressionNode(int_constant.lex_val,-,-)
 
 FACTOR ::= string_constant \1
-\1	FACTOR.node = newNode(string_constant.lexval,-,-)
+\1	FACTOR.node = ExpressionNode(string_constant.lex_val,-,-)
 
 FACTOR ::= null	\1
-\1 FACTOR.node = newNode(null,-,-)
+\1 FACTOR.node = ExpressionNode(null,-,-)
 
 FACTOR ::= ( NUMEXPRESSION \1 )
 \1 FACTOR.node = NUMEXPRESSION.node
 
 FACTOR ::= ident \1 UNARYEXPR'1 \2
-\1 UNARYEXPR'1.left_node = newNode(ident.lexval,-,-)
+\1 UNARYEXPR'1.left_node = ExpressionNode(ident.lex_val,-,-)
 \2 FACTOR.node = UNARYEXPR'1.node
 
 SIGNAL ::= + \1
