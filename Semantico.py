@@ -63,7 +63,12 @@ class ExpressionNode:
         self.right_node = right
     
     def __repr__(self):
-        return f"expnode: [{self.valor} {self.left_node} {self.right_node}]"
+        saida = f"expnode: [{self.valor}"
+        if not self.left_node is None:
+            saida += f" left: {self.left_node}"
+        if not self.right_node is None:
+            saida += f" right: {self.right_node}"
+        return saida + "]"
 
 class SintaticNode:
     def __init__(self, label, parent, lista_derivacoes: list, terminais: list, eh_nt = True, acao_semantica = False) -> None:
@@ -136,7 +141,11 @@ class SintaticNode:
                 filho.print_tree()
     
     def print_exp(self):
-        print(self.label, self.node, self.left_node, self.right_node)
+        if not (self.node is None and self.left_node is None and self.right_node is None):
+            print(f"{self.label}: {self.node}", end="")
+            if self.left_node: print(f" left: {self.left_node}", end="")
+            if self.right_node: print(f" right: {self.right_node}", end="")
+            print()
         for filho in self.filhos:
             # exclusivamente acao semantica
             if type(filho) == str:
