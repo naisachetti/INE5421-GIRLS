@@ -8,7 +8,7 @@ class TokenDriver:
 
     def gerador(self):
         for element in self.tokens:
-            yield element
+            yield (element, element)
 
 class ParsingTable:
     def __init__(self, gramatica: Gramatica) -> None:
@@ -124,8 +124,8 @@ class AnalisadorSintatico:
         self.pilha.push(self.gramatica.inicial)
 
         # Leitura do token
-        token_analisado = None
-        token_analisado = next(token)
+        token_analisado, token_valor = None, None
+        token_analisado, token_valor = next(token)
         tokens_lidos = token_analisado
 
         topo = self.pilha.top()
@@ -148,7 +148,8 @@ class AnalisadorSintatico:
                 self.pilha.pop()
                 try:
                     # Leitura do tokens
-                    token_analisado = next(token)
+                    token_analisado, token_valor = next(token)
+                    lista_derivacoes.append((token_analisado, token_valor))
                     # Todo resto dentro do try serve pra debug
                     tokens_lidos += (" " if not tokens_lidos[-1] in {"\t", "\n"} else "") + token_analisado
                     if token_analisado in {";", "{", "}"}:
