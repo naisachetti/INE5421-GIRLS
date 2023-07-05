@@ -56,17 +56,21 @@ class FiltroSDT:
                 arquivo.write("\n")
 
 class ExpressionNode:
-    def __init__(self, tipo: str, valor: str):
-        self.tipo = tipo
+    def __init__(self, valor: str, left, right):
+        # self.tipo = tipo
         self.valor = valor
-        self.left_node = None
-        self.right_node = None
+        self.left_node = left
+        self.right_node = right
+    
+    def __repr__(self):
+        return f"expnode: [{self.valor} {self.left_node} {self.right_node}]"
 
 class SintaticNode:
     def __init__(self, label, parent, lista_derivacoes: list, terminais: list, eh_nt = True, acao_semantica = False) -> None:
         # Atributos do nodo pertinentes para arvore de expressao
         self.node: ExpressionNode = None
-        self.op = None
+        self.left_node: ExpressionNode = None
+        self.right_node: ExpressionNode = None
         self.lex_val = None
 
         # Atributos de derivacao
@@ -84,8 +88,7 @@ class SintaticNode:
             if terminal != self.label:
                 raise SyntaxError(f"Lista de derivacoes incoerentes {terminal} e {self.label} na linha -{len(lista_derivacoes)}")
             # Terminais com valor lexico
-            if terminal != valor:
-                self.lex_val = valor
+            self.lex_val = valor
         
         # Nodo representa um nao terminal
         else:
@@ -114,7 +117,7 @@ class SintaticNode:
             # exclusivamente acao semantica
             if type(filho) == str:
                 if self.acao_semantica:
-                    print(f"acao semantica executando: {filho}. Producao: {self.label} ::= {self.filhos}")
+                    print(f"acao semantica: {filho}")
                     exec(filho)
             # filho obrigatoriamente um Nodo 
             elif filho.eh_nt:
@@ -131,22 +134,32 @@ class SintaticNode:
             # filho obrigatoriamente um Nodo 
             elif filho.eh_nt:
                 filho.print_tree()
-
-    @property
-    def left_node(self):
-        return self.node.left_node
     
-    @property
-    def right_node(self):
-        return self.node.right_node
-    
-    @left_node.setter
-    def left_node(self, value):
-        self.node.left_node = value
+    def print_exp(self):
+        print(self.label, self.node, self.left_node, self.right_node)
+        for filho in self.filhos:
+            # exclusivamente acao semantica
+            if type(filho) == str:
+                continue
+            # filho obrigatoriamente um Nodo 
+            elif filho.eh_nt:
+                filho.print_exp()
 
-    @right_node.setter
-    def right_node(self, value):
-        self.node.right_node = value
+    # @property
+    # def left_node(self):
+    #     return self.node.left_node
+    
+    # @property
+    # def right_node(self):
+    #     return self.node.right_node
+    
+    # @left_node.setter
+    # def left_node(self, value):
+    #     self.node.left_node = value
+
+    # @right_node.setter
+    # def right_node(self, value):
+    #     self.node.right_node = value
 
 class ArvoreDerivacoes:
     def __init__(self, acoes_anotadas: str, terminais: list):
@@ -165,6 +178,9 @@ class ArvoreDerivacoes:
     def print_tree(self):
         self.root.print_tree()
 
+    def print_exp(self):
+        self.root.print_exp()
+
 if __name__ == "__main__":
     FiltroSDT("compiladores", "sdt_base")
     FiltroSemantico("compiladores","sdt").annotate_file("compiladores","acoes_sintaticas.txt")
@@ -172,3 +188,5 @@ if __name__ == "__main__":
         terminais = arq.readline().split()
     der = ArvoreDerivacoes("compiladores/acoes_anotadas.txt", terminais)
     der.resolver_acoes_semanticas()
+    print("-----------")
+    der.print_exp()
