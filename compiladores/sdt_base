@@ -1,6 +1,6 @@
 EXPRESSION ::= float_constant \0 ATRIBSTAT_AUX1'1 \1
 \0 ATRIBSTAT_AUX1'1.left_node = ExpressionNode( float_constant.lex_val , None , None )
-\1 PARENT.node = ATRIBSTAT_AUX1'1.node
+\1 self.node = ATRIBSTAT_AUX1'1.node
 
 EXPRESSION ::= int_constant \0 ATRIBSTAT_AUX1'1 \1					
 \0 ATRIBSTAT_AUX1'1.left_node = ExpressionNode( int_constant.lex_val , None , None )

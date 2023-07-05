@@ -63,7 +63,7 @@ class ExpressionNode:
         self.right_node = None
 
 class SintaticNode:
-    def __init__(self, label, parent, lista_derivacoes: list, terminais: list, eh_nt = True, eh_acao_semantica = False) -> None:
+    def __init__(self, label, parent, lista_derivacoes: list, terminais: list, eh_nt = True, acao_semantica = False) -> None:
         # Atributos do nodo pertinentes para arvore de expressao
         self.node: ExpressionNode = None
         self.op = None
@@ -73,11 +73,12 @@ class SintaticNode:
         self.label = label
         self.parent = parent
         self.eh_nt: bool = eh_nt
-        self.eh_acao_semantica: bool = eh_acao_semantica
+        if self.label == "ATRIBSTAT_AUX1": acao_semantica = True
+        self.acao_semantica: bool = acao_semantica
         self.filhos = []
 
         # Nodo representa um terminal
-        if not self.eh_nt and not self.eh_acao_semantica:
+        if not self.eh_nt:
             derivacao = lista_derivacoes.pop(0)
             terminal, valor = derivacao.split(" ::= ")
             if terminal != self.label:
@@ -87,7 +88,7 @@ class SintaticNode:
                 self.lex_val = valor
         
         # Nodo representa um nao terminal
-        elif self.eh_nt:
+        else:
             derivacao = lista_derivacoes.pop(0)
             nao_terminal, producao = derivacao.split(" ::= ")
             
@@ -102,18 +103,19 @@ class SintaticNode:
                 # terminal
                 elif filho in terminais:
                     if filho != "&":
-                        self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais, eh_nt=False))
+                        self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais, eh_nt=False, acao_semantica=acao_semantica))
                 # nao terminal
                 else:
-                    self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais))
+                    self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais, acao_semantica=acao_semantica))
 
     def acoes_semanticas(self):
         print(f"{self.label} ::= {' '.join(map(lambda e: e if type(e) == str else e.label, self.filhos))}")
         for filho in self.filhos:
             # exclusivamente acao semantica
             if type(filho) == str:
-                print(f"acao semantica executando: {filho}. Producao: {self.label} ::= {self.filhos}")
-                exec(filho)
+                if self.acao_semantica:
+                    print(f"acao semantica executando: {filho}. Producao: {self.label} ::= {self.filhos}")
+                    exec(filho)
             # filho obrigatoriamente um Nodo 
             elif filho.eh_nt:
                 filho.acoes_semanticas()
