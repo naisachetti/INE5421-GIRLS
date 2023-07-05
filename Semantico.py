@@ -25,27 +25,49 @@ class FiltroSemantico:
             for producao in acoes_sintaticas:
                 acoes_sintaticas_anotadas.write(self.annotate_production(producao.strip())+"\n")
 
-class Node:
-    def __init__(self, label, parent, lista_derivacoes: list, terminais: list, nt = True, acao_semantica = False) -> None:
+class ExpressionNode:
+    def __init__(self, tipo: str, valor: str) -> None:
+        self.tipo = tipo
+        self.valor = valor
+        self.left = None
+        self.right = None
+
+class SintaticNode:
+    def __init__(self, label, parent, lista_derivacoes: list, terminais: list, eh_nt = True, eh_acao_semantica = False) -> None:
         # Atributos do nodo pertinentes para arvore de expressao
         self.node = None
         self.left_node = None
         self.right_node = None
         self.op = None
-        self.node = None
+        self.lex_val = None
 
         # Atributos de derivacao
         self.label = label
         self.parent = parent
-        self.nt = nt
-        self.acao_semantica = acao_semantica
+        self.eh_nt: bool = eh_nt
+        self.eh_acao_semantica: bool = eh_acao_semantica
         self.filhos = []
 
-        if self.nt:
+        # Nodo representa um terminal
+        if not self.eh_nt and not self.eh_acao_semantica:
+            derivacao = lista_derivacoes.pop(0)
+            terminal, valor = derivacao.split(" ::= ")
+            if terminal != self.label:
+                raise SyntaxError(f"Lista de derivacoes incoerentes {nao_terminal} e {self.label}")
+            # Terminais sem valor como for, + e >=
+            if terminal != valor:
+                self.lex_val = valor
+            # Terminais com valor
+        
+        # Nodo representa um nao terminal
+        elif self.eh_nt:
             derivacao = lista_derivacoes.pop(0)
             nao_terminal, producao = derivacao.split(" ::= ")
 
-            print(nao_terminal, producao)
+            if not self.parent is None:
+                print(f"Node: {nao_terminal} -- Pai: {self.parent.label} -- Filhos: {producao}")
+            else:
+                print(f"Node: {nao_terminal} -- Root -- Filhos: {producao}")
             
             if nao_terminal != self.label:
                 raise SyntaxError(f"Lista de derivacoes incoerentes {nao_terminal} e {self.label}")
@@ -56,10 +78,10 @@ class Node:
                     pass
                 # terminal
                 elif filho in terminais:
-                    pass
+                    self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais, nt=False))
                 # nao terminal
                 else:
-                    self.filhos.append(Node(filho, self, lista_derivacoes, terminais))
+                    self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais))
 
 class ArvoreDerivacoes:
     def __init__(self, acoes_anotadas: str, terminais: list):
