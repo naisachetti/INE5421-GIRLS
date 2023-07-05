@@ -102,11 +102,13 @@ class AnalisadorSintatico:
         self.tabela = ParsingTable(self.gramatica)
         self.tabela.to_csv(folder+"/tabela_sintatica.csv")
         self.pilha = Pilha()
+        self.folder = folder
         if validar: 
             self.validate(Gramatica().from_file_preprocess(folder+"/grammar"))
 
     # Faz o parsing dos tokens e valida a sintaxe
     def parse(self, show_stack = False, token: TokenDriver = None):
+        lista_derivacoes = []
 
         tokens_lidos = ""
         identation = 0
@@ -167,6 +169,7 @@ class AnalisadorSintatico:
             # Producao na pilha
             else:
                 producao = self.tabela[topo][token_analisado]
+                lista_derivacoes.append((topo, producao))
                 if show_stack:
                     print(f"prod: {producao:<18} ", end = "")
                 self.pilha.pop()
@@ -184,6 +187,9 @@ class AnalisadorSintatico:
             dump_tokens()
             return False
         dump_tokens()
+        with open(f"{self.folder}/acoes_sintaticas.txt","w") as arvore:
+            for linha in lista_derivacoes:
+                arvore.write(f"{linha[0]} ::= {linha[1]}\n")
         return True
 
     # Gera palavras 100 palavras aleatorias a partir da gramatica e faz o parsgin delas
