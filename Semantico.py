@@ -53,7 +53,7 @@ class SintaticNode:
             derivacao = lista_derivacoes.pop(0)
             terminal, valor = derivacao.split(" ::= ")
             if terminal != self.label:
-                raise SyntaxError(f"Lista de derivacoes incoerentes {nao_terminal} e {self.label}")
+                raise SyntaxError(f"Lista de derivacoes incoerentes {terminal} e {self.label}")
             # Terminais sem valor como for, + e >=
             if terminal != valor:
                 self.lex_val = valor
@@ -78,7 +78,7 @@ class SintaticNode:
                     pass
                 # terminal
                 elif filho in terminais:
-                    self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais, nt=False))
+                    self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais, eh_nt=False))
                 # nao terminal
                 else:
                     self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais))
@@ -92,7 +92,7 @@ class ArvoreDerivacoes:
             for linha in arq:
                 self.derivacoes.append(linha.strip())
         
-        self.root = Node(self.derivacoes[0].split()[0], None, self.derivacoes, terminais)
+        self.root = SintaticNode(self.derivacoes[0].split()[0], None, self.derivacoes, terminais)
 
 FiltroSemantico("compiladores","sdt_eu_acho").annotate_file("compiladores","acoes_sintaticas.txt")
 with open("debug/terminais.txt", "r") as arq:
