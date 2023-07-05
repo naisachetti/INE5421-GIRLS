@@ -1,4 +1,4 @@
-analysis: 
+analysis:	
 	python3 GIRLS.py $(DIR) $(PROGRAM)
 
 clean:

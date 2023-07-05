@@ -104,6 +104,8 @@ class AnalisadorLexico:
                 else:
                     self.tabela_simbolos[t[1]] = [index]
 
+        self.tabela_lexica.append(('$', '$'))
+
     # Escreve a tabela léxica num arquivo CSV
     def to_csv(self):
         def escape(str):
@@ -121,10 +123,9 @@ class AnalisadorLexico:
 
     # Interface para o analisador sintático
     def gerador(self):
-        tabela = filter(lambda item: item[0] != 'comment', self.tabela_lexica)
+        tabela = list(filter(lambda item: item[0] != 'comment', self.tabela_lexica))
         for item in tabela:
-            yield item[0]
-        yield '$'
+            yield item
 
 if __name__ == '__main__':
     if len(sys.argv) <= 2:
