@@ -73,9 +73,7 @@ class ExpressionNode:
 class SintaticNode:
     def __init__(self, label, parent, lista_derivacoes: list, terminais: list, eh_nt = True, acao_semantica = False) -> None:
         # Atributos do nodo pertinentes para arvore de expressao
-        self.node: ExpressionNode = None
-        self.left_node: ExpressionNode = None
-        self.right_node: ExpressionNode = None
+        self.node: ExpressionNode = ExpressionNode(None, None, None)
         self.lex_val = None
 
         # Atributos de derivacao
@@ -141,7 +139,7 @@ class SintaticNode:
                 filho.print_tree()
     
     def print_exp(self):
-        if not (self.node is None and self.left_node is None and self.right_node is None):
+        if self.node:
             print(f"{self.label}: {self.node}", end="")
             if self.left_node: print(f" left: {self.left_node}", end="")
             if self.right_node: print(f" right: {self.right_node}", end="")
@@ -154,21 +152,21 @@ class SintaticNode:
             elif filho.eh_nt:
                 filho.print_exp()
 
-    # @property
-    # def left_node(self):
-    #     return self.node.left_node
+    @property
+    def left_node(self):
+        return self.node.left_node
     
-    # @property
-    # def right_node(self):
-    #     return self.node.right_node
+    @property
+    def right_node(self):
+        return self.node.right_node
     
-    # @left_node.setter
-    # def left_node(self, value):
-    #     self.node.left_node = value
+    @left_node.setter
+    def left_node(self, value):
+        self.node.left_node = value
 
-    # @right_node.setter
-    # def right_node(self, value):
-    #     self.node.right_node = value
+    @right_node.setter
+    def right_node(self, value):
+        self.node.right_node = value
 
 class ArvoreDerivacoes:
     def __init__(self, acoes_anotadas: str, terminais: list):
@@ -196,6 +194,7 @@ if __name__ == "__main__":
     with open("debug/terminais.txt", "r") as arq:
         terminais = arq.readline().split()
     der = ArvoreDerivacoes("compiladores/acoes_anotadas.txt", terminais)
+    print("Arvore de derivacoes montadas")
     der.resolver_acoes_semanticas()
     print("-----------")
-    der.print_exp()
+    print(der.print_exp())
