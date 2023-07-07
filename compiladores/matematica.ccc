@@ -86,8 +86,8 @@ def lcm(int x, int y) {
 ~Calcula a fórmula de Legendre. Adaptado de <https://www.geeksforgeeks.org/legendres-formula-highest-power-of-prime-number-that-divides-n/>.~
 def legendresFormula(int i, int p) {
     int x;
+    int n;
     x=0;
-    int i;
     ~Equivalente a while(True).~
     for(i=0; i==i; i=i) {
         if (n > 0) {

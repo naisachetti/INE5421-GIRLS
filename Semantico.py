@@ -108,9 +108,11 @@ class Escopo:
 escopo_global = Escopo(None)
 escopo_atual = escopo_global
 escopo_loop = False
+escopo_def = False
 ponto_e_virgula_count = None
 arithmetic_starter = {"EXPRESSION", "ATRIBSTAT_AUX1"}
 current_arithmetic_type = None
+in_colchetes = False
 
 class ExpressionNode:
     def __init__(self, valor: str, left, right):
@@ -144,6 +146,7 @@ class SintaticNode:
         # Nodo representa um terminal
         if not self.eh_nt:
             derivacao = lista_derivacoes.pop(0)
+            print(derivacao)
             terminal, valor = derivacao.split(" ::= ")
             if terminal != self.label:
                 raise SyntaxError(f"Lista de derivacoes incoerentes {terminal} e {self.label} na linha -{len(lista_derivacoes)}")
@@ -178,6 +181,8 @@ class SintaticNode:
         global ponto_e_virgula_count
         global arithmetic_starter
         global current_arithmetic_type
+        global escopo_def
+        global in_colchetes
         for filho in self.filhos:
             # exclusivamente acao semantica
             if type(filho) == str:
@@ -197,11 +202,20 @@ class SintaticNode:
                     escopo_loop = True
                     escopo_atual = escopo_atual.entrar(loop=True)
                     ponto_e_virgula_count = 0
+                elif filho.label == "[":
+                    in_colchetes = True
+                elif filho.label == "]":
+                    in_colchetes = False
+                elif filho.label == "def":
+                    escopo_def = True
+                elif filho.label == "(" and escopo_def:
+                    escopo_atual = escopo_atual.entrar()
                 elif filho.label == "{":
                     ponto_e_virgula_count = None
-                    if not escopo_loop:
+                    if not escopo_loop and not escopo_def:
                         escopo_atual = escopo_atual.entrar()
                     escopo_loop = False
+                    escopo_def = False
                 elif filho.label == "}" and not escopo_loop:
                     escopo_atual = escopo_atual.parent
                 elif filho.label == ";" and escopo_loop and not ponto_e_virgula_count is None:
@@ -214,12 +228,13 @@ class SintaticNode:
                     if not escopo_atual.loop:
                         raise SemanticError("Break fora de escopo de loop")
                 elif current_arithmetic_type and filho.label in {"int_constant", "float_constant", "string_constant", "ident"}:
+                    if in_colchetes: continue
                     if filho.label == "ident":
                         tipo = escopo_atual.tipo_de(filho.lex_val)
                         if tipo == "def":
                             current_arithmetic_type = None
                         if not tipo:
-                            raise SemanticError(f"Variavel nao declarada {filho.lex_val} usada numa atribuicao")
+                            raise SemanticError(f"Variavel nao declarada {filho.lex_val} usada numa atribuicao {escopo_global}")
                     else:
                         tipo = filho.label.replace("_constant", "") #KKKKKKKKKKKKKKKKKKKKKK
                     if current_arithmetic_type == "no_type_yet":

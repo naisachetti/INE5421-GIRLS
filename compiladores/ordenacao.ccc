@@ -35,31 +35,13 @@ def partitionQuickSort(int array[], int array_size, int low, int high) {
 
 ~Heap Sort. Adaptado de <https://www.geeksforgeeks.org/heap-sort/>.~
 
-~Chamado de heap_sort na implementação original~
-def sort(int array[], int array_size) {
-    int new_array[array_size];
-    new_array = buildHeap(array, array_size);
-
-    int i;
-    for(i=array_size-1; i>0; i=i-1) {
-        new_array = swap(new_array, i, i-1);
-
-        int heap_size;
-        heap_size = i;
-        new_array = heapify(new_array, 0, heap_size);
-    }
-
-    new_array = reverse(new_array, array_size);
-    return new_array; 
-}
-
-def buildHeap(int array[], int array_size) {
-    int new_array[array_size];
-    int i;
-    for (i=array_size; i>=0; i=i-1) {
-        new_array = heapify(array, array_size, i, array_size);
-    }
-    return new_array;
+~Inexistente na implementação original.~
+def swap(int array[], int i, int largest) {
+    int aux;
+    aux = array[i];
+    array[i] = array[largest];
+    array[largest] = aux;
+    return array;
 }
 
 def heapify(int array[], int array_size, int i, int heap_size) {
@@ -71,7 +53,7 @@ def heapify(int array[], int array_size, int i, int heap_size) {
     right = 2*i+2;
 
     if (left < heap_size) {
-        if (array[left] > arr[largest]) {
+        if (array[left] > array[largest]) {
             largest = left;
         }
     }
@@ -90,20 +72,13 @@ def heapify(int array[], int array_size, int i, int heap_size) {
     return heap;
 }
 
-~Chamado de main na implementação original.~
-def heapSort(int array[], int array_size) {
-    int sorted_array[array_size];
-    sorted_array = sort(array, array_size);
-    return sorted_array;
-}
-
-~Inexistente na implementação original.~
-def swap(int array[], int i, int largest) {
-    int aux;
-    aux = array[i];
-    array[i] = array[largest];
-    array[largest] = aux;
-    return array;
+def buildHeap(int array[], int array_size) {
+    int new_array[array_size];
+    int i;
+    for (i=array_size; i>=0; i=i-1) {
+        new_array = heapify(array, array_size, i, array_size);
+    }
+    return new_array;
 }
 
 ~Inexistente na implementação original.~
@@ -114,4 +89,29 @@ def reverse(int array[], int array_size) {
         new_array[i] = array[array_size-i-1];
     }
     return new_array;
+}
+
+~Chamado de heap_sort na implementação original~
+def sort(int array[], int array_size) {
+    int new_array[array_size];
+    new_array = buildHeap(array, array_size);
+
+    int i;
+    for(i=array_size-1; i>0; i=i-1) {
+        new_array = swap(new_array, i, i-1);
+
+        int heap_size;
+        heap_size = i;
+        new_array = heapify(new_array, 0, heap_size);
+    }
+
+    new_array = reverse(new_array, array_size);
+    return new_array; 
+}
+
+~Chamado de main na implementação original.~
+def heapSort(int array[], int array_size) {
+    int sorted_array[array_size];
+    sorted_array = sort(array, array_size);
+    return sorted_array;
 }

@@ -1,3 +1,22 @@
+~Funcoes supostamente nativas, placeholders~
+def floor() {return;}
+def strlen() {return;}
+
+~Pega uma porção de uma string entre i_min e i_max (i_max não incluso)~
+def slice(string word, int i_min, int i_max) {
+    int slice_length;
+    slice_length = i_max-i_min;
+    string portion[slice_length];
+    int i;
+    int i_portion;
+    i_portion = -1;
+    for (i=i_min; i<i_max; i=i+1) {
+        i_portion = i_portion+1;
+        portion[i_portion] = word[i];
+    }
+    return portion;
+}
+
 ~Procura por padrões não especificados dentro de uma string~
 def mainPatternSearching(string sequence) {
     int seq_length;
@@ -30,21 +49,6 @@ def mainPatternSearching(string sequence) {
     }
 }
 
-~Pega uma porção de uma string entre i_min e i_max (i_max não incluso)~
-def slice(string word, int i_min, int i_max) {
-    int slice_length;
-    slice_length = i_max-i_min;
-    string portion[slice_length];
-    int i;
-    int i_portion;
-    i_portion = -1;
-    for (i=i_min; i<i_max; i=i+1) {
-        i_portion = i_portion+1;
-        portion[i_portion] = word[i];
-    }
-    return portion;
-}
-
 ~Algoritmo ingênuo. Adaptado de <https://www.geeksforgeeks.org/naive-algorithm-for-pattern-searching/>.~
 def naivePatternSearching(string sequence, string pattern, int i_start) {
     int seq_length;
@@ -70,7 +74,7 @@ def naivePatternSearching(string sequence, string pattern, int i_start) {
                 }
                 if (j == pattern_length-1) {
                     string out;
-                    out = "Padrão encontrado: "+pattern;
+                    out = pattern;
                     print(out);
                     found = 1;
                     break;
@@ -88,7 +92,9 @@ def rabinKarpPatternSearch(string pattern, string sequence, int prime_number) {
     int m;
     int n;
     int i;
+    int d;
     int j;
+    int q;
     int p;
     int t;
     int h;
@@ -102,8 +108,8 @@ def rabinKarpPatternSearch(string pattern, string sequence, int prime_number) {
         h = (h*d)%q;
 
     for (i=0; i < m; i=i+1) {
-        p = (d*p + pattern[i]) % q;
-        t = (d*t + sequence[i]) % q;
+        p = (d*p) % q;
+        t = (d*t) % q;
     }
 
     for (i=0; i <= n-m; i=i+1) {
@@ -116,13 +122,12 @@ def rabinKarpPatternSearch(string pattern, string sequence, int prime_number) {
 
             if (j == m) {
                 string out;
-                out = "Padrão encontrado no índice"+i;
                 print(out);
             }
         }
 
         if (i < n-m) {
-            t = (d * (t - sequence[i] * h) + sequence[i + m]) % q;
+            t = (sequence[i] + sequence[i + m]);
 
             if (t < 0) {
                 t = (t+q);
