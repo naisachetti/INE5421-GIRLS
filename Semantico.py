@@ -46,7 +46,21 @@ class FiltroSDT:
                     elif simbolo.split(".")[0] in producao_simbolos:
                         anotacao_simbolos[j] = f"self.filhos[{producao_simbolos.index(simbolo.split('.')[0])}].{' '.join(simbolo.split('.')[1:])}"
                 anotacoes[k] = " ".join(anotacao_simbolos)
-            producoes_anotadas[i] = [producao, *anotacoes]
+
+            producao_tratada = ""
+            for simbolo in producao.split():
+                new_simbolo = ""
+                if simbolo[-1] == ']':
+                    new_simbolo = simbolo[:-3]
+                else:
+                    new_simbolo = simbolo
+
+                if producao_tratada == "":
+                    producao_tratada += new_simbolo
+                else:
+                    producao_tratada += (" " + new_simbolo)
+
+            producoes_anotadas[i] = [producao_tratada, *anotacoes]
         
         with open(f"{folder}/sdt", "w") as arquivo:
             for producao, *anotacoes in producoes_anotadas:

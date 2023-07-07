@@ -2,7 +2,33 @@
 int,int
 ident,b
 ;,;
+<<<<<<< Updated upstream
+def,def
+ident,funcao
+(,(
+),)
 {,{
+return,return
+int_constant,0
+=======
+{,{
+int,int
+ident,o
+;,;
+ident,o
+=,=
+ident,a
++,+
+ident,b
+*,*
+int_constant,5
+*,*
+ident,c
+*,*
+int_constant,7
++,+
+int_constant,6
+>>>>>>> Stashed changes
 ident,a
 =,=
 int_constant,10

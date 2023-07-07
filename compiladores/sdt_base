@@ -29,32 +29,32 @@ EXPRESSION ::= ident \0 EXPRESSION'1 \1
 EXPRESSION'1 ::= & \0
 \0 self.node = self.left_node
 
-EXPRESSION'1 ::= \0 TERM_AUX1 \1 ATRIBSTAT_AUX1'3 \2
+EXPRESSION'1 ::= \0 TERM_AUX1 \1 ATRIBSTAT_AUX1'4 \2
 \0 TERM_AUX1.left_node = self.left_node
-\1 ATRIBSTAT_AUX1'3.left_node = TERM_AUX1.node
+\1 ATRIBSTAT_AUX1'4.left_node = TERM_AUX1.node
 \2 self.node = ATRIBSTAT_AUX'3.node	
 
-EXPRESSION'1 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'4
+EXPRESSION'1 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'3
 \0 NUMEXPRESSION_AUX1.left_node = self.left_node
 \1 self.node = NUMEXPRESSION_AUX1.node
 
 ATRIBSTAT_AUX1'1 ::= & \0
 \0 self.node = self.left_node
 
-ATRIBSTAT_AUX1'1 ::= \0 TERM_AUX1 \1 ATRIBSTAT_AUX1'3 \2
+ATRIBSTAT_AUX1'1 ::= \0 TERM_AUX1 \1 ATRIBSTAT_AUX1'4 \2
 \0 TERM_AUX1.left_node = self.left_node
-\1 ATRIBSTAT_AUX1'3.left_node = TERM_AUX1.node
-\2 self.node = ATRIBSTAT_AUX1'3.node							
+\1 ATRIBSTAT_AUX1'4.left_node = TERM_AUX1.node
+\2 self.node = ATRIBSTAT_AUX1'4.node							
 
-ATRIBSTAT_AUX1'1 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'4
+ATRIBSTAT_AUX1'1 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'3
 \0 NUMEXPRESSION_AUX1.left_node = self.left_node
 \1 self.node = NUMEXPRESSION_AUX1.node
  
-ATRIBSTAT_AUX1'3 ::= & \0
+ATRIBSTAT_AUX1'4 ::= & \0
 \0 self.node = self.left_node
 
-ATRIBSTAT_AUX1'3 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'4
-\0 NUMEXPRESSION_AUX1.left_node = ATRIBSTAT_AUX1'4.left_node
+ATRIBSTAT_AUX1'4 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'3
+\0 NUMEXPRESSION_AUX1.left_node = self.left_node
 \1 self.node = NUMEXPRESSION_AUX1.node	
 
 NUMEXPRESSION ::= float_constant \0 NUMEXPRESSION'1 \1
@@ -158,7 +158,7 @@ TERM'1 ::= & \0
 TERM'1 ::= OPERATION UNARYEXPR \0 TERM'1[1] \1 \2
 \0 TERM'1[1].left_node = UNARYEXPR.node
 \1 self.right_node = TERM'1[1].node
-\2 self.node = ExpressionNode(OPERATION.lex_val , self.left_node , self.right_node )
+\2 self.node = ExpressionNode( OPERATION.lex_val , self.left_node , self.right_node )
 
 TERM'2 ::= & \0
 \0 self.node = self.left_node
@@ -263,12 +263,12 @@ ATRIBSTAT_AUX1 ::= SIGNAL FACTOR \0 ATRIBSTAT_AUX1'1 \1
 ATRIBSTAT_AUX1'2 ::= & \0
 \0 self.node = self.left_node
 
-ATRIBSTAT_AUX1'2 ::= \0 TERM_AUX1 \1 ATRIBSTAT_AUX1'3 \2
+ATRIBSTAT_AUX1'2 ::= \0 TERM_AUX1 \1 ATRIBSTAT_AUX1'4 \2
 \0 TERM_AUX1.left_node = self.left_node
-\1 ATRIBSTAT_AUX1'3.left_node = TERM_AUX1.node
-\2 self.node = ATRIBSTAT_AUX1'3.node
+\1 ATRIBSTAT_AUX1'4.left_node = TERM_AUX1.node
+\2 self.node = ATRIBSTAT_AUX1'4.node
 
-ATRIBSTAT_AUX1'2 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'4
+ATRIBSTAT_AUX1'2 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'3
 \0 NUMEXPRESSION_AUX1.left_node = self.left_node
 \1 self.node = NUMEXPRESSION_AUX1.node
 
