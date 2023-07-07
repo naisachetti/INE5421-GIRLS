@@ -81,7 +81,7 @@ class Escopo:
         self.variaveis_declaradas = []
     
     def entrar(self, loop = False):
-        novo_escopo = Escopo(self, loop=loop)
+        novo_escopo = Escopo(self, loop=loop or self.loop)
         self.filhos.append(novo_escopo)
         return novo_escopo
     
@@ -285,15 +285,16 @@ class ArvoreDerivacoes:
     def print_exp(self):
         self.root.print_exp()
 
-if __name__ == "__main__":
+class AnalisadorSemantico:
+    def __init__(self, folder="compiladores", sdt="sdt_base"):
+        FiltroSDT("compiladores", "sdt_base")
+        FiltroSemantico("compiladores","sdt").annotate_file("compiladores","acoes_sintaticas.txt")
+        with open("debug/terminais.txt", "r") as arq:
+            terminais = arq.readline().split()
+        der = ArvoreDerivacoes("compiladores/acoes_anotadas.txt", terminais)
+        print("Arvore de derivacoes montadas")
+        der.resolver_acoes_semanticas()
+        print(der.print_exp())
 
-    FiltroSDT("compiladores", "sdt_base")
-    FiltroSemantico("compiladores","sdt").annotate_file("compiladores","acoes_sintaticas.txt")
-    with open("debug/terminais.txt", "r") as arq:
-        terminais = arq.readline().split()
-    der = ArvoreDerivacoes("compiladores/acoes_anotadas.txt", terminais)
-    print("Arvore de derivacoes montadas")
-    der.resolver_acoes_semanticas()
-    print("-----------")
-    print(der.print_exp())
-    print(repr(escopo_atual))
+if __name__ == "__main__":
+    pass
