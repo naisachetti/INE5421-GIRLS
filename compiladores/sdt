@@ -54,7 +54,7 @@ ATRIBSTAT_AUX1'3 ::= & \0
 \0 self.node = self.left_node
 
 ATRIBSTAT_AUX1'3 ::= \0 NUMEXPRESSION_AUX1 \1 ATRIBSTAT_AUX1'4
-\0 self.filhos[1].left_node = self.filhos[3].left_node
+\0 self.filhos[1].left_node = self.left_node
 \1 self.node = self.filhos[1].node
 
 NUMEXPRESSION ::= float_constant \0 NUMEXPRESSION'1 \1
