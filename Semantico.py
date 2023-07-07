@@ -76,6 +76,18 @@ class Escopo:
             raise SemanticError(f"Redeclaracao da variavel {variavel} no mesmo escopo {self}")
         self.filhos.append((tipo,variavel))
     
+    def tipo_de(self, variavel):
+        variaveis = [filho for filho in self.filhos if type(filho) != Escopo]
+        encontrei = list(filter(lambda e: e[1] == variavel, variaveis))
+        # Procura em escopos acima
+        if not len(encontrei):
+            if self.parent:
+                return self.parent.tipo_de(variavel)
+            else:
+                return None
+        return encontrei[0][0]
+
+    
     def __repr__(self):
         return "{"+" ".join(map(lambda e: repr(e), self.filhos))+"}"
 
@@ -83,6 +95,8 @@ escopo_global = Escopo(None)
 escopo_atual = escopo_global
 escopo_loop = False
 ponto_e_virgula_count = None
+arithmetic_starter = {"EXPRESSION", "ATRIBSTAT_AUX1"}
+current_arithmetic_type = None
 
 class ExpressionNode:
     def __init__(self, valor: str, left, right):
@@ -148,6 +162,8 @@ class SintaticNode:
         global escopo_atual
         global escopo_loop
         global ponto_e_virgula_count
+        global arithmetic_starter
+        global current_arithmetic_type
         for filho in self.filhos:
             # exclusivamente acao semantica
             if type(filho) == str:
@@ -156,7 +172,11 @@ class SintaticNode:
                     exec(filho)
             # filho obrigatoriamente um Nodo 
             elif filho.eh_nt:
+                if filho.label in arithmetic_starter:
+                    current_arithmetic_type = "no_type_yet"
                 filho.acoes_semanticas()
+                if filho.label in arithmetic_starter:
+                    current_arithmetic_type = None
             # filho terminal
             else:
                 if filho.label == "for":
@@ -179,6 +199,20 @@ class SintaticNode:
                 elif filho.label == "break":
                     if not escopo_atual.loop:
                         raise SemanticError("Break fora de escopo de loop")
+                elif current_arithmetic_type and filho.label in {"int_constant", "float_constant", "string_constant", "ident"}:
+                    if filho.label == "ident":
+                        tipo = escopo_atual.tipo_de(filho.lex_val)
+                        if not tipo:
+                            raise SemanticError(f"Variavel nao declarada {filho.lex_val} usada numa atribuicao")
+                    else:
+                        tipo = filho.label.replace("_constant", "") #KKKKKKKKKKKKKKKKKKKKKK
+                    if current_arithmetic_type == "no_type_yet":
+                        current_arithmetic_type = tipo
+                    elif tipo != current_arithmetic_type:
+                        raise SemanticError(f"Expressao do tipo {current_arithmetic_type} tentou receber um {tipo}")
+
+
+
     
     def print_tree(self):
         print(f"{self.label} ::= {' '.join(map(lambda e: e if type(e) == str else e.label, self.filhos))}")
