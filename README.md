@@ -1,19 +1,18 @@
 
 ## Como usar o WOMEN (Words Organized by Meaningful Elements and Notation)
 
-Acompanhe este documento com os arquivos de exemplo da pasta "pasca".
+Acompanhe este documento com os arquivos de exemplo da pasta "compiladores".
 
-1) Crie uma pasta com o nome do seu projeto (ex.: pasca)
-2) Nesta pasta, crie três arquivos:
-    - tokens: Expressões regulares para os tokens da linguagem (Veja a seção "Arquivo de tokens").<br>
-    - grammar: Gramática da linguagem (Veja a seção "Arquivo de gramática").<br>
-    - program (opcional): Código fonte do programa a ser analisado quando o atributo PROGRAM não for especificado na chamada do Makefile.<br>
-3) Rode os analisadores léxico e sintático do WOMEN com o seguinte comando:
+1) Crie um programa dentro da pasta "compiladores"
+2) Rode a análise do WOMEN com o seguinte comando:
 
 ```
-$ make analysis DIR=<nome_da_pasta_do_projeto> [PROGRAM=<nome do arquivo do programa>]
+$ make analysis PROGRAM=<nome do arquivo do programa>
 ```
 
+As SDDs e SDTs são definidas dentro da pasta "compiladores".
+
+## As seções abaixo são pertinentes apenas para a análise léxica e sintática
 ## Arquivo de tokens
 
 O arquivo de tokens deve ter a seguinte estrutura, com definições regulares antes de expressões regulares que representam tokens:
