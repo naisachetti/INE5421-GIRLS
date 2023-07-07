@@ -1,8 +1,5 @@
 {,{
 int,int
-ident,a
-;,;
-int,int
 ident,b
 ;,;
 {,{
@@ -11,8 +8,6 @@ ident,a
 int_constant,10
 +,+
 ident,b
-;,;
-break,break
 ;,;
 },}
 },}

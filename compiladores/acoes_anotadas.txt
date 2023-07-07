@@ -2,11 +2,6 @@ A ::= { STATELIST }
 { ::= {
 STATELIST ::= int ident \escopo_atual.declare(@"int",@self.filhos[1].lex_val@) STATELIST'4
 int ::= int
-ident ::= a
-STATELIST'4 ::= ; STATELIST'1
-; ::= ;
-STATELIST'1 ::= int ident \escopo_atual.declare(@"int",@self.filhos[1].lex_val@) STATELIST'4
-int ::= int
 ident ::= b
 STATELIST'4 ::= ; STATELIST'1
 ; ::= ;
@@ -28,9 +23,6 @@ ident ::= b
 TERM'2 ::= & \self.node@=@self.left_node
 NUMEXPRESSION_AUX1'1 ::= & \self.node@=@self.left_node
 ATRIBSTAT_AUX1'3 ::= & \self.node@=@self.left_node
-; ::= ;
-STATELIST'1 ::= break ; STATELIST'1
-break ::= break
 ; ::= ;
 STATELIST'1 ::= &
 } ::= }

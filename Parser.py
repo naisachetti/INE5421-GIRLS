@@ -11,7 +11,9 @@ class TokenDriver:
             yield (element, element)
 
 class ParsingTable:
-    def __init__(self, gramatica: Gramatica) -> None:
+    def __init__(self, gramatica: Gramatica, precompiled=False) -> None:
+        if precompiled:
+            return
         self.gramatica = gramatica
         terminais = gramatica.terminais.copy()
         terminais += "$"
@@ -81,7 +83,7 @@ class ParsingTable:
         # cabecalho += [terminal for terminal in self.table[self.gramatica.inicial]]
         cabecalho += ['"'+terminal+'"' for terminal in self.table[self.gramatica.inicial] if terminal != "&"]
         with open(filename, "w") as csv:
-            csv.write(",".join(cabecalho)+"\n")
+            csv.write("@".join(cabecalho)+"\n")
             for nt, linha in self.table.items():
                 arquivo_linha = [nt]
                 # arquivo_linha += [" " for terminal in linha]
@@ -92,7 +94,35 @@ class ParsingTable:
                     producao_str = self.table[nt][terminal]
                     if producao_str != None:
                         arquivo_linha[cabecalho.index('"'+terminal+'"')] = producao_str.replace('"', '"""').replace(',', '","')
-                csv.write(",".join(arquivo_linha)+"\n")
+                csv.write("@".join(arquivo_linha)+"\n")
+    
+    def from_csv(self, filename: str):
+        # Leitura da tabela crua
+        raw_table = []
+        with open(filename, "r") as arquivo:
+            for linha in arquivo:
+                raw_table.append(list(map(lambda e: None if e == '"Ø"' else e, linha.split("@"))))
+        
+        self.table = {}
+
+        print(raw_table[0])
+        for i, linha in enumerate(raw_table):
+            if not i: continue
+            nt = linha[0]
+            self.table[nt] = {}
+            for terminal, (j, producao) in zip(raw_table[0],enumerate(linha)):
+                # Nao terminal da linha
+                if not j:
+                    continue
+                if producao:
+                    print(producao)
+                    self.table[nt][terminal[1:-1]] = producao[1:-1]
+                    continue
+                self.table[nt][terminal[1:-1]] = None
+
+        
+        return self
+
 
 class AnalisadorSintatico:
     def __init__(self, folder: str, Lexer:TokenDriver, validar = True, precompiled = False) -> None:
@@ -102,8 +132,11 @@ class AnalisadorSintatico:
             self.gramatica = Gramatica().from_file_preprocess(folder+"/grammar").tratada()
         print("Gramatica Tratada com sucesso!")
         self.token = Lexer.gerador()
-        self.tabela = ParsingTable(self.gramatica)
-        self.tabela.to_csv(folder+"/tabela_sintatica.csv")
+        if False: #Precompiled
+            self.tabela = ParsingTable(self.gramatica, True).from_csv(folder+"/tabela_sintatica.csv")
+        else:
+            self.tabela = ParsingTable(self.gramatica)
+            self.tabela.to_csv(folder+"/tabela_sintatica.csv")
         self.pilha = Pilha()
         self.folder = folder
         if validar: 
