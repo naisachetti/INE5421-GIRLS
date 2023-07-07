@@ -10,9 +10,13 @@ class GIRLS:
         self.lexer = AnalisadorLexico(folder, nome_programa)
         self.parser = AnalisadorSintatico(folder, self.lexer, validar=False, precompiled=True)
         if self.parser.parse(True):
-            print("\nSintaxe e léxico correto do arquivo program")
+            print("\nSintaxe e léxico correto do arquivo program\n")
             self.semantico = AnalisadorSemantico()
-            print("\nSemântica correta no arquivo, breaks corretos e expressões aritméticas corretas") 
+            sucesso, erro = self.semantico.analisar()
+            if sucesso:
+                print("\nSemântica correta no arquivo, breaks corretos e expressões aritméticas corretas") 
+            else:
+                print("Erro semântico: "+str(erro))
         else:
             print("\nProblema na sintaxe")
             raise SyntaxError()

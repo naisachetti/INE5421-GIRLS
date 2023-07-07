@@ -88,7 +88,7 @@ class Escopo:
     
     def declare(self, tipo, variavel):
         if variavel in map(lambda e: None if type(e) == Escopo else e[1], self.filhos):
-            raise SemanticError(f"Redeclaracao da variavel {variavel} no mesmo escopo {self}")
+            raise SemanticError(f"Redeclaracao da variavel {variavel} no mesmo escopo")
         self.filhos.append((tipo,variavel))
     
     def tipo_de(self, variavel):
@@ -179,7 +179,7 @@ class SintaticNode:
                     self.filhos.append(SintaticNode(filho, self, lista_derivacoes, terminais, acao_semantica=acao_semantica))
 
     def acoes_semanticas(self):
-        print(f"{self.label} ::= {' '.join(map(lambda e: e if type(e) == str else e.label, self.filhos))}")
+        # print(f"{self.label} ::= {' '.join(map(lambda e: e if type(e) == str else e.label, self.filhos))}")
         global escopo_atual
         global escopo_loop
         global ponto_e_virgula_count
@@ -191,7 +191,7 @@ class SintaticNode:
             # exclusivamente acao semantica
             if type(filho) == str:
                 if self.acao_semantica:
-                    print(f"acao semantica: {filho}")
+                    # print(f"acao semantica: {filho}")
                     exec(filho)
             # filho obrigatoriamente um Nodo 
             elif filho.eh_nt:
@@ -244,7 +244,7 @@ class SintaticNode:
                     if current_arithmetic_type == "no_type_yet":
                         current_arithmetic_type = tipo
                     elif tipo != current_arithmetic_type and current_arithmetic_type:
-                        raise SemanticError(f"Expressao do tipo {current_arithmetic_type} tentou receber um {tipo} em {filho.label}")
+                        raise SemanticError(f"Expressao do tipo {current_arithmetic_type} tentou receber um {tipo} em {filho.lex_val}")
     
     def print_tree(self):
         print(f"{self.label} ::= {' '.join(map(lambda e: e if type(e) == str else e.label, self.filhos))}")
@@ -310,12 +310,23 @@ class AnalisadorSemantico:
         FiltroSemantico("compiladores","sdt").annotate_file("compiladores","acoes_sintaticas.txt")
         with open("debug/terminais.txt", "r") as arq:
             terminais = arq.readline().split()
-        der = ArvoreDerivacoes("compiladores/acoes_anotadas.txt", terminais)
-        print("Arvore de derivacoes montadas")
-        der.resolver_acoes_semanticas()
+        self.der = ArvoreDerivacoes("compiladores/acoes_anotadas.txt", terminais)
+    
+    def analisar(self):
+        try:
+            self.der.resolver_acoes_semanticas()
+        except SemanticError as e:
+            print("Escopo de variáveis encontradas até o erro:")
+            print(escopo_global)
+            return (False, e)
 
-        print(der.print_exp())
+        print(self.der.print_exp())
+
+        print("Escopo de variáveis")
         print(escopo_global)
+        return (True, None)
+        
+
 
 if __name__ == "__main__":
     pass
