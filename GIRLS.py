@@ -12,6 +12,7 @@ class GIRLS:
         if self.parser.parse(True):
             print("\nSintaxe e léxico correto do arquivo program")
             self.semantico = AnalisadorSemantico()
+            print("\nSemântica correta no arquivo, breaks corretos e expressões aritméticas corretas") 
         else:
             print("\nProblema na sintaxe")
             raise SyntaxError()

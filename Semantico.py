@@ -73,15 +73,16 @@ class SemanticError(SyntaxError):
     pass
 
 class Escopo:
-    def __init__(self, parent, loop = False):
+    def __init__(self, parent, loop = False, profundidade = 0):
         self.parent = parent
         self.loop = loop
         self.filhos = []
         self.leave = True
+        self.profundidade = profundidade
         self.variaveis_declaradas = []
     
     def entrar(self, loop = False):
-        novo_escopo = Escopo(self, loop=loop or self.loop)
+        novo_escopo = Escopo(self, loop=loop or self.loop, profundidade=self.profundidade+1)
         self.filhos.append(novo_escopo)
         return novo_escopo
     
@@ -103,7 +104,10 @@ class Escopo:
 
     
     def __repr__(self):
-        return "{"+" ".join(map(lambda e: repr(e), self.filhos))+"}"
+        tab = "\n"+"\t"*self.profundidade
+        return tab+"{"+tab+\
+                tab.join(map(lambda e: repr(e), self.filhos))+\
+                tab+"}\n"
 
 escopo_global = Escopo(None)
 escopo_atual = escopo_global
@@ -294,7 +298,9 @@ class AnalisadorSemantico:
         der = ArvoreDerivacoes("compiladores/acoes_anotadas.txt", terminais)
         print("Arvore de derivacoes montadas")
         der.resolver_acoes_semanticas()
+
         print(der.print_exp())
+        print(escopo_global)
 
 if __name__ == "__main__":
     pass
