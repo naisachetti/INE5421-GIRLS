@@ -12,6 +12,7 @@ class GIRLS:
             print("\nSintaxe e léxico correto do arquivo program")
         else:
             print("\nProblema na sintaxe")
+            raise SyntaxError()
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:

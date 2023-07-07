@@ -44,7 +44,7 @@ class FiltroSDT:
                     if simbolo in producao_simbolos:
                         anotacao_simbolos[j] = f"self.filhos[{producao_simbolos.index(simbolo)}]"
                     elif simbolo.split(".")[0] in producao_simbolos:
-                        anotacao_simbolos[j] = f"self.filhos[{producao_simbolos.index(simbolo.split('.')[0])}].{' '.join(simbolo.split('.')[1:])}"
+                        anotacao_simbolos[j] = f"self.filhos[{producao_simbolos.index(simbolo.split('.')[0])}].{'.'.join(simbolo.split('.')[1:])}"
                 anotacoes[k] = " ".join(anotacao_simbolos)
 
             producao_tratada = ""
@@ -216,17 +216,16 @@ class SintaticNode:
                 elif current_arithmetic_type and filho.label in {"int_constant", "float_constant", "string_constant", "ident"}:
                     if filho.label == "ident":
                         tipo = escopo_atual.tipo_de(filho.lex_val)
+                        if tipo == "def":
+                            current_arithmetic_type = None
                         if not tipo:
                             raise SemanticError(f"Variavel nao declarada {filho.lex_val} usada numa atribuicao")
                     else:
                         tipo = filho.label.replace("_constant", "") #KKKKKKKKKKKKKKKKKKKKKK
                     if current_arithmetic_type == "no_type_yet":
                         current_arithmetic_type = tipo
-                    elif tipo != current_arithmetic_type:
-                        raise SemanticError(f"Expressao do tipo {current_arithmetic_type} tentou receber um {tipo}")
-
-
-
+                    elif tipo != current_arithmetic_type and current_arithmetic_type:
+                        raise SemanticError(f"Expressao do tipo {current_arithmetic_type} tentou receber um {tipo} em {filho.label}")
     
     def print_tree(self):
         print(f"{self.label} ::= {' '.join(map(lambda e: e if type(e) == str else e.label, self.filhos))}")

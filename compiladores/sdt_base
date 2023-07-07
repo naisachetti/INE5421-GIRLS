@@ -325,3 +325,6 @@ A'4 ::= def ident \0 ( A'2
 
 FUNCLIST ::= def ident \0 ( A'2
 \0 escopo_atual.declare( "def", ident.lex_val )
+
+PARAMLIST ::= TYPE LVALUE \0 PARAMLIST'1
+\0 escopo_atual.declare( TYPE.filhos[0].lex_val , LVALUE.filhos[0].lex_val )
