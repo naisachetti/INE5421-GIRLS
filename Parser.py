@@ -95,8 +95,11 @@ class ParsingTable:
                 csv.write(",".join(arquivo_linha)+"\n")
 
 class AnalisadorSintatico:
-    def __init__(self, folder: str, Lexer:TokenDriver, validar = True) -> None:
-        self.gramatica = Gramatica().from_file_preprocess(folder+"/grammar").tratada()
+    def __init__(self, folder: str, Lexer:TokenDriver, validar = True, precompiled = False) -> None:
+        if precompiled:
+            self.gramatica = Gramatica().from_file(folder+"/grammar")
+        else:
+            self.gramatica = Gramatica().from_file_preprocess(folder+"/grammar").tratada()
         print("Gramatica Tratada com sucesso!")
         self.token = Lexer.gerador()
         self.tabela = ParsingTable(self.gramatica)

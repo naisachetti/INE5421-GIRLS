@@ -1,0 +1,35 @@
+STATELIST ::= float ident \0 STATELIST'4
+\0 escopo_atual.declare( ident.lex_val )
+
+STATELIST ::= string ident \0 STATELIST'4 
+\0 escopo_atual.declare( ident.lex_val )
+
+STATELIST ::= int ident \0 STATELIST'4
+\0 escopo_atual.declare( ident.lex_val )
+
+STATELIST'1 ::= float ident \0 STATELIST'4
+\0 escopo_atual.declare( ident.lex_val )
+
+STATELIST'1 ::= string ident \0 STATELIST'4 
+\0 escopo_atual.declare( ident.lex_val )
+
+STATELIST'1 ::= int ident \0 STATELIST'4
+\0 escopo_atual.declare( ident.lex_val )
+
+STATELIST'2 ::= float ident \0 STATELIST'4
+\0 escopo_atual.declare( ident.lex_val )
+
+STATELIST'2 ::= string ident \0 STATELIST'4 
+\0 escopo_atual.declare( ident.lex_val )
+
+STATELIST'2 ::= int ident \0 STATELIST'4
+\0 escopo_atual.declare( ident.lex_val )
+
+STATELIST'3 ::= float ident \0 STATELIST'4
+\0 escopo_atual.declare( ident.lex_val )
+
+STATELIST'3 ::= string ident \0 STATELIST'4 
+\0 escopo_atual.declare( ident.lex_val )
+
+STATELIST'3 ::= int ident \0 STATELIST'4
+\0 escopo_atual.declare( ident.lex_val )

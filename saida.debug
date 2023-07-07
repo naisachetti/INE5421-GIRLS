@@ -1,0 +1,12 @@
+Arvore de derivacoes montadas
+A ::= { STATELIST }
+STATELIST ::= int ident STATELIST'4
+STATELIST'4 ::= ; STATELIST'1
+STATELIST'1 ::= 
+-----------
+A: expnode: [None]
+STATELIST: expnode: [None]
+STATELIST'4: expnode: [None]
+STATELIST'1: expnode: [None]
+None
+{}

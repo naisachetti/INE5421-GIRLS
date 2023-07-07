@@ -55,6 +55,35 @@ class FiltroSDT:
                     arquivo.write(anotacao+"\n")
                 arquivo.write("\n")
 
+class SemanticError(SyntaxError):
+    pass
+
+class Escopo:
+    def __init__(self, parent, loop = False):
+        self.parent = parent
+        self.loop = loop
+        self.filhos = []
+        self.leave = True
+        self.variaveis_declaradas = []
+    
+    def entrar(self, loop = False):
+        novo_escopo = Escopo(self, loop=loop)
+        self.filhos.append(novo_escopo)
+        return novo_escopo
+    
+    def declare(self, tipo, variavel):
+        if variavel in map(lambda e: None if type(e) == Escopo else e[1], self.filhos):
+            raise SemanticError(f"Redeclaracao da variavel {variavel} no mesmo escopo {self}")
+        self.filhos.append((tipo,variavel))
+    
+    def __repr__(self):
+        return "{"+" ".join(map(lambda e: repr(e), self.filhos))+"}"
+
+escopo_global = Escopo(None)
+escopo_atual = escopo_global
+escopo_loop = False
+ponto_e_virgula_count = None
+
 class ExpressionNode:
     def __init__(self, valor: str, left, right):
         # self.tipo = tipo
@@ -80,9 +109,9 @@ class SintaticNode:
         self.label = label
         self.parent = parent
         self.eh_nt: bool = eh_nt
-        if self.label == "ATRIBSTAT_AUX1": acao_semantica = True
-        self.acao_semantica: bool = acao_semantica
-        self.filhos = []
+        # if self.label == "ATRIBSTAT_AUX1": acao_semantica = True
+        self.acao_semantica: bool = True
+        self.filhos: list[SintaticNode] = []
 
         # Nodo representa um terminal
         if not self.eh_nt:
@@ -116,6 +145,9 @@ class SintaticNode:
 
     def acoes_semanticas(self):
         print(f"{self.label} ::= {' '.join(map(lambda e: e if type(e) == str else e.label, self.filhos))}")
+        global escopo_atual
+        global escopo_loop
+        global ponto_e_virgula_count
         for filho in self.filhos:
             # exclusivamente acao semantica
             if type(filho) == str:
@@ -125,8 +157,28 @@ class SintaticNode:
             # filho obrigatoriamente um Nodo 
             elif filho.eh_nt:
                 filho.acoes_semanticas()
+            # filho terminal
             else:
-                pass
+                if filho.label == "for":
+                    escopo_loop = True
+                    escopo_atual = escopo_atual.entrar(loop=True)
+                    ponto_e_virgula_count = 0
+                elif filho.label == "{":
+                    ponto_e_virgula_count = None
+                    if not escopo_loop:
+                        escopo_atual = escopo_atual.entrar()
+                    escopo_loop = False
+                elif filho.label == "}" and not escopo_loop:
+                    escopo_atual = escopo_atual.parent
+                elif filho.label == ";" and escopo_loop and not ponto_e_virgula_count is None:
+                    ponto_e_virgula_count += 1
+                    if ponto_e_virgula_count >= 3:
+                        ponto_e_virgula_count = None
+                        escopo_loop = False
+                        escopo_atual = escopo_atual.parent
+                elif filho.label == "break":
+                    if not escopo_atual.loop:
+                        raise SemanticError("Break fora de escopo de loop")
     
     def print_tree(self):
         print(f"{self.label} ::= {' '.join(map(lambda e: e if type(e) == str else e.label, self.filhos))}")
@@ -140,9 +192,7 @@ class SintaticNode:
     
     def print_exp(self):
         if self.node:
-            print(f"{self.label}: {self.node}", end="")
-            if self.left_node: print(f" left: {self.left_node}", end="")
-            if self.right_node: print(f" right: {self.right_node}", end="")
+            print(f"{self.label}: {self.node}")
             print()
         for filho in self.filhos:
             # exclusivamente acao semantica
@@ -189,6 +239,7 @@ class ArvoreDerivacoes:
         self.root.print_exp()
 
 if __name__ == "__main__":
+
     FiltroSDT("compiladores", "sdt_base")
     FiltroSemantico("compiladores","sdt").annotate_file("compiladores","acoes_sintaticas.txt")
     with open("debug/terminais.txt", "r") as arq:
@@ -198,3 +249,4 @@ if __name__ == "__main__":
     der.resolver_acoes_semanticas()
     print("-----------")
     print(der.print_exp())
+    print(repr(escopo_atual))

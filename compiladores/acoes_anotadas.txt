@@ -1,69 +1,18 @@
-A ::= { STATELIST }
-{ ::= {
-STATELIST ::= int ident STATELIST'4
-int ::= int
-ident ::= a
-STATELIST'4 ::= ; STATELIST'1
-; ::= ;
-STATELIST'1 ::= ident STATELIST'5
-ident ::= a
-STATELIST'5 ::= UNARYEXPR'1 = ATRIBSTAT_AUX1 ; STATELIST'1
-UNARYEXPR'1 ::= & \self.node@=@self.left_node
-= ::= =
-ATRIBSTAT_AUX1 ::= int_constant \self.filhos[2].left_node@=@ExpressionNode(@self.filhos[0].lex_val@,@None@,@None@) ATRIBSTAT_AUX1'1 \self.node@=@self.filhos[2].node
-int_constant ::= 1
-ATRIBSTAT_AUX1'1 ::= \self.filhos[1].left_node@=@self.left_node TERM_AUX1 \self.filhos[3].left_node@=@self.filhos[1].node ATRIBSTAT_AUX1'3 \self.node@=@self.filhos[3].node
-TERM_AUX1 ::= OPERATION UNARYEXPR \self.filhos[3].left_node@=@self.filhos[1].node TERM'1 \self.right_node@=@self.filhos[3].node \self.node@=@ExpressionNode(@self.filhos[0].lex_val@,@self.left_node@,@self.right_node@)
-OPERATION ::= * \self.lex_val@=@self.filhos[0].lex_val
-* ::= *
-UNARYEXPR ::= int_constant \self.node@=@ExpressionNode(@self.filhos[0].lex_val@,@None@,@None@)
-int_constant ::= 2
-TERM'1 ::= & \self.node@=@self.left_node
-ATRIBSTAT_AUX1'3 ::= \self.filhos[1].left_node@=@self.filhos[3].left_node NUMEXPRESSION_AUX1 \self.node@=@self.filhos[1].node ATRIBSTAT_AUX1'4
-NUMEXPRESSION_AUX1 ::= SIGNAL TERM \self.filhos[3].left_node@=@self.filhos[1].node NUMEXPRESSION_AUX1'1 \self.right_node@=@self.filhos[3].node \self.node@=@ExpressionNode(@self.filhos[0].lex_val@,@self.left_node@,@self.right_node@)
-SIGNAL ::= + \self.lex_val@=@self.filhos[0].lex_val
-+ ::= +
-TERM ::= int_constant \self.filhos[2].left_node@=@ExpressionNode(@self.filhos[0].lex_val@,@None@,@None@) TERM'1 \self.node@=@self.filhos[2].node
-int_constant ::= 3
-TERM'1 ::= OPERATION UNARYEXPR TERM'1
-OPERATION ::= * \self.lex_val@=@self.filhos[0].lex_val
-* ::= *
-UNARYEXPR ::= int_constant \self.node@=@ExpressionNode(@self.filhos[0].lex_val@,@None@,@None@)
-int_constant ::= 4
-TERM'1 ::= OPERATION UNARYEXPR TERM'1
-OPERATION ::= * \self.lex_val@=@self.filhos[0].lex_val
-* ::= *
-UNARYEXPR ::= SIGNAL FACTOR \self.node@=@ExpressionNode(@self.filhos[0].lex_val@,@self.filhos[1].node@,@None@)
-SIGNAL ::= - \self.lex_val@=@self.filhos[0].lex_val
-- ::= -
-FACTOR ::= int_constant \self.node@=@ExpressionNode(@self.filhos[0].lex_val@,@None@,@None@)
-int_constant ::= 10
-TERM'1 ::= OPERATION UNARYEXPR TERM'1
-OPERATION ::= / \self.lex_val@=@self.filhos[0].lex_val
-/ ::= /
-UNARYEXPR ::= ( NUMEXPRESSION \self.node@=@self.filhos[1].node )
+A ::= def ident \escopo_atual.declare(@"def",@self.filhos[1].lex_val@) ( A'2
+def ::= def
+ident ::= funcao
 ( ::= (
-NUMEXPRESSION ::= SIGNAL FACTOR \self.filhos[3].left_node@=@ExpressionNode(@self.filhos[0].lex_val@,@self.filhos[1].node@,@None@) NUMEXPRESSION'1 \self.node@=@self.filhos[3].node
-SIGNAL ::= + \self.lex_val@=@self.filhos[0].lex_val
-+ ::= +
-FACTOR ::= int_constant \self.node@=@ExpressionNode(@self.filhos[0].lex_val@,@None@,@None@)
-int_constant ::= 6
-NUMEXPRESSION'1 ::= SIGNAL TERM NUMEXPRESSION_AUX1'1
-SIGNAL ::= + \self.lex_val@=@self.filhos[0].lex_val
-+ ::= +
-TERM ::= int_constant \self.filhos[2].left_node@=@ExpressionNode(@self.filhos[0].lex_val@,@None@,@None@) TERM'1 \self.node@=@self.filhos[2].node
-int_constant ::= 4
-TERM'1 ::= OPERATION UNARYEXPR TERM'1
-OPERATION ::= * \self.lex_val@=@self.filhos[0].lex_val
-* ::= *
-UNARYEXPR ::= int_constant \self.node@=@ExpressionNode(@self.filhos[0].lex_val@,@None@,@None@)
-int_constant ::= 2
-TERM'1 ::= & \self.node@=@self.left_node
-NUMEXPRESSION_AUX1'1 ::= & \self.node@=@self.left_node
+A'2 ::= ) STATEMENT A'4
 ) ::= )
-TERM'1 ::= & \self.node@=@self.left_node
-NUMEXPRESSION_AUX1'1 ::= & \self.node@=@self.left_node
-ATRIBSTAT_AUX1'4 ::= &
+STATEMENT ::= { STATELIST }
+{ ::= {
+STATELIST ::= RETURNSTAT ; STATELIST'1
+RETURNSTAT ::= return RETURNSTAT'1
+return ::= return
+RETURNSTAT'1 ::= int_constant RETURNLIST'1
+int_constant ::= 0
+RETURNLIST'1 ::= &
 ; ::= ;
 STATELIST'1 ::= &
 } ::= }
+A'4 ::= &
